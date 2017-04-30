@@ -22,7 +22,7 @@
     <ProjectGuid>{71D4C2A8-9E78-47A8-A2B7-3FB2DE014D27}</ProjectGuid>
     <RootNamespace>InversePower</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>GTAVAddonLoader</ProjectName>
+    <ProjectName>AddonSpawner</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

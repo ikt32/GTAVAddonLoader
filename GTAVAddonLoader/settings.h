@@ -13,8 +13,7 @@ public:
 	void SaveSettings();
 	void SetFiles(const std::string &general, const std::string &menu);
 
-	bool autoApply = false;
-	bool enableMod = false;
+	bool SpawnInside = false;
 private:
 	std::string settingsGeneralFile;
 	std::string settingsMenuFile;

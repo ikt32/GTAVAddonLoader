@@ -111,7 +111,10 @@ void update_menu() {
 	menu.CheckKeys(&controls, std::bind(cacheAddons), nullptr);
 
 	if (menu.CurrentMenu("mainmenu")) {
-		menu.Title("Add-on vehicles");
+		menu.Title("Add-on spawner");
+
+		menu.BoolOption("Spawn in car", &settings.SpawnInside);
+
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
 		}

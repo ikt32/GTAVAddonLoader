@@ -13,6 +13,6 @@ http://dev-c.com
 #include "..\..\ScriptHookV_SDK\inc\main.h"
 #include <string>
 
-const std::string modDir  = "\\AddonLoader";
+const std::string modDir  = "\\AddonSpawner";
 
 void ScriptMain();

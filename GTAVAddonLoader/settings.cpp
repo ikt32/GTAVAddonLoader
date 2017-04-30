@@ -20,8 +20,7 @@ void Settings::ReadSettings(MenuControls *control, Menu *menuOpts) {
 	settingsGeneral.SetUnicode();
 	settingsGeneral.LoadFile(settingsGeneralFile.c_str());
 	
-	enableMod = settingsGeneral.GetBoolValue("OPTIONS", "EnableMod", false);
-	autoApply = settingsGeneral.GetBoolValue("OPTIONS", "AutoApply", false);
+	SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
 	
 
 	CSimpleIniA settingsMenu;
@@ -47,7 +46,6 @@ void Settings::SaveSettings() {
 	settings.SetUnicode();
 	settings.LoadFile(settingsGeneralFile.c_str());
 
-	settings.SetBoolValue("OPTIONS", "EnableMod", enableMod);
-	settings.SetBoolValue("OPTIONS", "AutoApply", autoApply);
+	settings.SetBoolValue("OPTIONS", "SpawnInside", SpawnInside);
 	settings.SaveFile(settingsGeneralFile.c_str());
 }

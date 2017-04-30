@@ -24,7 +24,7 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 		scriptRegister(hInstance, ScriptMain);
 //		keyboardHandlerRegister(OnKeyboardMessage);
 		logger.Clear();
-		logger.Write("VStancer " + std::string(DISPLAY_VERSION));
+		logger.Write("GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
 		logger.Write("Game version " + eGameVersionToString(getGameVersion()));
 		logger.Write("Script registered");
 		break;
