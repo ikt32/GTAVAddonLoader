@@ -86,8 +86,15 @@ void spawnVehicle(Hash hash) {
 		STREAMING::REQUEST_MODEL(hash);
 		while (!STREAMING::HAS_MODEL_LOADED(hash)) WAIT(0);
 		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 3.0, 2.0, 0);
-		VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
+		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
+		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
+		
+		if (settings.SpawnInside) {
+			ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
+			PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);
+		}
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+
 		showSubtitle("Spawned vehicle");
 	}
 	else
