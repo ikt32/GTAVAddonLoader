@@ -124,7 +124,7 @@ void update_menu() {
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
 
-		menu.BoolOption("Spawn in car", &settings.SpawnInside);
+		if (menu.BoolOption("Spawn in car", &settings.SpawnInside)) { settings.SaveSettings(); }
 
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
