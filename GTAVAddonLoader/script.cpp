@@ -107,7 +107,11 @@ void spawnMenu(std::string className) {
 	for (auto vehicleHash : addonVehicles) {
 		if (className == vehicleHash.first) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicleHash.second);
-			if (menu.Option(name)) {
+			std::string displayName = UI::_GET_LABEL_TEXT(name);
+			if (displayName == "NULL") {
+				displayName = name;
+			}
+			if (menu.Option(displayName)) {
 				spawnVehicle(vehicleHash.second);
 			}
 		}
