@@ -81,10 +81,18 @@ void init() {
 }
 
 void spawnVehicle(Hash hash) {
-	if (STREAMING::IS_MODEL_IN_CDIMAGE(hash))
-	{
+	if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash)) {
 		STREAMING::REQUEST_MODEL(hash);
-		while (!STREAMING::HAS_MODEL_LOADED(hash)) WAIT(0);
+		DWORD startTime = GetTickCount();
+		DWORD timeout = 10000; // in millis
+
+		while (!STREAMING::HAS_MODEL_LOADED(hash)) {
+			WAIT(0);
+			if (GetTickCount() > startTime + timeout) {
+				showSubtitle("Couldn't load model");
+				return;
+			}
+		}
 		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 3.0, 2.0, 0);
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
@@ -100,8 +108,9 @@ void spawnVehicle(Hash hash) {
 
 		showSubtitle("Spawned vehicle");
 	}
-	else
+	else {
 		showSubtitle("Vehicle doesn't exist");
+	}
 }
 
 void spawnMenu(std::string className) {
