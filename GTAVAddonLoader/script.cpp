@@ -107,6 +107,8 @@ void spawnVehicle(Hash hash) {
 			WAIT(0);
 			if (GetTickCount() > startTime + timeout) {
 				showSubtitle("Couldn't load model");
+				WAIT(0);
+				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 				return;
 			}
 		}
