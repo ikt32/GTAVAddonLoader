@@ -93,7 +93,10 @@ void spawnVehicle(Hash hash) {
 			ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
 			PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);
 		}
+
+		WAIT(0);
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+		ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
 
 		showSubtitle("Spawned vehicle");
 	}
