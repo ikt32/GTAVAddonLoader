@@ -33,6 +33,21 @@ MemoryAccess mem;
 std::vector<std::pair<std::string, Hash>> addonVehicles;
 std::set<std::string> addonClasses;
 
+std::string prettyNameFromHash(Hash hash) {
+	char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+	std::string displayName = UI::_GET_LABEL_TEXT(name);
+	if (displayName == "NULL") {
+		displayName = name;
+	}
+	return displayName;
+}
+
+bool predicateHashByName(Hash h1, Hash h2) {
+	std::string name1 = prettyNameFromHash(h1);
+	std::string name2 = prettyNameFromHash(h2);
+	return name1 < name2;
+}
+
 void cacheAddons() {
 	if (!addonVehicles.empty())
 		return;
@@ -56,6 +71,8 @@ void cacheAddons() {
 		}
 		g++;
 	}
+
+	std::sort(allVehicles.begin(), allVehicles.end(), predicateHashByName);
 
 	logger.Write("Found: ");
 	for (auto hash : allVehicles) {
