@@ -14,6 +14,8 @@
 #include <vector>
 #include "VehicleHashes.h"
 #include <set>
+#include <sstream>
+#include <iomanip>
 
 Menu menu;
 
@@ -149,13 +151,61 @@ void spawnMenu(std::string className) {
 	}
 }
 
+std::string manualVehicleName = "";
+bool manualSpawnSelected = false;
+
+std::string evaluateInput() {
+	PLAYER::IS_PLAYER_CONTROL_ON(false);
+	UI::HIDE_HUD_AND_RADAR_THIS_FRAME();
+	UI::SET_PAUSE_MENU_ACTIVE(false);
+	CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(1);
+	CONTROLS::IS_CONTROL_ENABLED(playerPed, false);
+
+	for (char c = ' '; c < '~'; c++) {
+		int key = str2key(std::string(1, c));
+		if (key == -1) continue;
+		if (IsKeyJustUp(key)) {
+			manualVehicleName += c;
+		}
+	}
+	if (IsKeyJustUp(str2key("SPACE"))) {
+		manualVehicleName += ' ';
+	}
+	if (IsKeyJustUp(str2key("DELETE"))) {
+		manualVehicleName.pop_back();
+	}
+	if (IsKeyJustUp(str2key("BACKSPACE"))) {
+		manualVehicleName.clear();
+	}
+
+	return manualVehicleName;
+}
+
+void clearStuff() {
+	manualVehicleName.clear();
+}
+
 void update_menu() {
-	menu.CheckKeys(&controls, std::bind(cacheAddons), nullptr);
+	menu.CheckKeys(&controls, std::bind(cacheAddons), std::bind(clearStuff));
 
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
 
 		if (menu.BoolOption("Spawn in car", &settings.SpawnInside)) { settings.SaveSettings(); }
+
+
+		std::vector<std::string> extraSpawnInfo = {
+			"Enter car model:",
+			manualVehicleName,
+		};
+
+		if (manualSpawnSelected) {
+			evaluateInput();
+		}
+
+		if (menu.OptionPlus("Spawn manually", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr)) {
+			spawnVehicle(GAMEPLAY::GET_HASH_KEY(CharAdapter(manualVehicleName.c_str())));
+		}
 
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
