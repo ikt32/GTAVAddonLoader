@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.3
+No config changes.
+
+* Fix some vehicles not showing up
+* Update menu controls
+
 ## v1.0.2
 No config changes.
 
