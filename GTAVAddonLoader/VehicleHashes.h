@@ -198,6 +198,7 @@ std::vector<Hash> Vehicles = {
 	2983812512u ,
 	//Chimera
 	1491277511u ,
+	0x675ED7,
 	//Chino
 	349605904u ,
 	//Chino2
@@ -406,6 +407,7 @@ std::vector<Hash> Vehicles = {
 	1265391242u ,
 	//Hakuchou2
 	3685342204u ,
+	0xF0C2A91F,
 	//Handler
 	444583674u ,
 	//Hauler
@@ -998,6 +1000,7 @@ std::vector<Hash> Vehicles = {
 	65402552u ,
 	//Youga2
 	3685342204u ,
+	0x3D29CD2B,
 	//Zentorno
 	2891838741u ,
 	//Zion
@@ -1011,5 +1014,5 @@ std::vector<Hash> Vehicles = {
 	//ZType
 	758895617u ,
 	//FREIGHT
-	0x33c9e158
+	0x33c9e158,
 };

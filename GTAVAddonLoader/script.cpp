@@ -54,11 +54,6 @@ void cacheAddons() {
 	if (!addonVehicles.empty())
 		return;
 	std::vector<Hash> allVehicles;
-	std::vector<Hash> dlcVehicles;
-	int num = DLC1::GET_NUM_DLC_VEHICLES();
-	for (int i = 0; i < num; i++) {
-		dlcVehicles.push_back(DLC1::GET_DLC_VEHICLE_MODEL(i));
-	}
 
 	auto vehicleModelList = mem.GenerateVehicleModelList();
 	int i = 0;
@@ -78,14 +73,26 @@ void cacheAddons() {
 
 	logger.Write("Found: ");
 	for (auto hash : allVehicles) {
-		if (std::find(Vehicles.begin(), Vehicles.end(), hash) == Vehicles.end() &&
-			std::find(dlcVehicles.begin(), dlcVehicles.end(), hash) == dlcVehicles.end()) {
+		if (std::find(Vehicles.begin(), Vehicles.end(), hash) == Vehicles.end()) {
 			char buffer[128];
-			std::sprintf(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			char* className = UI::_GET_LABEL_TEXT(buffer);
 
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-			logger.Write(std::string(className) + ": " + std::string(name));
+			
+			std::stringstream displayHash;
+			displayHash << "0x" << std::uppercase << std::hex << hash;
+			std::string displayHashString = displayHash.str();
+			for (int i = 0; i < (12 - displayHash.str().length()); i++) {
+				displayHashString +=  " ";
+			}
+
+			std::string displayName = name;
+			for (int i = 0; i < 20 - std::string(name).length(); i++) {
+				displayName += " ";
+			}
+
+			logger.Write(displayHashString + displayName + std::string(className));
 			addonVehicles.push_back(std::make_pair(className, hash));
 			addonClasses.emplace(className);
 		}
