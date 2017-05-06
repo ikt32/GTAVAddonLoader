@@ -125,9 +125,6 @@ bool Menu::OptionPlus(std::string  option, std::vector<std::string> &extra, bool
 	bool thisOption = false;
 	if (currentoption == optioncount) {
 		thisOption = true;
-		if (highlighted != nullptr) {
-			*highlighted = true;
-		}
 		if (onLeft && leftpress) {
 			onLeft();
 			leftpress = false;
@@ -157,6 +154,10 @@ bool Menu::OptionPlus(std::string  option, std::vector<std::string> &extra, bool
 			drawRect(menux, ((optioncount - (currentoption - 16)) * 0.035f + (menuy + 0.0165f)/*0.1415f*/), 0.23f, 0.035f, scroller);
 			drawAdditionalInfoBox(extra, infoLines);
 		}
+	}
+
+	if (highlighted != nullptr) {
+		*highlighted = thisOption;
 	}
 
 	if (optionpress && currentoption == optioncount) return true;
