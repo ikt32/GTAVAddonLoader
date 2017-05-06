@@ -601,13 +601,12 @@ void Menu::CheckKeys(MenuControls* controls, std::function<void() > onMain, std:
 				changeMenu("mainmenu");
 				if (onMain) onMain();
 			}
-			else if (menulevel == 1) {
-				backMenu();
+			else {
+				CloseMenu();
 				CAM::SET_CINEMATIC_BUTTON_ACTIVE(1);
 				if (onExit) {
 					onExit();
 				}
-
 			}
 			delay = GetTickCount();
 		}

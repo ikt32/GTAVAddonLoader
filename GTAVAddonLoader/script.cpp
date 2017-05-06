@@ -201,7 +201,7 @@ void update_menu() {
 		if (menu.BoolOption("Spawn in car", &settings.SpawnInside)) { settings.SaveSettings(); }
 
 
-		std::vector<std::string> extraSpawnInfo = {
+		/*std::vector<std::string> extraSpawnInfo = {
 			"Enter car model:",
 			manualVehicleName,
 		};
@@ -212,7 +212,7 @@ void update_menu() {
 
 		if (menu.OptionPlus("Spawn manually", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr)) {
 			spawnVehicle(GAMEPLAY::GET_HASH_KEY(CharAdapter(manualVehicleName.c_str())));
-		}
+		}*/
 
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
