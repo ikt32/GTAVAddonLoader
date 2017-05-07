@@ -77,23 +77,19 @@ void cacheAddons() {
 		if (std::find(Vehicles.begin(), Vehicles.end(), hash) == Vehicles.end()) {
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-			char* className = UI::_GET_LABEL_TEXT(buffer);
-
+			char *className = UI::_GET_LABEL_TEXT(buffer);
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-			
-			std::stringstream displayHash;
-			displayHash << "0x" << std::uppercase << std::hex << hash;
-			std::string displayHashString = displayHash.str();
-			for (int i = 0; i < (12 - displayHash.str().length()); i++) {
-				displayHashString +=  " ";
-			}
 
-			std::string displayName = name;
-			for (int i = 0; i < 20 - std::string(name).length(); i++) {
-				displayName += " ";
-			}
+			int hashLength = 12;
+			int nameLength = 20;
+			std::stringstream hashAsHex;
+			std::stringstream logStream;
+			hashAsHex << "0x" << std::uppercase << std::hex << hash;
+			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << name;
+			logStream << std::left << className;
+			logger.Write(logStream.str());
 
-			logger.Write(displayHashString + displayName + std::string(className));
 			addonVehicles.push_back(std::make_pair(className, hash));
 			addonClasses.emplace(className);
 		}
