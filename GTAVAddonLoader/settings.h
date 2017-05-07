@@ -1,15 +1,17 @@
 #pragma once
 #include <vector>
 
-class MenuControls;
+namespace NativeMenu {
 class Menu;
+class MenuControls;
+}
 
 class Settings
 {
 public:
 	Settings();
 	~Settings();
-	void ReadSettings(MenuControls *control, Menu *menuOpts);
+	void ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu *menuOpts);
 	void SaveSettings();
 	void SetFiles(const std::string &general, const std::string &menu);
 

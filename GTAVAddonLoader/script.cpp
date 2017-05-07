@@ -4,9 +4,9 @@
 
 #include "NativeMemory.hpp"
 
-#include "Menu/controls.h"
+#include "menucontrols.h"
 #include "settings.h"
-#include "Menu/MenuClass.h"
+#include "menu.h"
 #include "Util/Paths.h"
 #include "Util/Logger.hpp"
 
@@ -16,8 +16,9 @@
 #include <set>
 #include <sstream>
 #include <iomanip>
+#include "inc/natives.h"
 
-Menu menu;
+NativeMenu::Menu menu;
 
 std::string settingsGeneralFile;
 std::string settingsMenuFile;
@@ -27,7 +28,7 @@ Ped playerPed;
 
 int prevNotification;
 
-MenuControls controls;
+NativeMenu::MenuControls controls;
 Settings settings;
 
 MemoryAccess mem;

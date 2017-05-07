@@ -1,8 +1,8 @@
 #include "settings.h"
-#include "Menu/controls.h"
 #include "Util/simpleini/SimpleIni.h"
 #include "keyboard.h"
-#include "Menu/MenuClass.h"
+#include "menucontrols.h"
+#include "menu.h"
 
 Settings::Settings() { }
 
@@ -14,7 +14,7 @@ void Settings::SetFiles(const std::string &general, const std::string &menu) {
 	settingsMenuFile = menu;
 }
 
-void Settings::ReadSettings(MenuControls *control, Menu *menuOpts) {
+void Settings::ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu *menuOpts) {
 
 	CSimpleIniA settingsGeneral;
 	settingsGeneral.SetUnicode();
@@ -26,13 +26,13 @@ void Settings::ReadSettings(MenuControls *control, Menu *menuOpts) {
 	CSimpleIniA settingsMenu;
 	settingsMenu.SetUnicode();
 	settingsMenu.LoadFile(settingsMenuFile.c_str());
-	control->ControlKeys[MenuControls::ControlType::MenuKey]	= str2key(settingsMenu.GetValue("MENU", "MenuKey",		"VK_OEM_4"));
-	control->ControlKeys[MenuControls::ControlType::MenuUp]		= str2key(settingsMenu.GetValue("MENU", "MenuUp",		"UP"));
-	control->ControlKeys[MenuControls::ControlType::MenuDown]	= str2key(settingsMenu.GetValue("MENU", "MenuDown",		"DOWN"));
-	control->ControlKeys[MenuControls::ControlType::MenuLeft]	= str2key(settingsMenu.GetValue("MENU", "MenuLeft",		"LEFT"));
-	control->ControlKeys[MenuControls::ControlType::MenuRight]	= str2key(settingsMenu.GetValue("MENU", "MenuRight",	"RIGHT"));
-	control->ControlKeys[MenuControls::ControlType::MenuSelect] = str2key(settingsMenu.GetValue("MENU", "MenuSelect",	"RETURN"));
-	control->ControlKeys[MenuControls::ControlType::MenuCancel] = str2key(settingsMenu.GetValue("MENU", "MenuCancel",	"BACKSPACE"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuKey]	= str2key(settingsMenu.GetValue("MENU", "MenuKey",		"VK_OEM_4"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuUp]		= str2key(settingsMenu.GetValue("MENU", "MenuUp",		"UP"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuDown]	= str2key(settingsMenu.GetValue("MENU", "MenuDown",		"DOWN"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuLeft]	= str2key(settingsMenu.GetValue("MENU", "MenuLeft",		"LEFT"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuRight]	= str2key(settingsMenu.GetValue("MENU", "MenuRight",	"RIGHT"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuSelect] = str2key(settingsMenu.GetValue("MENU", "MenuSelect",	"RETURN"));
+	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuCancel] = str2key(settingsMenu.GetValue("MENU", "MenuCancel",	"BACKSPACE"));
 #pragma warning(push)
 #pragma warning(disable: 4244)
 	menuOpts->menux = settingsMenu.GetDoubleValue("MENU", "MenuX", 0.2);

@@ -5,12 +5,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="settings.cpp" />
-    <ClCompile Include="Menu\controls.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu\MenuClass.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Util\Util.cpp">
       <Filter>Util</Filter>
     </ClCompile>
@@ -21,6 +15,12 @@
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="NativeMemory.cpp" />
+    <ClCompile Include="..\..\GTAVMenuBase\menu.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GTAVMenuBase\menucontrols.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -37,12 +37,6 @@
     </ClInclude>
     <ClInclude Include="..\..\ScriptHookV_SDK\inc\enums.h">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu\controls.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu\MenuClass.h">
-      <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Util\Versions.h">
       <Filter>Util</Filter>
@@ -61,6 +55,12 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="VehicleHashes.h" />
+    <ClInclude Include="..\..\GTAVMenuBase\menu.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GTAVMenuBase\menucontrols.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">

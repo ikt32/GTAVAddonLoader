@@ -81,7 +81,7 @@
     <OutDir>bin\</OutDir>
     <IntDir>obj\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);D:\git\ScriptHookV_SDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);..\..\ScriptHookV_SDK\;..\..\GTAVMenuBase\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,10 +148,10 @@
     </BuildLog>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Menu\controls.cpp" />
+    <ClCompile Include="..\..\GTAVMenuBase\menu.cpp" />
+    <ClCompile Include="..\..\GTAVMenuBase\menucontrols.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Menu\MenuClass.cpp" />
     <ClCompile Include="NativeMemory.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="settings.cpp" />
@@ -160,13 +160,13 @@
     <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\GTAVMenuBase\menu.h" />
+    <ClInclude Include="..\..\GTAVMenuBase\menucontrols.h" />
     <ClInclude Include="..\..\ScriptHookV_SDK\inc\enums.h" />
     <ClInclude Include="..\..\ScriptHookV_SDK\inc\main.h" />
     <ClInclude Include="..\..\ScriptHookV_SDK\inc\natives.h" />
     <ClInclude Include="..\..\ScriptHookV_SDK\inc\types.h" />
-    <ClInclude Include="Menu\controls.h" />
     <ClInclude Include="keyboard.h" />
-    <ClInclude Include="Menu\MenuClass.h" />
     <ClInclude Include="NativeMemory.hpp" />
     <ClInclude Include="script.h" />
     <ClInclude Include="settings.h" />
