@@ -9,32 +9,10 @@ http://dev-c.com
 
 const int KEYS_SIZE = 255;
 
-//struct {
-//	DWORD time;
-//	BOOL isWithAlt;
-//	BOOL wasDownBefore;
-//	BOOL isUpNow;
-//} keyStates[KEYS_SIZE];
-
 struct {
 	BOOL curr;
 	BOOL prev;
 } _keyStates[KEYS_SIZE];
-
-//void OnKeyboardMessage(DWORD key, WORD repeats, BYTE scanCode, BOOL isExtended, BOOL isWithAlt, BOOL wasDownBefore, BOOL isUpNow)
-//{
-//	if (key < KEYS_SIZE)
-//	{
-//		keyStates[key].time = GetTickCount();
-//		keyStates[key].isWithAlt = isWithAlt;
-//		keyStates[key].wasDownBefore = wasDownBefore;
-//		keyStates[key].isUpNow = isUpNow;
-//		
-//	}
-//}
-
-// >5 minute holding W or S is improbable
-const int NOW_PERIOD = 100, MAX_DOWN = 300000; // ms
 
 bool IsWindowFocused() {
 	auto foregroundHwnd = GetForegroundWindow();
@@ -48,9 +26,7 @@ bool IsWindowFocused() {
 	return false;
 }
 
-bool IsKeyDown(DWORD key)
-{
-	//return (key < KEYS_SIZE) ? ((GetTickCount() < keyStates[key].time + MAX_DOWN) && !keyStates[key].isUpNow) : false;
+bool IsKeyDown(DWORD key) {
 	if (!IsWindowFocused()) return false;
 	if (GetAsyncKeyState(key) & 0x8000) return true;
 	return false;
@@ -58,13 +34,7 @@ bool IsKeyDown(DWORD key)
 
 
 
-bool IsKeyJustUp(DWORD key, bool exclusive)
-{
-	//bool b = (key < KEYS_SIZE) ? (GetTickCount() < keyStates[key].time + NOW_PERIOD && keyStates[key].isUpNow) : false;
-	//if (b && exclusive)
-	//	ResetKeyState(key);
-	//return b;
-
+bool IsKeyJustUp(DWORD key, bool exclusive) {
 	_keyStates[key].curr = IsKeyDown(key);
 	if (!_keyStates[key].curr && _keyStates[key].prev) {
 		_keyStates[key].prev = _keyStates[key].curr;
@@ -74,21 +44,12 @@ bool IsKeyJustUp(DWORD key, bool exclusive)
 	return false;
 }
 
-//void ResetKeyState(DWORD key)
-//{
-//	if (key < KEYS_SIZE)
-//		memset(&keyStates[key], 0, sizeof(keyStates[0]));
-//}
-
-DWORD str2key(std::string humanReadableKey)
-{
+DWORD str2key(std::string humanReadableKey) {
 	auto keymap = createKeyMap();
-	if (humanReadableKey.length() == 1)
-	{
+	if (humanReadableKey.length() == 1) {
 		char letter = humanReadableKey.c_str()[0];
 
-		if ((letter >= 0x30 && letter <= 0x39) || (letter >= 0x41 && letter <= 0x5A))
-		{
+		if ((letter >= 0x30 && letter <= 0x39) || (letter >= 0x41 && letter <= 0x5A)) {
 			return static_cast<int>(letter);
 		}
 	}
@@ -236,4 +197,3 @@ std::map<std::string, int> createKeyMap() {
 
 	return keymap;
 }
-
