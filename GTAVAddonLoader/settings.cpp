@@ -1,5 +1,5 @@
 #include "settings.h"
-#include "Util/simpleini/SimpleIni.h"
+#include "simpleini/SimpleIni.h"
 #include "keyboard.h"
 #include "menucontrols.h"
 #include "menu.h"

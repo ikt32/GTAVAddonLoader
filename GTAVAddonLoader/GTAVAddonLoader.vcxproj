@@ -81,7 +81,7 @@
     <OutDir>bin\</OutDir>
     <IntDir>obj\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);..\..\ScriptHookV_SDK\;..\..\GTAVMenuBase\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)thirdparty;$(ProjectDir);..\..\ScriptHookV_SDK\;..\..\GTAVMenuBase\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
