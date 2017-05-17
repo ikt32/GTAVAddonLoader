@@ -21,7 +21,7 @@ void Settings::ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu 
 	settingsGeneral.LoadFile(settingsGeneralFile.c_str());
 	
 	SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
-	
+	SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
 
 	CSimpleIniA settingsMenu;
 	settingsMenu.SetUnicode();
@@ -33,6 +33,10 @@ void Settings::ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu 
 	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuRight]	= str2key(settingsMenu.GetValue("MENU", "MenuRight",	"RIGHT"));
 	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuSelect] = str2key(settingsMenu.GetValue("MENU", "MenuSelect",	"RETURN"));
 	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuCancel] = str2key(settingsMenu.GetValue("MENU", "MenuCancel",	"BACKSPACE"));
+
+	control->ControllerButton1 = settingsMenu.GetLongValue("MENU", "ControllerButton1", -1);
+	control->ControllerButton2 = settingsMenu.GetLongValue("MENU", "ControllerButton2", -1);
+	
 #pragma warning(push)
 #pragma warning(disable: 4244)
 	menuOpts->menux = settingsMenu.GetDoubleValue("MENU", "MenuX", 0.2);

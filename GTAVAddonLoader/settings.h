@@ -16,6 +16,7 @@ public:
 	void SetFiles(const std::string &general, const std::string &menu);
 
 	bool SpawnInside = false;
+	bool SpawnByName = false;
 private:
 	std::string settingsGeneralFile;
 	std::string settingsMenuFile;

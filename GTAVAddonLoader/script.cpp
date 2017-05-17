@@ -51,7 +51,14 @@ bool predicateHashByName(Hash h1, Hash h2) {
 	return name1 < name2;
 }
 
+void updateSettings() {
+	settings.SaveSettings();
+	settings.ReadSettings(&controls, &menu);
+	menu.LoadMenuTheme(std::wstring(settingsMenuFile.begin(), settingsMenuFile.end()).c_str());
+}
+
 void cacheAddons() {
+	updateSettings();
 	if (!addonVehicles.empty())
 		return;
 	std::vector<Hash> allVehicles;
@@ -160,7 +167,6 @@ bool manualSpawnSelected = false;
 
 std::string evaluateInput() {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
-	UI::HIDE_HUD_AND_RADAR_THIS_FRAME();
 	UI::SET_PAUSE_MENU_ACTIVE(false);
 	CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(1);
 	CONTROLS::IS_CONTROL_ENABLED(playerPed, false);
@@ -197,19 +203,21 @@ void update_menu() {
 
 		if (menu.BoolOption("Spawn in car", &settings.SpawnInside)) { settings.SaveSettings(); }
 
+		if (settings.SpawnByName) {
+			std::vector<std::string> extraSpawnInfo = {
+				"Use Delete for backspace",
+				"Enter car model:",
+				manualVehicleName,
+			};
 
-		/*std::vector<std::string> extraSpawnInfo = {
-			"Enter car model:",
-			manualVehicleName,
-		};
+			if (manualSpawnSelected) {
+				evaluateInput();
+			}
 
-		if (manualSpawnSelected) {
-			evaluateInput();
+			if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
+				spawnVehicle(GAMEPLAY::GET_HASH_KEY(CharAdapter(manualVehicleName.c_str())));
+			}
 		}
-
-		if (menu.OptionPlus("Spawn manually", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr)) {
-			spawnVehicle(GAMEPLAY::GET_HASH_KEY(CharAdapter(manualVehicleName.c_str())));
-		}*/
 
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
