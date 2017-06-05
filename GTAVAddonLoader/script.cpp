@@ -114,7 +114,7 @@ void spawnVehicle(Hash hash) {
 	if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash)) {
 		STREAMING::REQUEST_MODEL(hash);
 		DWORD startTime = GetTickCount();
-		DWORD timeout = 10000; // in millis
+		DWORD timeout = 3000; // in millis
 
 		while (!STREAMING::HAS_MODEL_LOADED(hash)) {
 			WAIT(0);
