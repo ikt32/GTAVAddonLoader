@@ -125,7 +125,26 @@ void spawnVehicle(Hash hash) {
 				return;
 			}
 		}
-		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), 3.0, 2.0, 0);
+
+
+		float offsetX = 0.0f;
+		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
+			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+			Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
+			Vector3 newMin, newMax;
+			Vector3 oldMin, oldMax;
+			GAMEPLAY::GET_MODEL_DIMENSIONS(hash, &newMin, &newMax);
+			GAMEPLAY::GET_MODEL_DIMENSIONS(oldHash, &oldMin, &oldMax);
+			if (!ENTITY::DOES_ENTITY_EXIST(oldVeh)) {
+				oldMax.x = oldMin.x = 0.0f;
+			}
+			// to the right
+			// width + margin + width again 
+			offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
+		}
+		
+		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), offsetX, 0.0, 0);
+
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
 		
