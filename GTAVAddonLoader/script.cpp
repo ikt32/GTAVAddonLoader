@@ -69,6 +69,7 @@ void cacheAddons() {
 	for (auto vehicleModelVector : vehicleModelList) {
 		for (auto hash : vehicleModelVector) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+			
 			if (name) {
 				allVehicles.push_back(hash);
 			}
@@ -79,22 +80,29 @@ void cacheAddons() {
 
 	std::sort(allVehicles.begin(), allVehicles.end(), predicateHashByName);
 
-	logger.Write("Found: ");
+	int hashLength = 12;
+	int nameLength = 20;
+	std::stringstream thingy;
+	thingy << std::left << std::setw(hashLength) << std::setfill(' ') << "Hash";
+	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
+	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Class";
+	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "GXT name";
+	logger.Write(thingy.str());
+
 	for (auto hash : allVehicles) {
 		if (std::find(Vehicles.begin(), Vehicles.end(), hash) == Vehicles.end()) {
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-			char *className = UI::_GET_LABEL_TEXT(buffer);
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+			std::string className = UI::_GET_LABEL_TEXT(buffer);
+			std::string name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 
-			int hashLength = 12;
-			int nameLength = 20;
 			std::stringstream hashAsHex;
 			std::stringstream logStream;
 			hashAsHex << "0x" << std::uppercase << std::hex << hash;
 			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << name;
-			logStream << std::left << className;
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << prettyNameFromHash(hash);
 			logger.Write(logStream.str());
 
 			addonVehicles.push_back(std::make_pair(className, hash));
