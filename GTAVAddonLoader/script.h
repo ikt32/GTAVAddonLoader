@@ -7,7 +7,10 @@ http://dev-c.com
 #pragma once
 
 #include <string>
+#include <vector>
 
 const std::string modDir  = "\\AddonSpawner";
 
 void ScriptMain();
+
+extern std::vector<std::string> dlcpackFolders;

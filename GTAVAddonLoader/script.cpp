@@ -36,6 +36,34 @@ MemoryAccess mem;
 std::vector<std::pair<std::string, Hash>> addonVehicles;
 std::set<std::string> addonClasses;
 
+Hash joaat(std::string s) {
+	Hash hash = 0;
+	for (int i = 0; i < s.size(); i++) {
+		hash += s[i];
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+	return hash;
+}
+
+std::string modelNameFromFolderAndHash(Hash hash) {
+	for (auto folderName : dlcpackFolders) {
+		std::transform(folderName.begin(), folderName.end(), folderName.begin(), ::tolower);
+		if (joaat(folderName) == hash) return folderName;
+		for (int i = 0; i <= 9; i++) {
+			if (joaat(folderName + std::to_string(i)) == hash) return folderName + std::to_string(i);
+		}
+		for (char c = 'a'; c <= 'z'; c++) {
+			if (joaat(folderName + c) == hash) return folderName + c;
+		}
+	}
+
+	return "NOTFOUND";
+}
+
 std::string prettyNameFromHash(Hash hash) {
 	char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 	std::string displayName = UI::_GET_LABEL_TEXT(name);
@@ -84,8 +112,9 @@ void cacheAddons() {
 	int nameLength = 20;
 	std::stringstream thingy;
 	thingy << std::left << std::setw(hashLength) << std::setfill(' ') << "Hash";
-	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
 	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Class";
+	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
+	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Model name";
 	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "GXT name";
 	logger.Write(thingy.str());
 
@@ -94,15 +123,17 @@ void cacheAddons() {
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			std::string className = UI::_GET_LABEL_TEXT(buffer);
-			std::string name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+			std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 
 			std::stringstream hashAsHex;
 			std::stringstream logStream;
 			hashAsHex << "0x" << std::uppercase << std::hex << hash;
 			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << name;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << modelNameFromFolderAndHash(hash);
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << prettyNameFromHash(hash);
+
 			logger.Write(logStream.str());
 
 			addonVehicles.push_back(std::make_pair(className, hash));
@@ -165,7 +196,7 @@ void spawnVehicle(Hash hash) {
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 		ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
 
-		showSubtitle("Spawned vehicle");
+		showSubtitle("Spawned " + prettyNameFromHash(hash) + " (" + modelNameFromFolderAndHash(hash) + ")");
 	}
 	else {
 		showSubtitle("Vehicle doesn't exist");
