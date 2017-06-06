@@ -49,7 +49,8 @@ Hash joaat(std::string s) {
 	return hash;
 }
 
-std::string modelNameFromFolderAndHash(Hash hash) {
+std::string guessModelName(Hash hash) {
+	// Try dlcpacks dir name (if said DLC only contains the car + variations)
 	for (auto folderName : dlcpackFolders) {
 		std::transform(folderName.begin(), folderName.end(), folderName.begin(), ::tolower);
 		if (joaat(folderName) == hash) return folderName;
@@ -61,6 +62,16 @@ std::string modelNameFromFolderAndHash(Hash hash) {
 		}
 	}
 
+	// Try display name otherwise (correct vehicles.meta, other package name)
+	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+	std::transform(displayName.begin(), displayName.end(), displayName.begin(), ::tolower);
+	if (joaat(displayName) == hash) return displayName;
+	for (int i = 0; i <= 9; i++) {
+		if (joaat(displayName + std::to_string(i)) == hash) return displayName + std::to_string(i);
+	}
+	for (char c = 'a'; c <= 'z'; c++) {
+		if (joaat(displayName + c) == hash) return displayName + c;
+	}
 	return "NOTFOUND";
 }
 
@@ -131,7 +142,7 @@ void cacheAddons() {
 			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << modelNameFromFolderAndHash(hash);
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << guessModelName(hash);
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << prettyNameFromHash(hash);
 
 			logger.Write(logStream.str());
@@ -196,7 +207,7 @@ void spawnVehicle(Hash hash) {
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 		ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
 
-		showSubtitle("Spawned " + prettyNameFromHash(hash) + " (" + modelNameFromFolderAndHash(hash) + ")");
+		showSubtitle("Spawned " + prettyNameFromHash(hash) + " (" + guessModelName(hash) + ")");
 	}
 	else {
 		showSubtitle("Vehicle doesn't exist");
