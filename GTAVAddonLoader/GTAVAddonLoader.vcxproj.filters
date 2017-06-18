@@ -24,6 +24,12 @@
     <ClCompile Include="..\..\GTAVMenuBase\menukeyboard.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\GTAVMenuBase\menusettings.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GTAVMenuBase\menuutils.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -65,6 +71,12 @@
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GTAVMenuBase\menukeyboard.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GTAVMenuBase\menusettings.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GTAVMenuBase\menuutils.h">
       <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>

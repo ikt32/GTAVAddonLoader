@@ -92,8 +92,8 @@ bool predicateHashByName(Hash h1, Hash h2) {
 
 void updateSettings() {
 	settings.SaveSettings();
-	settings.ReadSettings(&controls, &menu);
-	menu.LoadMenuTheme(std::wstring(settingsMenuFile.begin(), settingsMenuFile.end()).c_str());
+	settings.ReadSettings();
+	menu.ReadSettings();
 }
 
 void cacheAddons() {
@@ -154,8 +154,8 @@ void cacheAddons() {
 }
 
 void init() {
-	settings.ReadSettings(&controls, &menu);
-	menu.LoadMenuTheme(std::wstring(settingsMenuFile.begin(), settingsMenuFile.end()).c_str());
+	settings.ReadSettings();
+	menu.ReadSettings();
 	logger.Write("Settings read");
 	logger.Write("Initialization finished");
 }
@@ -268,12 +268,12 @@ void clearStuff() {
 }
 
 void update_menu() {
-	menu.CheckKeys(&controls, std::bind(cacheAddons), std::bind(clearStuff));
+	menu.CheckKeys();
 
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
 
-		if (menu.BoolOption("Spawn in car", &settings.SpawnInside)) { settings.SaveSettings(); }
+		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) { settings.SaveSettings(); }
 
 		if (settings.SpawnByName) {
 			std::vector<std::string> extraSpawnInfo = {
@@ -327,10 +327,11 @@ void main() {
 
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
 	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
-	settings.SetFiles(settingsGeneralFile, settingsMenuFile);
-
+	settings.SetFiles(settingsGeneralFile);
 	logger.Write("Loading " + settingsGeneralFile);
-	logger.Write("Loading " + settingsMenuFile);
+	menu.RegisterOnMain(std::bind(cacheAddons));
+	menu.RegisterOnExit(std::bind(clearStuff));
+	menu.SetFiles(settingsMenuFile);
 
 	init();
 	while (true) {

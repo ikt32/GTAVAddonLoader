@@ -11,9 +11,9 @@ class Settings
 public:
 	Settings();
 	~Settings();
-	void ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu *menuOpts);
+	void ReadSettings();
 	void SaveSettings();
-	void SetFiles(const std::string &general, const std::string &menu);
+	void SetFiles(const std::string &general);
 
 	bool SpawnInside = false;
 	bool SpawnByName = false;

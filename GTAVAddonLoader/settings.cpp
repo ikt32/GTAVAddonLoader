@@ -1,20 +1,15 @@
 #include "settings.h"
 #include "simpleini/SimpleIni.h"
-#include "keyboard.h"
-#include "menucontrols.h"
-#include "menu.h"
 
 Settings::Settings() { }
 
-
 Settings::~Settings() { }
 
-void Settings::SetFiles(const std::string &general, const std::string &menu) {
+void Settings::SetFiles(const std::string &general) {
 	settingsGeneralFile = general;
-	settingsMenuFile = menu;
 }
 
-void Settings::ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu *menuOpts) {
+void Settings::ReadSettings() {
 
 	CSimpleIniA settingsGeneral;
 	settingsGeneral.SetUnicode();
@@ -22,26 +17,6 @@ void Settings::ReadSettings(NativeMenu::MenuControls *control, NativeMenu::Menu 
 	
 	SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
 	SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
-
-	CSimpleIniA settingsMenu;
-	settingsMenu.SetUnicode();
-	settingsMenu.LoadFile(settingsMenuFile.c_str());
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuKey]	= str2key(settingsMenu.GetValue("MENU", "MenuKey",		"VK_OEM_4"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuUp]		= str2key(settingsMenu.GetValue("MENU", "MenuUp",		"UP"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuDown]	= str2key(settingsMenu.GetValue("MENU", "MenuDown",		"DOWN"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuLeft]	= str2key(settingsMenu.GetValue("MENU", "MenuLeft",		"LEFT"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuRight]	= str2key(settingsMenu.GetValue("MENU", "MenuRight",	"RIGHT"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuSelect] = str2key(settingsMenu.GetValue("MENU", "MenuSelect",	"RETURN"));
-	control->ControlKeys[NativeMenu::MenuControls::ControlType::MenuCancel] = str2key(settingsMenu.GetValue("MENU", "MenuCancel",	"BACKSPACE"));
-
-	control->ControllerButton1 = settingsMenu.GetLongValue("MENU", "ControllerButton1", -1);
-	control->ControllerButton2 = settingsMenu.GetLongValue("MENU", "ControllerButton2", -1);
-	
-#pragma warning(push)
-#pragma warning(disable: 4244)
-	menuOpts->menux = settingsMenu.GetDoubleValue("MENU", "MenuX", 0.2);
-	menuOpts->menuy = settingsMenu.GetDoubleValue("MENU", "MenuY", 0.125);
-#pragma warning(pop)
 }
 
 
