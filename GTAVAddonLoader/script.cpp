@@ -158,6 +158,7 @@ void init() {
 	menu.ReadSettings();
 	logger.Write("Settings read");
 	logger.Write("Initialization finished");
+	cacheAddons();
 }
 
 void spawnVehicle(Hash hash) {
