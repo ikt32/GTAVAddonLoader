@@ -1015,4 +1015,24 @@ std::vector<Hash> Vehicles = {
 	758895617u ,
 	//FREIGHT
 	0x33c9e158,
+
+	0x2189D250, //  APC                 apc                 APC
+	0x8FD54EBB, //  TRSMALL2            NOTFOUND            Anti - Aircraft Trailer
+	0x97E5533 , //  ARDENT              ardent              Ardent
+	0xD227BDBB, //  CADDY3              caddy3              Caddy
+	0xD4E5F4D , //  CHEETAH2            cheetah2            Cheetah Classic
+	0x711D4738, //  DUNE3               dune3               Dune FAV
+	0xFE141DA6, //  HALFTRACK           halftrack           Half - track
+	0x171C92C4, //  HAULER2             hauler2             Hauler Custom
+	0x8D4B7A8A, //  INSURGENT3          insurgent3          Insurgent Pick - Up Custom
+	0x5993F939, //  TRLARGE             NOTFOUND            Mobile Operations Center
+	0x19DD9ED1, //  NIGHTSHARK          nightshark          Nightshark
+	0x34B82784, //  OPPRESSOR           oppressor           Oppressor
+	0xA90ED5C , //  PHANTOM3            phantom3            Phantom Custom
+	0x50D4D19F, //  TECHNICAL3          technical3          Technical Custom
+	0x59A9E570, //  TORERO              torero              Torero
+	0xBE66F5AA, //  TRAILER             NOTFOUND            Trailer
+	0x7397224C, //  VAGNER              vagner              Vagner
+	0xB7D9F7F1, //  TAMPA3              tampa3              Weaponized Tampa
+	0x36B4A8A9, //  XA21                xa21                XA - 21
 };
