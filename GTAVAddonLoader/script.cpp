@@ -254,7 +254,7 @@ std::string evaluateInput() {
 	if (IsKeyJustUp(str2key("VK_OEM_MINUS"))) {
 		manualVehicleName += '_';
 	}
-	if (IsKeyJustUp(str2key("DELETE"))) {
+	if (IsKeyJustUp(str2key("DELETE")) && manualVehicleName.size() > 0) {
 		manualVehicleName.pop_back();
 	}
 	if (IsKeyJustUp(str2key("BACKSPACE"))) {
