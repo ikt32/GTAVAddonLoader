@@ -138,7 +138,7 @@ void cacheAddons() {
 
 			std::stringstream hashAsHex;
 			std::stringstream logStream;
-			hashAsHex << "0x" << std::uppercase << std::hex << hash;
+			hashAsHex << "0x" << std::setfill('0') << std::setw(8) << std::uppercase << std::hex << hash;
 			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
