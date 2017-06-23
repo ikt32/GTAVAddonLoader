@@ -5,7 +5,6 @@ No config changes.
 
 * Fix crash when removing one character
 * Print hex that's always 8 long (leading zeroes after "0x")
-* Add menu descriptions
 
 ## v1.0.7
 Config changes: Adjusted MenuY to visually match earlier settings
