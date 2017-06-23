@@ -31,7 +31,6 @@ int prevNotification;
 NativeMenu::MenuControls controls;
 Settings settings;
 
-MemoryAccess mem;
 // className, vehicleHash
 std::vector<std::pair<std::string, Hash>> addonVehicles;
 std::set<std::string> addonClasses;
@@ -102,7 +101,7 @@ void cacheAddons() {
 		return;
 	std::vector<Hash> allVehicles;
 
-	auto vehicleModelList = mem.GenerateVehicleModelList();
+	auto vehicleModelList = MemoryAccess::GenerateVehicleModelList();
 	int i = 0;
 	int g = 0;
 	for (auto vehicleModelVector : vehicleModelList) {

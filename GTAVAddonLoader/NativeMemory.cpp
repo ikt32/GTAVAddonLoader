@@ -7,12 +7,6 @@
 #include <array>
 #include <vector>
 
-MemoryAccess::MemoryAccess() {
-	const uintptr_t patternAddress = FindPattern(EntityPoolOpcodePattern, EntityPoolOpcodeMask);
-
-	// 3 bytes are opcode and its first argument, so we add it to get relative address to patternAddress. 7 bytes are length of opcode and its parameters.
-	sAddressEntityPool = reinterpret_cast<MemoryPool **>(*reinterpret_cast<int *>(patternAddress + 3) + patternAddress + 7);
-}
 
 // This is ripped straight from ScriptHookVDotNet/zorg93!
 inline bool bittest(int data, unsigned char index)
@@ -31,12 +25,12 @@ struct HashNode
 std::array<std::vector<int>, 0x20> MemoryAccess::GenerateVehicleModelList() {
 	uintptr_t address = FindPattern("\x66\x81\xF9\x00\x00\x74\x10\x4D\x85\xC0", "xxx??xxxxx") - 0x21;
 	UINT64 baseFuncAddr = address + *reinterpret_cast<int*>(address) + 4;
-	modelHashEntries = *reinterpret_cast<PUINT16>(baseFuncAddr + *reinterpret_cast<int*>(baseFuncAddr + 3) + 7);
-	modelNum1 = *reinterpret_cast<int*>(*reinterpret_cast<int*>(baseFuncAddr + 0x52) + baseFuncAddr + 0x56);
-	modelNum2 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x63) + baseFuncAddr + 0x67);
-	modelNum3 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x7A) + baseFuncAddr + 0x7E);
-	modelNum4 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x81) + baseFuncAddr + 0x85);
-	modelHashTable = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x24) + baseFuncAddr + 0x28);
+	unsigned short modelHashEntries = *reinterpret_cast<PUINT16>(baseFuncAddr + *reinterpret_cast<int*>(baseFuncAddr + 3) + 7);
+	int modelNum1 = *reinterpret_cast<int*>(*reinterpret_cast<int*>(baseFuncAddr + 0x52) + baseFuncAddr + 0x56);
+	unsigned long long modelNum2 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x63) + baseFuncAddr + 0x67);
+	unsigned long long modelNum3 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x7A) + baseFuncAddr + 0x7E);
+	unsigned long long modelNum4 = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x81) + baseFuncAddr + 0x85);
+	unsigned long long modelHashTable = *reinterpret_cast<PUINT64>(*reinterpret_cast<int*>(baseFuncAddr + 0x24) + baseFuncAddr + 0x28);
 	int vehClassOff = *reinterpret_cast<int*>(address + 0x31);
 
 	HashNode** HashMap = reinterpret_cast<HashNode**>(modelHashTable);
@@ -95,24 +89,4 @@ uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 	}
 
 	return 0;
-}
-
-uintptr_t MemoryAccess::GetAddressOfEntity(int Handle) const {
-	return *reinterpret_cast<uintptr_t*>(GetAddressOfItemInPool(*sAddressEntityPool, Handle) + 8);
-}
-
-uintptr_t MemoryAccess::GetAddressOfItemInPool(MemoryPool* PoolAddress, int Handle) {
-	if (PoolAddress == nullptr) {
-		return 0;
-	}
-
-	const int index = Handle >> 8;
-	const int flag = PoolAddress->BoolAdr[index]; // flag should be equal to 2 if everything is ok
-
-	// parity check? (taken from ScriptHookDotNet for IV
-	if (flag & 0x80 || flag != (Handle & 0xFF)) {
-		return 0;
-	}
-
-	return (PoolAddress->ListAddr + index * PoolAddress->ItemSize);
 }
