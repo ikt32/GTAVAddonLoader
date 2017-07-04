@@ -35,6 +35,19 @@ Settings settings;
 std::vector<std::pair<std::string, Hash>> addonVehicles;
 std::set<std::string> addonClasses;
 
+class DLC {
+public:
+	DLC(std::string name, std::vector<Hash> hashes) :
+	Name(name), Hashes(hashes)
+	{ }
+	std::string Name;
+	std::set<std::string> Classes;
+	std::vector<Hash> Hashes;
+	std::vector<std::pair<std::string, Hash>> Vehicles;
+};
+
+std::vector<DLC> dlcs;
+
 Hash joaat(std::string s) {
 	Hash hash = 0;
 	for (int i = 0; i < s.size(); i++) {
@@ -95,7 +108,52 @@ void updateSettings() {
 	menu.ReadSettings();
 }
 
+void sortDLCVehicles() {
+	for (auto &dlc : dlcs) {
+		for (auto hash : dlc.Hashes) {
+			char buffer[128];
+			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+			std::string className = UI::_GET_LABEL_TEXT(buffer);
+
+			dlc.Vehicles.push_back(std::make_pair(className, hash));
+			auto result = dlc.Classes.emplace(className);
+		}
+	}
+}
+
+void cacheDLCs() {
+	dlcs = {
+		{ DLC("Beach Bum", BeachBumVehicles) },
+		{ DLC("Valentines Day Massacre", ValentineVehicles) },
+		{ DLC("The Business Update", BusinessVehicles) },
+		{ DLC("The High Life", HighLifeVehicles) },
+		{ DLC("I'm Not A Hipster", HipsterVehicles) },
+		{ DLC("Independence Day", MURKAVehicles) },
+		{ DLC("SA Flught School", FlightSchoolVehicles) },
+		{ DLC("Last Team Standing", LTSVehicles) },
+		{ DLC("Festive Surprise", FestiveVehicles) },
+		{ DLC("Heists", HeistsVehicles) },
+		{ DLC("Ill-Gotten Gains Pt1", IllGottenGainsPt1Vehicles) },
+		{ DLC("Ill-Gotten Gains Pt2", IllGottenGainsPt2Vehicles) },
+		{ DLC("Lowriders", LowriderVehicles) },
+		{ DLC("Halloween Surprise", HalloweenVehicles) },
+		{ DLC("Executives and Other Criminals", ExecutiveVehicles) },
+		{ DLC("Lowriders: Custom Classics", LowriderCCVehicles) },
+		{ DLC("Further Adventures in Finance and Felony", FinanceFelonyVehicles) },
+		{ DLC("Cunning Stunts", CunningStuntsVehicles) },
+		{ DLC("Bikers", BikersVehicles) },
+		{ DLC("Import/Export", ImportExportVehicles) },
+		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
+		{ DLC("Gunrunning", GunrunningVehicles)}
+	};
+
+	sortDLCVehicles();
+}
+
 void cacheAddons() {
+	if (settings.ListAllDLCs)
+		cacheDLCs();
+
 	updateSettings();
 	if (!addonVehicles.empty())
 		return;
@@ -235,6 +293,27 @@ void spawnMenu(std::string className) {
 	}
 }
 
+void spawnMenuDLC(std::string className, DLC dlc) {
+	menu.Title(className);
+
+	for (auto vehicleHash : dlc.Vehicles) {
+		if (className == vehicleHash.first) {
+			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicleHash.second);
+			std::string displayName = UI::_GET_LABEL_TEXT(name);
+			if (displayName == "NULL") {
+				displayName = name;
+			}
+			std::vector<std::string> details = {
+				"GXT name: \t" + prettyNameFromHash(vehicleHash.second),
+				"Model name: \t" + guessModelName(vehicleHash.second),
+			};
+			if (menu.Option(displayName, details)) {
+				spawnVehicle(vehicleHash.second);
+			}
+		}
+	}
+}
+
 std::string manualVehicleName = "";
 bool manualSpawnSelected = false;
 
@@ -295,6 +374,10 @@ void update_menu() {
 			}
 		}
 
+		if (settings.ListAllDLCs) {
+			menu.MenuOption("Spawn official DLCs", "officialdlcmenu");
+		}
+
 		for (auto className : addonClasses) {
 			menu.MenuOption(className, className);
 		}
@@ -303,6 +386,33 @@ void update_menu() {
 	for (auto className : addonClasses) {
 		if (menu.CurrentMenu(className)) { spawnMenu(className); }
 	}
+
+	if (menu.CurrentMenu("officialdlcmenu")) {
+		menu.Title("Official DLC");
+
+		for (auto dlc : dlcs) {
+			menu.MenuOption(dlc.Name, dlc.Name);
+		}
+	}
+
+
+	for (auto dlc : dlcs) {
+		if (menu.CurrentMenu(dlc.Name)) {
+			menu.Title(dlc.Name);
+			for (auto className : dlc.Classes) {
+				menu.MenuOption(className, dlc.Name + " " + className);
+			}
+		}
+		for (auto className : dlc.Classes) {
+			if (menu.CurrentMenu(dlc.Name + " " + className)) {
+				menu.Title(className);
+
+				spawnMenuDLC(className, dlc);
+			}
+		}
+	}
+
+
 	menu.EndMenu();
 }
 

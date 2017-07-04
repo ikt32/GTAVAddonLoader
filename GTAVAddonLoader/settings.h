@@ -17,6 +17,8 @@ public:
 
 	bool SpawnInside = false;
 	bool SpawnByName = false;
+	bool ListAllDLCs = false;
+
 private:
 	std::string settingsGeneralFile;
 	std::string settingsMenuFile;

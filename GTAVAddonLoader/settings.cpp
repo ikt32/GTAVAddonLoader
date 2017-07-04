@@ -17,6 +17,7 @@ void Settings::ReadSettings() {
 	
 	SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
 	SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
+	ListAllDLCs = settingsGeneral.GetBoolValue("OPTIONS", "ListAllDLCs", false);
 }
 
 
