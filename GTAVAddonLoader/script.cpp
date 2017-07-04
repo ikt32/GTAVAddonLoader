@@ -224,7 +224,11 @@ void spawnMenu(std::string className) {
 			if (displayName == "NULL") {
 				displayName = name;
 			}
-			if (menu.Option(displayName)) {
+			std::vector<std::string> details = {
+				"GXT name: \t" + prettyNameFromHash(vehicleHash.second),
+				"Model name: \t" + guessModelName(vehicleHash.second),
+			};
+			if (menu.Option(displayName, details)) {
 				spawnVehicle(vehicleHash.second);
 			}
 		}
