@@ -121,8 +121,10 @@ void sortDLCVehicles() {
 	}
 }
 
-void cacheDLCs() {
+void buildDLClist() {
 	dlcs = {
+		{ DLC("Original game", OriginalVehicles) },
+		{ DLC("Returning Player", SPUpgradeVehicles) } ,
 		{ DLC("Beach Bum", BeachBumVehicles) },
 		{ DLC("Valentines Day Massacre", ValentineVehicles) },
 		{ DLC("The Business Update", BusinessVehicles) },
@@ -138,6 +140,7 @@ void cacheDLCs() {
 		{ DLC("Lowriders", LowriderVehicles) },
 		{ DLC("Halloween Surprise", HalloweenVehicles) },
 		{ DLC("Executives and Other Criminals", ExecutiveVehicles) },
+		{ DLC("Drop Zone", DropzoneVehicles) },
 		{ DLC("Lowriders: Custom Classics", LowriderCCVehicles) },
 		{ DLC("Further Adventures in Finance and Felony", FinanceFelonyVehicles) },
 		{ DLC("Cunning Stunts", CunningStuntsVehicles) },
@@ -146,14 +149,14 @@ void cacheDLCs() {
 		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
 		{ DLC("Gunrunning", GunrunningVehicles)}
 	};
+}
 
+void cacheDLCs() {
+	buildDLClist();
 	sortDLCVehicles();
 }
 
 void cacheAddons() {
-	if (settings.ListAllDLCs)
-		cacheDLCs();
-
 	updateSettings();
 	if (!addonVehicles.empty())
 		return;
@@ -210,12 +213,28 @@ void cacheAddons() {
 	}
 }
 
+void buildBlacklist() {
+	Vehicles.clear();
+	for (auto dlc : dlcs) {
+		for (auto hash : dlc.Hashes) {
+			Vehicles.push_back(hash);
+		}
+	}
+}
+
 void init() {
+
+
 	settings.ReadSettings();
 	menu.ReadSettings();
 	logger.Write("Settings read");
 	logger.Write("Initialization finished");
+	buildDLClist();
+	buildBlacklist();
 	cacheAddons();
+
+	if (settings.ListAllDLCs)
+		cacheDLCs();
 }
 
 void spawnVehicle(Hash hash) {
