@@ -4,1018 +4,559 @@
 
 // Ripped straight from ScriptHookVDotNet
 std::vector<Hash> Vehicles = {
-	//Adder
-	3078201489u ,
-	//Airbus
-	1283517198u ,
-	//Airtug
-	1560980623u ,
-	//Akuma
-	1672195559u ,
-	//Alpha
-	767087018u ,
-	//Ambulance
-	1171614426u ,
-	//Annihilator
-	837858166u ,
-	//ArmyTanker
-	3087536137u ,
-	//ArmyTrailer
-	2818520053u ,
-	//ArmyTrailer2
-	2657817814u ,
-	//Asea
-	2485144969u ,
-	//Asea2
-	2487343317u ,
-	//Asterope
-	2391954683u ,
-	//Avarus
-	2179174271u ,
-	//Bagger
-	2154536131u ,
-	//BaleTrailer
-	3895125590u ,
-	//Baller
-	3486135912u ,
-	//Baller2
-	142944341u ,
-	//Baller3
-	1878062887u ,
-	//Baller4
-	634118882u ,
-	//Baller5
-	470404958u ,
-	//Baller6
-	666166960u ,
-	//Banshee
-	3253274834u ,
-	//Banshee2
-	633712403u ,
-	//Barracks
-	3471458123u ,
-	//Barracks2
-	1074326203u ,
-	//Barracks3
-	630371791u ,
-	//Bati
-	4180675781u ,
-	//Bati2
-	3403504941u ,
-	//Benson
-	2053223216u ,
-	//Besra
-	1824333165u ,
-	//BestiaGTS
-	1274868363u ,
-	//BF400
-	86520421u ,
-	//BfInjection
-	1126868326u ,
-	//Biff
-	850991848u ,
-	//Bifta
-	3945366167u ,
-	//Bison
-	4278019151u ,
-	//Bison2
-	2072156101u ,
-	//Bison3
-	1739845664u ,
-	//BJXL
-	850565707u ,
-	//Blade
-	3089165662u ,
-	//Blazer
-	2166734073u ,
-	//Blazer2
-	4246935337u ,
-	//Blazer3
-	3025077634u ,
-	//Blazer4
-	3854198872u ,
-	//Blazer5
-	2704629607u ,
-	//Blimp
-	4143991942u ,
-	//Blimp2
-	3681241380u ,
-	//Blista
-	3950024287u ,
-	//Blista2
-	1039032026u ,
-	//Blista3
-	3703315515u ,
-	//Bmx
-	1131912276u ,
-	//BoatTrailer
-	524108981u ,
-	//BobcatXL
-	1069929536u ,
-	//Bodhi2
-	2859047862u ,
-	//Boxville
-	2307837162u ,
-	//Boxville2
-	4061868990u ,
-	//Boxville3
-	121658888u ,
-	//Boxville4
-	444171386u ,
-	//Boxville5
-	682434785u ,
-	//Brawler
-	2815302597u ,
-	//Brickade
-	3989239879u ,
-	//Brioso
-	1549126457 ,
-	//BType
-	117401876u ,
-	//BType2
-	3463132580u ,
-	//BType3
-	3692679425u ,
-	//Buccaneer
-	3612755468u ,
-	//Buccaneer2
-	3281516360u ,
-	//Buffalo
-	3990165190u ,
-	//Buffalo2
-	736902334u ,
-	//Buffalo3
-	237764926u ,
-	//Bulldozer
-	1886712733u ,
-	//Bullet
-	2598821281u ,
-	//Burrito
-	2948279460u ,
-	//Burrito2
-	3387490166u ,
-	//Burrito3
-	2551651283u ,
-	//Burrito4
-	893081117u ,
-	//Burrito5
-	1132262048u ,
-	//Bus
-	3581397346u ,
-	//Buzzard
-	788747387u ,
-	//Buzzard2
-	745926877u ,
-	//CableCar
-	3334677549u ,
-	//Caddy
-	1147287684u ,
-	//Caddy2
-	3757070668u ,
-	//Camper
-	1876516712u ,
-	//Carbonizzare
-	2072687711u ,
-	//CarbonRS
-	11251904u ,
-	//Cargobob
-	4244420235u ,
-	//Cargobob2
-	1621617168u ,
-	//Cargobob3
-	1394036463u ,
-	//Cargobob4
-	2025593404u ,
-	//CargoPlane
-	368211810u ,
-	//Casco
-	941800958u ,
-	//Cavalcade
-	2006918058u ,
-	//Cavalcade2
-	3505073125u ,
-	//Cheetah
-	2983812512u ,
-	//Chimera
-	1491277511u ,
-	0x675ED7,
-	//Chino
-	349605904u ,
-	//Chino2
-	2933279331u ,
-	//Cliffhanger
-	390201602u ,
-	//Coach
-	2222034228u ,
-	//Cog55
-	906642318u ,
-	//Cog552
-	704435172u ,
-	//CogCabrio
-	330661258u ,
-	//Cognoscenti
-	2264796000u ,
-	//Cognoscenti2
-	3690124666u ,
-	//Comet2
-	3249425686u ,
-	//Comet3
-	2272483501u ,
-	//Contender
-	683047626u ,
-	//Coquette
-	108773431u ,
-	//Coquette2
-	1011753235u ,
-	//Coquette3
-	784565758u ,
-	//Cruiser
-	448402357u ,
-	//Crusader
-	321739290u ,
-	//Cuban800
-	3650256867u ,
-	//Cutter
-	3288047904u ,
-	//Daemon
-	2006142190u ,
-	//Daemon2
-	2890830793u ,
-	//Defiler
-	822018448u ,
-	//Diablous
-	4055125828u ,
-	//Diablous2
-	1790834270u ,
-	//Dilettante
-	3164157193u ,
-	//Dilettante2
-	1682114128u ,
-	//Dinghy
-	1033245328u ,
-	//Dinghy2
-	276773164u ,
-	//Dinghy3
-	509498602u ,
-	//Dinghy4
-	867467158u ,
-	//DLoader
-	1770332643u ,
-	//DockTrailer
-	2154757102u ,
-	//Docktug
-	3410276810u ,
-	//Dodo
-	3393804037u ,
-	//Dominator
-	80636076u ,
-	//Dominator2
-	3379262425u ,
-	//Double
-	2623969160u ,
-	//Dubsta
-	1177543287u ,
-	//Dubsta2
-	3900892662u ,
-	//Dubsta3
-	3057713523u ,
-	//Dukes
-	723973206u ,
-	//Dukes2
-	3968823444u ,
-	//Dump
-	2164484578u ,
-	//Dune
-	2633113103u ,
-	//Dune2
-	534258863u ,
-	//Dune4
-	3467805257u ,
-	//Dune5
-	3982671785u ,
-	//Duster
-	970356638u ,
-	//Elegy
-	196747873u ,
-	//Elegy2
-	3728579874u ,
-	//Emperor
-	3609690755u ,
-	//Emperor2
-	2411965148u ,
-	//Emperor3
-	3053254478u ,
-	//Enduro
-	1753414259u ,
-	//EntityXF
-	3003014393u ,
-	//Esskey
-	2035069708u ,
-	//Exemplar
-	4289813342u ,
-	//F620
-	3703357000u ,
-	//Faction
-	2175389151u ,
-	//Faction2
-	2504420315u ,
-	//Faction3
-	2255212070u ,
-	//Faggio
-	2452219115u ,
-	//Faggio2
-	55628203u ,
-	//Faggio3
-	3005788552u ,
-	//FBI
-	1127131465u ,
-	//FBI2
-	2647026068u ,
-	//FCR
-	627535535u ,
-	//FCR2
-	3537231886u ,
-	//Felon
-	3903372712u ,
-	//Felon2
-	4205676014u ,
-	//Feltzer2
-	2299640309u ,
-	//Feltzer3
-	2728226064u ,
-	//FireTruck
-	1938952078u ,
-	//Fixter
-	3458454463u ,
-	//Flatbed
-	1353720154u ,
-	//Forklift
-	1491375716u ,
-	//FMJ
-	1426219628u ,
-	//FQ2
-	3157435195u ,
-	//Freight
-	1030400667u ,
-	//FreightCar
-	184361638u ,
-	//FreightCont1
-	920453016u ,
-	//FreightCont2
-	240201337u ,
-	//FreightGrain
-	642617954u ,
-	//FreightTrailer
-	3517691494u ,
-	//Frogger
-	744705981u ,
-	//Frogger2
-	1949211328u ,
-	//Fugitive
-	1909141499u ,
-	//Furoregt
-	3205927392u ,
-	//Fusilade
-	499169875u ,
-	//Futo
-	2016857647u ,
-	//Gargoyle
-	741090084u ,
-	//Gauntlet
-	2494797253u ,
-	//Gauntlet2
-	349315417u ,
-	//GBurrito
-	2549763894u ,
-	//GBurrito2
-	296357396u ,
-	//Glendale
-	75131841u ,
-	//GP1
-	1234311532u ,
-	//GrainTrailer
-	1019737494u ,
-	//Granger
-	2519238556u ,
-	//Gresley
-	2751205197u ,
-	//Guardian
-	2186977100u ,
-	//Habanero
-	884422927u ,
-	//Hakuchou ,
-	1265391242u ,
-	//Hakuchou2
-	3685342204u ,
-	0xF0C2A91F,
-	//Handler
-	444583674u ,
-	//Hauler
-	1518533038u ,
-	//Hexer
-	301427732u ,
-	//Hotknife
-	37348240u ,
-	//Huntley
-	486987393u ,
-	//Hydra
-	970385471u ,
-	//Infernus
-	418536135u ,
-	//Infernus2
-	2889029532u ,
-	//Ingot
-	3005245074u ,
-	//Innovation
-	4135840458u ,
-	//Insurgent
-	2434067162u ,
-	//Insurgent2
-	2071877360u ,
-	//Intruder
-	886934177u ,
-	//Issi2
-	3117103977u ,
-	//ItaliGTB
-	2246633323u ,
-	//ItaliGTB2
-	3812247419u ,
-	//Jackal
-	3670438162u ,
-	//JB700
-	1051415893u ,
-	//Jester
-	2997294755u ,
-	//Jester2
-	3188613414u ,
-	//Jet
-	1058115860u ,
-	//Jetmax
-	861409633u ,
-	//Journey
-	4174679674u ,
-	//Kalahari
-	92612664u ,
-	//Khamelion
-	544021352u ,
-	//Kuruma
-	2922118804u ,
-	//Kuruma2
-	410882957u ,
-	//Landstalker
-	1269098716u ,
-	//Lazer
-	3013282534u ,
-	//LE7B
-	3062131285u ,
-	//Lectro
-	640818791u ,
-	//Lguard
-	469291905u ,
-	//Limo2
-	4180339789u ,
-	//Lurcher
-	2068293287u ,
-	//Luxor
-	621481054u ,
-	//Luxor2
-	3080673438u ,
-	//Lynx
-	482197771u ,
-	//Mamba
-	2634021974u ,
-	//Mammatus
-	2548391185u ,
-	//Manana
-	2170765704u ,
-	//Manchez
-	2771538552u ,
-	//Marquis
-	3251507587u ,
-	//Marshall
-	1233534620u ,
-	//Massacro
-	4152024626u ,
-	//Massacro2
-	3663206819u ,
-	//Maverick
-	2634305738u ,
-	//Mesa
-	914654722u ,
-	//Mesa2
-	3546958660u ,
-	//Mesa3
-	2230595153u ,
-	//Miljet
-	165154707u ,
-	//Minivan
-	3984502180u ,
-	//Minivan2
-	3168702960u ,
-	//Mixer
-	3510150843u ,
-	//Mixer2
-	475220373u ,
-	//Monroe
-	3861591579u ,
-	//Monster
-	3449006043u ,
-	//Moonbeam
-	525509695u ,
-	//Moonbeam2
-	1896491931u ,
-	//Mower
-	1783355638u ,
-	//Mule
-	904750859u ,
-	//Mule2
-	3244501995u ,
-	//Mule3
-	2242229361u ,
-	//Nemesis
-	3660088182u ,
-	//Nero
-	1034187331u ,
-	//Nero2
-	1093792632u ,
-	//Nightblade
-	2688780135u ,
-	//Nightshade
-	2351681756u ,
-	//Nimbus
-	2999939664u ,
-	//Ninef
-	1032823388u ,
-	//Ninef2
-	2833484545u ,
-	//Omnis
-	3517794615u ,
-	//Oracle
-	1348744438u ,
-	//Oracle2
-	3783366066u ,
-	//Osiris
-	1987142870u ,
-	//Packer
-	569305213u ,
-	//Panto
-	3863274624u ,
-	//Paradise
-	1488164764u ,
-	//Patriot
-	3486509883u ,
-	//PBus
-	2287941233u ,
-	//PCJ
-	3385765638u ,
-	//Penetrator
-	2536829930u ,
-	//Penumbra
-	3917501776u ,
-	//Peyote
-	1830407356u ,
-	//Pfister811
-	2465164804u ,
-	//Phantom
-	2157618379u ,
-	//Phantom2
-	2645431192u ,
-	//Phoenix
-	2199527893u ,
-	//Picador
-	1507916787u ,
-	//Pigalle
-	1078682497u ,
-	//Police
-	2046537925u ,
-	//Police2
-	2667966721u ,
-	//Police3
-	1912215274u ,
-	//Police4
-	2321795001u ,
-	//Policeb
-	4260343491u ,
-	//PoliceOld1
-	2758042359u ,
-	//PoliceOld2
-	2515846680u ,
-	//PoliceT
-	456714581u ,
-	//Polmav
-	353883353u ,
-	//Pony
-	4175309224u ,
-	//Pony2
-	943752001u ,
-	//Pounder
-	2112052861u ,
-	//Prairie
-	2844316578u ,
-	//Pranger
-	741586030u ,
-	//Predator
-	3806844075u ,
-	//Premier
-	2411098011u ,
-	//Primo
-	3144368207u ,
-	//Primo2
-	2254540506u ,
-	//PropTrailer
-	356391690u ,
-	//Prototipo
-	2123327359u ,
-	//Radi
-	2643899483u ,
-	//RakeTrailer
-	390902130u ,
-	//RancherXL
-	1645267888u ,
-	//RancherXL2
-	1933662059u ,
-	//RallyTruck
-	2191146052u ,
-	//RapidGT
-	2360515092u ,
-	//RapidGT2
-	1737773231u ,
-	//Raptor
-	3620039993u ,
-	//RatBike
-	1873600305u ,
-	//RatLoader
-	3627815886u ,
-	//RatLoader2
-	3705788919u ,
-	//Reaper
-	234062309u ,
-	//Rebel
-	3087195462u ,
-	//Rebel2
-	2249373259u ,
-	//Regina
-	4280472072u ,
-	//RentalBus
-	3196165219u ,
-	//Rhapsody
-	841808271u ,
-	//Rhino
-	782665360u ,
-	//Riot
-	3089277354u ,
-	//Ripley
-	3448987385u ,
-	//Rocoto
-	2136773105u ,
-	//Romero
-	627094268u ,
-	//Rubble
-	2589662668u ,
-	//Ruffian
-	3401388520u ,
-	//Ruiner
-	4067225593u ,
-	//Ruiner2
-	941494461u ,
-	//Ruiner3
-	777714999u ,
-	//Rumpo
-	1162065741u ,
-	//Rumpo2
-	2518351607u ,
-	//Rumpo3
-	1475773103u ,
-	//Ruston
-	719660200u ,
-	//SabreGT
-	2609945748u ,
-	//SabreGT2
-	223258115u ,
-	//Sadler
-	3695398481u ,
-	//Sadler2
-	734217681u ,
-	//Sanchez
-	788045382u ,
-	//Sanchez2
-	2841686334u ,
-	//Sanctus
-	1491277511u ,
-	//Sandking
-	3105951696u ,
-	//Sandking2
-	989381445u ,
-	//Savage
-	4212341271u ,
-	//Schafter2
-	3039514899u ,
-	//Schafter3
-	2809443750u ,
-	//Schafter4
-	1489967196u ,
-	//Schafter5
-	3406724313u ,
-	//Schafter6
-	1922255844u ,
-	//Schwarzer
-	3548084598u ,
-	//Scorcher
-	4108429845u ,
-	//Scrap
-	2594165727u ,
-	//Seashark
-	3264692260u ,
-	//Seashark2
-	3678636260u ,
-	//Seashark3
-	3983945033u ,
-	//Seminole
-	1221512915u ,
-	//Sentinel
-	1349725314u ,
-	//Sentinel2
-	873639469u ,
-	//Serrano
-	1337041428u ,
-	//Seven70
-	2537130571u ,
-	//Shamal
-	3080461301u ,
-	//Sheava
-	819197656u ,
-	//Sheriff
-	2611638396u ,
-	//Sheriff2
-	1922257928u ,
-	//Shotaro
-	3889340782u ,
-	//Skylift
-	1044954915u ,
-	//SlamVan
-	729783779u ,
-	//SlamVan2
-	833469436u ,
-	//SlamVan3
-	1119641113u ,
-	//Sovereign
-	743478836u ,
-	//Specter
-	1886268224u ,
-	//Specter2
-	1074745671u ,
-	//Speeder
-	231083307u ,
-	//Speeder2
-	437538602u ,
-	//Speedo
-	3484649228u ,
-	//Speedo2
-	728614474u ,
-	//Squalo
-	400514754u ,
-	//Stalion
-	1923400478u ,
-	//Stalion2
-	3893323758u ,
-	//Stanier
-	2817386317u ,
-	//Stinger
-	1545842587u ,
-	//StingerGT
-	2196019706u ,
-	//Stockade
-	1747439474u ,
-	//Stockade3
-	4080511798u ,
-	//Stratum
-	1723137093u ,
-	//Stretch
-	2333339779u ,
-	//Stunt
-	2172210288u ,
-	//Submersible
-	771711535u ,
-	//Submersible2
-	3228633070u ,
-	//Sultan
-	970598228u ,
-	//SultanRS
-	3999278268u ,
-	//Suntrap
-	4012021193u ,
-	//Superd
-	1123216662u ,
-	//Supervolito
-	710198397u ,
-	//Supervolito2
-	2623428164u ,
-	//Surano
-	384071873u ,
-	//Surfer
-	699456151u ,
-	//Surfer2
-	2983726598u ,
-	//Surge
-	2400073108u ,
-	//Swift2
-	1075432268u ,
-	//Swift
-	3955379698u ,
-	//T20
-	1663218586u ,
-	//Taco
-	1951180813u ,
-	//Tailgater
-	3286105550u ,
-	//Tampa
-	972671128u ,
-	//Tampa2
-	3223586949u ,
-	//Tanker
-	3564062519u ,
-	//Tanker2
-	1956216962u ,
-	//TankerCar
-	586013744u ,
-	//Taxi
-	3338918751u ,
-	//Technical
-	2198148358u ,
-	//Technical2
-	1180875963u ,
-	//Tempesta
-	272929391u ,
-	//Thrust
-	1836027715u ,
-	//TipTruck
-	48339065u ,
-	//TipTruck2
-	3347205726u ,
-	//Titan
-	1981688531u ,
-	//Tornado
-	464687292u ,
-	//Tornado2
-	1531094468u ,
-	//Tornado3
-	1762279763u ,
-	//Tornado4
-	2261744861u ,
-	//Tornado5
-	2497353967u ,
-	//Tornado6
-	2736567667u ,
-	//Toro
-	1070967343u ,
-	//Toro2
-	908897389u ,
-	//Tourbus
-	1941029835u ,
-	//TowTruck
-	2971866336u ,
-	//TowTruck2
-	3852654278u ,
-	//TR2
-	2078290630u ,
-	//TR3
-	1784254509u ,
-	//TR4
-	2091594960u ,
-	//Tractor
-	1641462412u ,
-	//Tractor2
-	2218488798u ,
-	//Tractor3
-	1445631933u ,
-	//TrailerLogs
-	2016027501u ,
-	//Trailers
-	3417488910u ,
-	//Trailers2
-	2715434129u ,
-	//Trailers3
-	2236089197u ,
-	//TrailerSmall
-	712162987u ,
-	//Trash
-	1917016601u ,
-	//Trash2
-	3039269212u ,
-	//TRFlat
-	2942498482u ,
-	//TriBike
-	1127861609u ,
-	//TriBike2
-	3061159916u ,
-	//TriBike3
-	3894672200u ,
-	//TrophyTruck
-	101905590u ,
-	//TrophyTruck2
-	3631668194u ,
-	//Tropic
-	290013743u ,
-	//Tropic2
-	1448677353u ,
-	//Tropos
-	1887331236u ,
-	//Tug
-	2194326579u ,
-	//Turismor
-	408192225u ,
-	//Turismo2
-	3312836369u ,
-	//TVTrailer
-	2524324030u ,
-	//Tyrus
-	2067820283u ,
-	//UtilityTruck
-	516990260u ,
-	//UtilityTruck2
-	887537515u ,
-	//UtilityTruck3
-	2132890591u ,
-	//UtilliTruck
-	516990260u ,
-	//UtilliTruck2
-	887537515u ,
-	//UtilliTruck3
-	2132890591u ,
-	//Vacca
-	338562499u ,
-	//Vader
-	4154065143u ,
-	//Valkyrie
-	2694714877u ,
-	//Valkyrie2
-	1543134283u ,
-	//Velum
-	2621610858u ,
-	//Velum2
-	1077420264u ,
-	//Verlierer2
-	1102544804u ,
-	//Vestra
-	1341619767u ,
-	//Vigero
-	3469130167u ,
-	//Vindicator
-	2941886209u ,
-	//Virgo
-	3796912450u ,
-	//Virgo2
-	3395457658u ,
-	//Virgo3
-	16646064u ,
-	//Volatus
-	2449479409u ,
-	//Voltic
-	2672523198u ,
-	//Voltic2
-	989294410u ,
-	//Voodoo
-	2006667053u ,
-	//Voodoo2
-	523724515u ,
-	//Vortex
-	3685342204u ,
-	//Warrener
-	1373123368u ,
-	//Washington
-	1777363799u ,
-	//Wastelander
-	2382949506u ,
-	//Windsor
-	1581459400u ,
-	//Windsor2
-	2364918497u ,
-	//Wolfsbane
-	3676349299u ,
-	//XLS
-	1203490606u ,
-	//XLS2
-	3862958888u ,
-	//Youga
-	65402552u ,
-	//Youga2
-	3685342204u ,
-	0x3D29CD2B,
-	//Zentorno
-	2891838741u ,
-	//Zion
-	3172678083u ,
-	//Zion2
-	3101863448u ,
-	//ZombieA
-	3285698347u ,
-	//ZombieB
-	3724934023u ,
-	//ZType
-	758895617u ,
-	//FREIGHT
-	0x33c9e158,
+	// No DLC
+	1033245328, //  Dinghy
+	276773164, //  Dinghy2
+	861409633, //  Jetmax
+	3251507587, //  Marquis
+	3264692260, //  Seashark
+	3678636260, //  Seashark2
+	400514754, //  Squalo
+	771711535, //  Submersible
+	4012021193, //  Suntrap
+	290013743, //  Tropic
+	1448677353, //  Tropic2
+	2053223216, //  Benson
+	850991848, //  Biff
+	1518533038, //  Hauler
+	904750859, //  Mule
+	3244501995, //  Mule2
+	569305213, //  Packer
+	2157618379, //  Phantom
+	2112052861, //  Pounder
+	1747439474, //  Stockade
+	4080511798, //  Stockade3
+	3950024287, //  Blista
+	3164157193, //  Dilettante
+	1682114128, //  Dilettante2
+	3117103977, //  Issi2
+	2844316578, //  Prairie
+	330661258, //  CogCabrio
+	4289813342, //  Exemplar
+	3703357000, //  F620
+	3903372712, //  Felon
+	4205676014, //  Felon2
+	3670438162, //  Jackal
+	1348744438, //  Oracle
+	3783366066, //  Oracle2
+	1349725314, //  Sentinel
+	873639469, //  Sentinel2
+	3172678083, //  Zion
+	3101863448, //  Zion2
+	1131912276, //  Bmx
+	448402357, //  Cruiser
+	3458454463, //  Fixter
+	4108429845, //  Scorcher
+	1127861609, //  TriBike
+	3061159916, //  TriBike2
+	3894672200, //  TriBike3
+	1171614426, //  Ambulance
+	1127131465, //  FBI
+	2647026068, //  FBI2
+	1938952078, //  FireTruck
+	2287941233, //  PBus
+	2046537925, //  Police
+	2667966721, //  Police2
+	1912215274, //  Police3
+	2321795001, //  Police4
+	2758042359, //  PoliceOld1
+	2515846680, //  PoliceOld2
+	456714581, //  PoliceT
+	4260343491, //  Policeb
+	353883353, //  Polmav
+	741586030, //  Pranger
+	3806844075, //  Predator
+	3089277354, //  Riot
+	2611638396, //  Sheriff
+	1922257928, //  Sheriff2
+	837858166, //  Annihilator
+	788747387, //  Buzzard
+	745926877, //  Buzzard2
+	4244420235, //  Cargobob
+	1621617168, //  Cargobob2
+	1394036463, //  Cargobob3
+	744705981, //  Frogger
+	1949211328, //  Frogger2
+	2634305738, //  Maverick
+	1044954915, //  Skylift
+	1886712733, //  Bulldozer
+	3288047904, //  Cutter
+	2164484578, //  Dump
+	1353720154, //  Flatbed
+	444583674, //  Handler
+	3510150843, //  Mixer
+	475220373, //  Mixer2
+	2589662668, //  Rubble
+	48339065, //  TipTruck
+	3347205726, //  TipTruck2
+	3471458123, //  Barracks
+	1074326203, //  Barracks2
+	321739290, //  Crusader
+	782665360, //  Rhino
+	1672195559, //  Akuma
+	2154536131, //  Bagger
+	3403504941, //  Bati2
+	4180675781, //  Bati
+	11251904, //  CarbonRS
+	2006142190, //  Daemon
+	2623969160, //  Double
+	55628203, //  Faggio2
+	301427732, //  Hexer
+	3660088182, //  Nemesis
+	3385765638, //  PCJ
+	3401388520, //  Ruffian
+	2841686334, //  Sanchez2
+	788045382, //  Sanchez
+	4154065143, //  Vader
+	3612755468, //  Buccaneer
+	80636076, //  Dominator
+	2255212070, //  Faction3
+	2494797253, //  Gauntlet
+	37348240, //  Hotknife
+	2199527893, //  Phoenix
+	1507916787, //  Picador
+	3627815886, //  RatLoader
+	4067225593, //  Ruiner
+	2609945748, //  SabreGT
+	223258115, //  SabreGT2
+	734217681, //  Sadler2
+	1119641113, //  SlamVan3
+	3469130167, //  Vigero
+	3395457658, //  Virgo2
+	16646064, //  Virgo3
+	523724515, //  Voodoo2
+	1126868326, //  BfInjection
+	2166734073, //  Blazer
+	4246935337, //  Blazer2
+	3025077634, //  Blazer3
+	2859047862, //  Bodhi2
+	1770332643, //  DLoader
+	2633113103, //  Dune
+	534258863, //  Dune2
+	469291905, //  Lguard
+	914654722, //  Mesa
+	3546958660, //  Mesa2
+	2230595153, //  Mesa3
+	1645267888, //  RancherXL
+	1933662059, //  RancherXL2
+	3087195462, //  Rebel
+	2249373259, //  Rebel2
+	3105951696, //  Sandking
+	989381445, //  Sandking2
+	4143991942, //  Blimp
+	368211810, //  CargoPlane
+	3650256867, //  Cuban800
+	970356638, //  Duster
+	1058115860, //  Jet
+	3013282534, //  Lazer
+	621481054, //  Luxor
+	2548391185, //  Mammatus
+	3080461301, //  Shamal
+	2172210288, //  Stunt
+	1981688531, //  Titan
+	2621610858, //  Velum
+	850565707, //  BJXL
+	3486135912, //  Baller
+	142944341, //  Baller2
+	2006918058, //  Cavalcade
+	3505073125, //  Cavalcade2
+	1177543287, //  Dubsta
+	3900892662, //  Dubsta2
+	3157435195, //  FQ2
+	2519238556, //  Granger
+	2751205197, //  Gresley
+	884422927, //  Habanero
+	1269098716, //  Landstalker
+	3486509883, //  Patriot
+	2643899483, //  Radi
+	2136773105, //  Rocoto
+	1221512915, //  Seminole
+	1337041428, //  Serrano
+	2485144969, //  Asea
+	2487343317, //  Asea2
+	2391954683, //  Asterope
+	3609690755, //  Emperor
+	2411965148, //  Emperor2
+	3053254478, //  Emperor3
+	1909141499, //  Fugitive
+	3005245074, //  Ingot
+	886934177, //  Intruder
+	2411098011, //  Premier
+	3144368207, //  Primo
+	4280472072, //  Regina
+	627094268, //  Romero
+	2817386317, //  Stanier
+	1723137093, //  Stratum
+	2333339779, //  Stretch
+	2400073108, //  Surge
+	3286105550, //  Tailgater
+	1777363799, //  Washington
+	1283517198, //  Airbus
+	3581397346, //  Bus
+	2222034228, //  Coach
+	3196165219, //  RentalBus
+	3338918751, //  Taxi
+	1941029835, //  Tourbus
+	1917016601, //  Trash
+	3253274834, //  Banshee
+	3990165190, //  Buffalo
+	736902334, //  Buffalo2
+	2072687711, //  Carbonizzare
+	3249425686, //  Comet2
+	108773431, //  Coquette
+	3728579874, //  Elegy2
+	2299640309, //  Feltzer2
+	499169875, //  Fusilade
+	2016857647, //  Futo
+	544021352, //  Khamelion
+	1032823388, //  Ninef
+	2833484545, //  Ninef2
+	3917501776, //  Penumbra
+	2360515092, //  RapidGT
+	1737773231, //  RapidGT2
+	3039514899, //  Schafter2
+	3548084598, //  Schwarzer
+	970598228, //  Sultan
+	384071873, //  Surano
+	1051415893, //  JB700
+	2170765704, //  Manana
+	3861591579, //  Monroe
+	1830407356, //  Peyote
+	1545842587, //  Stinger
+	2196019706, //  StingerGT
+	464687292, //  Tornado
+	1531094468, //  Tornado2
+	1762279763, //  Tornado3
+	2261744861, //  Tornado4
+	2497353967, //  Tornado5
+	75889561, //  ZType
+	3078201489, //  Adder
+	2598821281, //  Bullet
+	2983812512, //  Cheetah
+	3003014393, //  EntityXF
+	418536135, //  Infernus
+	1123216662, //  Superd
+	338562499, //  Vacca
+	2672523198, //  Voltic
+	3087536137, //  ArmyTanker
+	2818520053, //  ArmyTrailer
+	2657817814, //  ArmyTrailer2
+	3895125590, //  BaleTrailer
+	524108981, //  BoatTrailer
+	3334677549, //  CableCar
+	2154757102, //  DockTrailer
+	1019737494, //  GrainTrailer
+	356391690, //  PropTrailer
+	390902130, //  RakeTrailer
+	2078290630, //  TR2
+	1784254509, //  TR3
+	2091594960, //  TR4
+	2942498482, //  TRFlat
+	2524324030, //  TVTrailer
+	3564062519, //  Tanker
+	2016027501, //  TrailerLogs
+	712162987, //  TrailerSmall
+	3417488910, //  Trailers
+	2715434129, //  Trailers2
+	2236089197, //  Trailers3
+	1030400667, //  Freight
+	184361638, //  FreightCar
+	920453016, //  FreightCont1
+	240201337, //  FreightCont2
+	642617954, //  FreightGrain
+	3517691494, //  FreightTrailer
+	586013744, //  TankerCar
+	1560980623, //  Airtug
+	1147287684, //  Caddy
+	3757070668, //  Caddy2
+	3410276810, //  Docktug
+	1491375716, //  Forklift
+	1783355638, //  Mower
+	3448987385, //  Ripley
+	3695398481, //  Sadler
+	2594165727, //  Scrap
+	2971866336, //  TowTruck
+	3852654278, //  TowTruck2
+	1641462412, //  Tractor
+	2218488798, //  Tractor2
+	1445631933, //  Tractor3
+	516990260, //  UtilliTruck
+	2132890591, //  UtilliTruck3
+	887537515, //  UtilliTruck2
+	4278019151, //  Bison
+	2072156101, //  Bison2
+	1739845664, //  Bison3
+	1069929536, //  BobcatXL
+	2307837162, //  Boxville
+	4061868990, //  Boxville2
+	121658888, //  Boxville3
+	2948279460, //  Burrito
+	3387490166, //  Burrito2
+	2551651283, //  Burrito3
+	893081117, //  Burrito4
+	1132262048, //  Burrito5
+	1876516712, //  Camper
+	2549763894, //  GBurrito
+	4174679674, //  Journey
+	3984502180, //  Minivan
+	3168702960, //  Minivan2
+	4175309224, //  Pony
+	943752001, //  Pony2
+	1162065741, //  Rumpo
+	2518351607, //  Rumpo2
+	3484649228, //  Speedo
+	728614474, //  Speedo2
+	699456151, //  Surfer
+	2983726598, //  Surfer2
+	1951180813, //  Taco
+	65402552, //  Youga
+	0x33C9E158, //  FREIGHT             NOTFOUND            Freight Train (Actually is the tram/metro)
+	0x2D3BD401, //  ZTYPE               ztype               Z - Type
 
+	// Beach Bum
+	231083307, //  Speeder
+	3945366167, //  Bifta
+	92612664, //  Kalahari
+	1488164764, //  Paradise
+
+	// Bikers
+	2179174271, //  Avarus
+	3854198872, //  Blazer4
+	6774487, //  Chimera
+	2890830793, //  Daemon2
+	822018448, //  Defiler
+	2035069708, //  Esskey
+	2452219115, //  Faggio
+	3005788552, //  Faggio3
+	4039289119, //  Hakuchou2
+	2771538552, //  Manchez
+	2688780135, //  Nightblade
+	1873600305, //  Ratbike
+	1491277511, //  Sanctus
+	3889340782, //  Shotaro
+	3685342204, //  Vortex
+	3676349299, //  Wolfsbane
+	3285698347, //  Zombiea
+	3724934023, //  Zombieb
+	3724934023, //  Zombieb
+	3724934023, //  Zombieb
+	3620039993, //  Raptor
+	2736567667, //  Tornado6
+	2736567667, //  Tornado6
+	1026149675, //  Youga2
+
+	// Cunning Stunts
+	1549126457, //  Brioso
+	86520421, //  BF400
+	390201602, //  Cliffhanger
+	741090084, //  Gargoyle
+	101905590, //  TrophyTruck
+	3631668194, //  TrophyTruck2
+	3631668194, //  TrophyTruck2
+	683047626, //  Contender
+	2191146052, //  Rallytruck
+	482197771, //  Lynx
+	3517794615, //  Omnis
+	3223586949, //  Tampa2
+	1887331236, //  Tropos
+	3062131285, //  LE7B
+	819197656, //  Sheava
+	2067820283, //  Tyrus
+
+	// Drop zone
+	633712403, //  Banshee2
+	3999278268, //  SultanRS
+
+	// Executives and other Criminals
+	867467158, //  Dinghy4
+	3983945033, //  Seashark3
+	437538602, //  Speeder2
+	908897389, //  Toro2
+	2025593404, //  Cargobob4
+	710198397, //  Supervolito
+	2623428164, //  Supervolito2
+	1543134283, //  Valkyrie2
+	2351681756, //  Nightshade
+	1878062887, //  Baller3
+	634118882, //  Baller4
+	470404958, //  Baller5
+	666166960, //  Baller6
+	906642318, //  Cog55
+	704435172, //  Cog552
+	2264796000, //  Cognoscenti
+	3690124666, //  Cognoscenti2
+	4180339789, //  Limo2
+	2809443750, //  Schafter3
+	1489967196, //  Schafter4
+	3406724313, //  Schafter5
+	1922255844, //  Schafter6
+	1102544804, //  Verlierer2
+	2634021974, //  Mamba
+
+
+	// Festive Surprise
+	3705788919, //  RatLoader2
+	729783779, //  SlamVan
+	3188613414, //  Jester2
+	3663206819, //  Massacro2
+
+	// Further Adventures in Finance and Felony
+	2194326579, //  Tug
+	2364918497, //  Windsor2
+	2449479409, //  Volatus
+	2999939664, //  Nimbus
+	1203490606, //  XLS
+	3862958888, //  XLS2
+	3989239879, //  Brickade
+	1274868363, //  BestiaGTS
+	2537130571, //  Seven70
+	1426219628, //  FMJ
+	2465164804, //  Pfister811
+	2123327359, //  Prototipo
+	234062309, //  Reaper
+	1475773103, //  Rumpo3
+
+	// Ill Gotten Gains Part 2
+	1070967343, //  Toro
+	1581459400, //  Windsor
+	1075432268, //  Swift2
+	2941886209, //  Vindicator
+	349605904, //  Chino
+	3796912450, //  Virgo
+	2815302597, //  Brawler
+	3080673438, //  Luxor2
+	2728226064, //  Feltzer3
+	784565758, //  Coquette3
+	1987142870, //  Osiris
+	1663218586, //  T20
+
+	// Halloween
+	2068293287, //  Lurcher
+	3463132580, //  BType2
+
+	// Heists
+	509498602, //  Dinghy3
+	2242229361, //  Mule3
+	4212341271, //  Savage
+	2694714877, //  Valkyrie
+	2186977100, //  Guardian
+	630371791, //  Barracks3
+	1753414259, //  Enduro
+	640818791, //  Lectro
+	833469436, //  SlamVan2
+	2434067162, //  Insurgent
+	2071877360, //  Insurgent2
+	2198148358, //  Technical
+	970385471, //  Hydra
+	1077420264, //  Velum2
+	3039269212, //  Trash2
+	2922118804, //  Kuruma
+	410882957, //  Kuruma2
+	941800958, //  Casco
+	1956216962, //  Tanker2
+	444171386, //  Boxville4
+	296357396, //  GBurrito2
+
+	// I'm Not a Hipster
+	3863274624, //  Panto
+	841808271, //  Rhapsody
+	3089165662, //  Blade
+	3057713523, //  Dubsta3
+	75131841, //  Glendale
+	1373123368, //  Warrener
+	1078682497, //  Pigalle
+
+	// Independence Day
+	743478836, //  Sovereign
+	3449006043, //  Monster
+
+	// Last Team Standing
+	1265391242, //  Hakuchou
+	4135840458, //  Innovation
+	3205927392, //  Furoregt
+
+	// Lowrider
+	3281516360, //  Buccaneer2
+	2933279331, //  Chino2
+	2175389151, //  Faction
+	2504420315, //  Faction2
+	525509695, //  Moonbeam
+	1896491931, //  Moonbeam2
+	2006667053, //  Voodoo
+	2254540506, //  Primo2
+
+	// Business Update
+	1341619767, //  Vestra
+	767087018, //  Alpha
+	2997294755, //  Jester
+	408192225, //  Turismor
+
+	// The High Life
+	1836027715, //  Thrust
+	486987393, //  Huntley
+	4152024626, //  Massacro
+	2891838741, //  Zentorno
+
+	// Flight School
+	3955379698, //  Swift
+	1824333165, //  Besra
+	165154707, //  Miljet
+	1011753235, //  Coquette2
+
+	// Valentine Day
+	117401876, //  BType
+	972671128, //  Tampa
+	3692679425, //  BType3
+
+	// Console to PC
+	3228633070, //  Submersible2
+	1039032026, //  Blista2
+	3703315515, //  Blista3
+	3379262425, //  Dominator2
+	723973206, //  Dukes
+	3968823444, //  Dukes2
+	349315417, //  Gauntlet2
+	1923400478, //  Stalion
+	3893323758, //  Stalion2
+	1233534620, //  Marshall
+	3681241380, //  Blimp2
+	3393804037, //  Dodo
+	237764926, //  Buffalo3
+
+	// Cunning_Stunts Special Vehicle Circuit
+	0x4992196C, //  GP1                 gp1                 GP1
+	0xC575DF11, //  TURISMO2            turismo2            Turismo Classic
+	0x2AE524A8, //  RUSTON              ruston              Ruston
+	0xAC33179C, //  INFERNUS2           infernus2           Infernus Classic
+
+
+	// Import/Export
+	0x28AD20E1, //  BOXVILLE5           boxville5           Armored Boxville
+	0xA1355F67, //  BLAZER5             blazer5             Blazer Aqua
+	0x877358AD, //  COMET3              comet3              Comet Retro Custom
+	0xF1B44F44, //  DIABLOUS            diablous            Diabolus
+	0x6ABDF65E, //  DIABLOUS2           diablous2           Diabolus Custom
+	0x0BBA2261, //  ELEGY               elegy               Elegy Retro Custom
+	0x25676EAF, //  FCR                 fcr                 FCR 1000
+	0xD2D5E00E, //  FCR2                fcr2                FCR 1000 Custom
+	0x85E8E76B, //  ITALIGTB            italigtb            Itali GTB
+	0xE33A477B, //  ITALIGTB2           italigtb2           Itali GTB Custom
+	0x3DA47243, //  NERO                nero                Nero
+	0x4131F378, //  NERO2               nero2               Nero Custom
+	0x9734F3EA, //  penetrator          penetrator          Penetrator
+	0x9DAE1398, //  PHANTOM2            phantom2            Phantom Wedge
+	0xCEB28249, //  DUNE4               dune4               Ramp Buggy
+	0xED62BFA9, //  DUNE5               dune5               Ramp Buggy
+	0x3AF76F4A, //  VOLTIC2             voltic2             Rocket Voltic
+	0x2E5AFD37, //  RUINER              ruiner3             Ruiner
+	0x381E10BD, //  RUINER2             ruiner2             Ruiner 2000
+	0x706E2B40, //  SPECTER             specter             Specter
+	0x400F5147, //  SPECTER2            specter2            Specter Custom
+	0x4662BCBB, //  TECHNICAL2          technical2          Technical Aqua
+	0x1044926F, //  TEMPESTA            tempesta            Tempesta
+	0x8E08EC82, //  WASTLNDR            NOTFOUND            Wastelander
+
+	// Gunrunning
 	0x2189D250, //  APC                 apc                 APC
 	0x8FD54EBB, //  TRSMALL2            NOTFOUND            Anti - Aircraft Trailer
 	0x97E5533 , //  ARDENT              ardent              Ardent
