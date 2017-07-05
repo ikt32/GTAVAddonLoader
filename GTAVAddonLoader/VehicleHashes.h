@@ -2,7 +2,6 @@
 #include <vector>
 #include "inc/types.h"
 
-// Ripped straight from ScriptHookVDotNet
 std::vector<Hash> Vehicles;
 
 std::vector<Hash> OriginalVehicles = {

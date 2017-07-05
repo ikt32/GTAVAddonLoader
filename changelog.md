@@ -1,4 +1,11 @@
 # Changelog
+## v1.1.0
+Config changes: Moved menu origin
+
+* Add official DLC vehicle spawning, sorted per DLC
+* Display guessed model name in details
+* Menu now changes accordingly to resolution and safe zones
+
 
 ## v1.0.8
 No config changes.  
