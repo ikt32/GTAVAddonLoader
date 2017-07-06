@@ -58,3 +58,5 @@ private:
 	int m_soundID;
 	int m_prevNotification;
 };
+
+bool GetPNGDimensions(std::string file, int *width, int *height);

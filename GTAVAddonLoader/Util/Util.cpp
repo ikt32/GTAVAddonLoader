@@ -2,6 +2,10 @@
 #include "../../../ScriptHookV_SDK/inc/natives.h"
 #include "Util.hpp"
 #include <algorithm>
+#include <fstream>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 void showText(float x, float y, float scale, const char* text, int font, const Color &rgba, bool outline) {
 	UI::SET_TEXT_FONT(font);
@@ -73,3 +77,30 @@ void GameSound::Stop() {
 	Active = false;
 }
 
+// https://codereview.stackexchange.com/questions/149717/implementation-of-c-standard-library-function-ntohl
+uint32_t my_ntohl(uint32_t const net) {
+	uint8_t data[4] = {};
+	memcpy(&data, &net, sizeof(data));
+
+	return ((uint32_t)data[3] << 0)
+		| ((uint32_t)data[2] << 8)
+		| ((uint32_t)data[1] << 16)
+		| ((uint32_t)data[0] << 24);
+}
+
+bool GetPNGDimensions(std::string file, int *width, int *height) {
+	if (fs::path(file).extension() != ".png")
+		return false;
+
+	std::ifstream in(file);
+	int _width, _height;
+
+	in.seekg(16);
+	in.read((char *)&_width, 4);
+	in.read((char *)&_height, 4);
+
+	*width = my_ntohl(_width);
+	*height = my_ntohl(_height);
+
+	return true;
+}

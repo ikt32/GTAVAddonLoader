@@ -18,6 +18,9 @@
 #include <iomanip>
 #include "inc/natives.h"
 
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 NativeMenu::Menu menu;
 
 std::string settingsGeneralFile;
@@ -35,6 +38,10 @@ Settings settings;
 std::vector<std::pair<std::string, Hash>> addonVehicles;
 std::set<std::string> addonClasses;
 
+// nameHash, textureId, width, height
+std::vector<std::tuple<Hash, int, int, int>> addonImages;
+int noImageHandle;
+
 class DLC {
 public:
 	DLC(std::string name, std::vector<Hash> hashes) :
@@ -49,6 +56,8 @@ public:
 std::vector<DLC> dlcs;
 
 Hash joaat(std::string s) {
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+
 	Hash hash = 0;
 	for (int i = 0; i < s.size(); i++) {
 		hash += s[i];
@@ -59,6 +68,25 @@ Hash joaat(std::string s) {
 	hash ^= (hash >> 11);
 	hash += (hash << 15);
 	return hash;
+}
+
+void resolveImgs() {
+	addonImages.clear();
+	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+	for (auto &file : fs::directory_iterator(imgPath)) {
+		int width;
+		int height;
+		std::stringstream fileName;
+		fileName << file;
+		if (!GetPNGDimensions(fileName.str(), &width, &height))
+			continue;
+
+		int handle = createTexture(fileName.str().c_str());
+		Hash hash = joaat(fs::path(fileName.str()).stem().string());
+		if (hash == joaat("noimage")) 
+			noImageHandle = handle;
+		addonImages.push_back(std::make_tuple(hash, handle, width, height));
+	}
 }
 
 std::string guessModelName(Hash hash) {
@@ -157,6 +185,7 @@ void cacheDLCs() {
 }
 
 void cacheAddons() {
+	resolveImgs();
 	updateSettings();
 	if (!addonVehicles.empty())
 		return;
@@ -221,6 +250,8 @@ void buildBlacklist() {
 		}
 	}
 }
+
+
 
 void init() {
 
@@ -312,14 +343,31 @@ void spawnMenu(std::string className, std::vector<std::pair<std::string, Hash>> 
 				}
 			}
 
-			std::vector<std::string> details = {
-				"GXT name: \t" + prettyNameFromHash(vehicleHash.second),
-				"Model name: \t" + guessModelName(vehicleHash.second),
-			};
-			if (modkitsInfo.size() > 0) {
-				details.push_back("Mod kits: \t" + modkitsInfo);
+			std::vector<std::string> extras;
+
+			for (auto addonImage : addonImages) {
+				if (std::get<0>(addonImage) == vehicleHash.second) {
+					extras.push_back(menu.ImagePrefix + std::to_string(std::get<1>(addonImage)) +
+									 "W" + std::to_string(std::get<2>(addonImage)) +
+									 "H" + std::to_string(std::get<3>(addonImage)));
+					break;
+				}
 			}
-			if (menu.Option(displayName, details)) {
+			// Nothing's been added :(
+			if (extras.size() == 0) {
+				extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
+								 "W" + std::to_string(320) +
+								 "H" + std::to_string(180));
+			}
+			extras.push_back("Model name: \t" + guessModelName(vehicleHash.second));
+			if (modkitsInfo.size() > 0) {
+				extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
+			}
+			else {
+				extras.push_back("Mod kit ID(s): \tNone");
+			}
+
+			if (menu.OptionPlus(displayName, extras, nullptr, nullptr, "Add-on info", {})) {
 				spawnVehicle(vehicleHash.second);
 			}
 		}
