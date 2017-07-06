@@ -291,41 +291,34 @@ void spawnVehicle(Hash hash) {
 	}
 }
 
-void spawnMenu(std::string className) {
+void spawnMenu(std::string className, std::vector<std::pair<std::string, Hash>> hashCombo) {
 	menu.Title(className);
 	
-	for (auto vehicleHash : addonVehicles) {
+	for (auto vehicleHash : hashCombo) {
 		if (className == vehicleHash.first) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicleHash.second);
 			std::string displayName = UI::_GET_LABEL_TEXT(name);
 			if (displayName == "NULL") {
 				displayName = name;
 			}
+			auto modkits = MemoryAccess::GetVehicleModKits(vehicleHash.second);
+			std::string modkitsInfo;
+			for( auto kit : modkits ) {
+				if (kit == modkits.back()) {
+					modkitsInfo += std::to_string(kit);
+				} 
+				else {
+					modkitsInfo += std::to_string(kit) + ", ";
+				}
+			}
+
 			std::vector<std::string> details = {
 				"GXT name: \t" + prettyNameFromHash(vehicleHash.second),
 				"Model name: \t" + guessModelName(vehicleHash.second),
 			};
-			if (menu.Option(displayName, details)) {
-				spawnVehicle(vehicleHash.second);
+			if (modkitsInfo.size() > 0) {
+				details.push_back("Mod kits: \t" + modkitsInfo);
 			}
-		}
-	}
-}
-
-void spawnMenuDLC(std::string className, DLC dlc) {
-	menu.Title(className);
-
-	for (auto vehicleHash : dlc.Vehicles) {
-		if (className == vehicleHash.first) {
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicleHash.second);
-			std::string displayName = UI::_GET_LABEL_TEXT(name);
-			if (displayName == "NULL") {
-				displayName = name;
-			}
-			std::vector<std::string> details = {
-				"GXT name: \t" + prettyNameFromHash(vehicleHash.second),
-				"Model name: \t" + guessModelName(vehicleHash.second),
-			};
 			if (menu.Option(displayName, details)) {
 				spawnVehicle(vehicleHash.second);
 			}
@@ -403,7 +396,7 @@ void update_menu() {
 	}
 
 	for (auto className : addonClasses) {
-		if (menu.CurrentMenu(className)) { spawnMenu(className); }
+		if (menu.CurrentMenu(className)) { spawnMenu(className, addonVehicles); }
 	}
 
 	if (menu.CurrentMenu("officialdlcmenu")) {
@@ -426,7 +419,7 @@ void update_menu() {
 			if (menu.CurrentMenu(dlc.Name + " " + className)) {
 				menu.Title(className);
 
-				spawnMenuDLC(className, dlc);
+				spawnMenu(className, dlc.Vehicles);
 			}
 		}
 	}

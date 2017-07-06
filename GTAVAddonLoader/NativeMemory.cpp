@@ -64,6 +64,28 @@ std::array<std::vector<int>, 0x20> MemoryAccess::GenerateVehicleModelList() {
 	return hashes;
 }
 
+// Thank you, Unknown Modder!
+typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
+GetModelInfo_t GetModelInfo = (GetModelInfo_t)MemoryAccess::FindPattern("\x0F\xB7\x05\x00\x00\x00\x00\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0\x0F\x84\x00\x00\x00\x00\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48\x8B\x05\x00\x00\x00\x00\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
+																		"xxx????xxxxxxxxxxx????xxxxxxxxxxxxxx????xxxxxxxxxxx");
+
+std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
+	std::vector<uint8_t> modKits;
+
+	int index = 0xFFFF;
+	uint64_t modelInfo = GetModelInfo(modelHash, &index);
+
+	if (modelInfo) {
+		uint16_t count = *(uint16_t*)(modelInfo + 0x290);
+		for (uint16_t i = 0; i < count; i++) {
+			uint8_t modKit = *(uint8_t*)(*(uint64_t*)(modelInfo + 0x288) + i);
+			modKits.push_back(modKit);
+		}
+	}
+
+	return modKits;
+}
+
 
 uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 	MODULEINFO modInfo = {nullptr};
