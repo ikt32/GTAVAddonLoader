@@ -89,9 +89,10 @@ uint32_t my_ntohl(uint32_t const net) {
 }
 
 bool GetIMGDimensions(std::string file, int *width, int *height) {
-	if (fs::path(file).extension() == ".png")
+	auto ext = fs::path(file).extension();
+	if (ext == ".png" || ext == ".PNG")
 		return GetPNGDimensions(file, width, height);
-	if (fs::path(file).extension() == ".jpg")
+	if (ext == ".jpg" || ext == ".JPG" || ext == ".jpeg" || ext == ".JPEG")
 		return GetJPGDimensions(file, width, height);
 	return false;
 }

@@ -80,7 +80,7 @@ Hash joaat(std::string s) {
 }
 
 void resolveImgs() {
-	std::lock_guard<std::mutex> lock(imgsMx);
+	//std::lock_guard<std::mutex> lock(imgsMx);
 	addonImageMetadata.clear();
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
@@ -94,15 +94,26 @@ void resolveImgs() {
 	}
 }
 
+bool isPresentinAddonImages(Hash hash) {
+	for (auto addonImage : addonImages) {
+		if (std::get<0>(addonImage) == hash)
+			return true;
+	}
+	return false;
+}
+
 void resolveImgs2() {
-	addonImages.clear();
-	std::lock_guard<std::mutex> lock(imgsMx);
+	//addonImages.clear();
+	//std::lock_guard<std::mutex> lock(imgsMx);
 	for (auto metadata : addonImageMetadata) {
 		auto fileName = std::get<0>(metadata);
+		Hash hash = joaat(fs::path(fileName).stem().string());
+		if (isPresentinAddonImages(hash)) {
+			continue;
+		}
 		auto width = std::get<1>(metadata);
 		auto height = std::get<2>(metadata);
 		int handle = createTexture(fileName.c_str());
-		Hash hash = joaat(fs::path(fileName).stem().string());
 		if (hash == joaat("noimage"))
 			noImageHandle = handle;
 		addonImages.push_back(std::make_tuple(hash, handle, width, height));
@@ -386,7 +397,6 @@ void spawnMenu(std::string className, std::vector<std::pair<std::string, Hash>> 
 
 			std::vector<std::string> extras;
 			
-			
 			for (auto addonImage : addonImages) {
 				if (std::get<0>(addonImage) == vehicleHash.second) {
 					extras.push_back(menu.ImagePrefix + std::to_string(std::get<1>(addonImage)) +
@@ -396,8 +406,6 @@ void spawnMenu(std::string className, std::vector<std::pair<std::string, Hash>> 
 				}
 			}
 			
-			
-			// Nothing's been added :(
 			if (extras.size() == 0) {
 				extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
 								 "W" + std::to_string(320) +
