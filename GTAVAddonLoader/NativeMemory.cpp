@@ -75,7 +75,7 @@ std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 	int index = 0xFFFF;
 	uint64_t modelInfo = GetModelInfo(modelHash, &index);
 
-	if (modelInfo) {
+	if (modelInfo && (*(uint8_t*)(modelInfo + 0x9D) & 0x1F) == 5) {
 		uint16_t count = *(uint16_t*)(modelInfo + 0x290);
 		for (uint16_t i = 0; i < count; i++) {
 			uint8_t modKit = *(uint8_t*)(*(uint64_t*)(modelInfo + 0x288) + i);
