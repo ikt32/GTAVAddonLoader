@@ -12,5 +12,6 @@ http://dev-c.com
 const std::string modDir  = "\\AddonSpawner";
 
 void ScriptMain();
+void joinRemainingThreads();
 
 extern std::vector<std::string> dlcpackFolders;

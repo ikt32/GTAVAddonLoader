@@ -19,6 +19,8 @@
 #include "inc/natives.h"
 
 #include <experimental/filesystem>
+#include <mutex>
+#include <future>
 namespace fs = std::experimental::filesystem;
 
 NativeMenu::Menu menu;
@@ -40,6 +42,13 @@ std::set<std::string> addonClasses;
 
 // nameHash, textureId, width, height
 std::vector<std::tuple<Hash, int, int, int>> addonImages;
+// file width height
+std::vector<std::tuple<std::string, int, int>> addonImageMetadata;
+
+std::mutex imgsMx;
+std::vector<std::future<void>> futures;
+std::vector<std::thread> threads;
+
 int noImageHandle;
 
 class DLC {
@@ -71,21 +80,46 @@ Hash joaat(std::string s) {
 }
 
 void resolveImgs() {
-	addonImages.clear();
+	std::lock_guard<std::mutex> lock(imgsMx);
+	addonImageMetadata.clear();
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
+		std::stringstream fileName;
 		int width;
 		int height;
-		std::stringstream fileName;
 		fileName << file;
-		if (!GetPNGDimensions(fileName.str(), &width, &height))
+		if (!GetIMGDimensions(fileName.str(), &width, &height))
 			continue;
+		addonImageMetadata.push_back(std::make_tuple(fileName.str(), width, height));
+	}
+}
 
-		int handle = createTexture(fileName.str().c_str());
-		Hash hash = joaat(fs::path(fileName.str()).stem().string());
-		if (hash == joaat("noimage")) 
+void resolveImgs2() {
+	addonImages.clear();
+	std::lock_guard<std::mutex> lock(imgsMx);
+	for (auto metadata : addonImageMetadata) {
+		auto fileName = std::get<0>(metadata);
+		auto width = std::get<1>(metadata);
+		auto height = std::get<2>(metadata);
+		int handle = createTexture(fileName.c_str());
+		Hash hash = joaat(fs::path(fileName).stem().string());
+		if (hash == joaat("noimage"))
 			noImageHandle = handle;
 		addonImages.push_back(std::make_tuple(hash, handle, width, height));
+	}
+}
+
+void checkThread() {
+	for (auto it = futures.begin(); it != futures.end();) {
+		auto status = (*it).wait_for(std::chrono::milliseconds(0));
+		if (status == std::future_status::ready) {
+			(*it).get();
+			resolveImgs2();
+			futures.erase(it);
+		}
+		else {
+			++it;
+		}
 	}
 }
 
@@ -185,7 +219,14 @@ void cacheDLCs() {
 }
 
 void cacheAddons() {
-	resolveImgs();
+	std::packaged_task<void()> task(&resolveImgs);
+	auto f = task.get_future();
+	std::thread thread(std::move(task));
+	futures.push_back(std::move(f));
+	//threads.push_back(std::move(thread));
+	thread.detach();
+
+
 	updateSettings();
 	if (!addonVehicles.empty())
 		return;
@@ -344,15 +385,18 @@ void spawnMenu(std::string className, std::vector<std::pair<std::string, Hash>> 
 			}
 
 			std::vector<std::string> extras;
-
+			
+			
 			for (auto addonImage : addonImages) {
 				if (std::get<0>(addonImage) == vehicleHash.second) {
 					extras.push_back(menu.ImagePrefix + std::to_string(std::get<1>(addonImage)) +
-									 "W" + std::to_string(std::get<2>(addonImage)) +
-									 "H" + std::to_string(std::get<3>(addonImage)));
+										"W" + std::to_string(std::get<2>(addonImage)) +
+										"H" + std::to_string(std::get<3>(addonImage)));
 					break;
 				}
 			}
+			
+			
 			// Nothing's been added :(
 			if (extras.size() == 0) {
 				extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
@@ -493,7 +537,7 @@ void update_game() {
 	}
 
 	update_menu();
-
+	checkThread();
 }
 
 void main() {
@@ -517,4 +561,10 @@ void main() {
 void ScriptMain() {
 	srand(GetTickCount());
 	main();
+}
+
+void joinRemainingThreads() {
+	for (auto &thread : threads) {
+		thread.join();
+	}
 }

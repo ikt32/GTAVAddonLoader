@@ -88,10 +88,15 @@ uint32_t my_ntohl(uint32_t const net) {
 		| ((uint32_t)data[0] << 24);
 }
 
-bool GetPNGDimensions(std::string file, int *width, int *height) {
-	if (fs::path(file).extension() != ".png")
-		return false;
+bool GetIMGDimensions(std::string file, int *width, int *height) {
+	if (fs::path(file).extension() == ".png")
+		return GetPNGDimensions(file, width, height);
+	if (fs::path(file).extension() == ".jpg")
+		return GetJPGDimensions(file, width, height);
+	return false;
+}
 
+bool GetPNGDimensions(std::string file, int *width, int *height) {
 	std::ifstream in(file);
 	int _width, _height;
 
@@ -102,5 +107,48 @@ bool GetPNGDimensions(std::string file, int *width, int *height) {
 	*width = my_ntohl(_width);
 	*height = my_ntohl(_height);
 
+	return true;
+}
+
+//https://stackoverflow.com/questions/17847171/c-library-for-getting-the-jpeg-image-size
+bool GetJPGDimensions(std::string file, int *width, int *height) {
+	FILE *image = nullptr;
+
+	errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file
+	if (!image || err) {
+		return false;
+	}
+	fseek(image, 0, SEEK_END);
+	int size = ftell(image);
+	fseek(image, 0, SEEK_SET);
+	unsigned char *data = (unsigned char *)malloc(size);
+	fread(data, 1, size, image);
+	/* verify valid JPEG header */
+	int i = 0;
+	if (data[i] == 0xFF && data[i + 1] == 0xD8 && data[i + 2] == 0xFF && data[i + 3] == 0xE0) {
+		i += 4;
+		/* Check for null terminated JFIF */
+		if (data[i + 2] == 'J' && data[i + 3] == 'F' && data[i + 4] == 'I' && data[i + 5] == 'F' && data[i + 6] == 0x00) {
+			while (i < size) {
+				i++;
+				if (data[i] == 0xFF) {
+					if (data[i + 1] == 0xC0) {
+						*height = data[i + 5] * 256 + data[i + 6];
+						*width = data[i + 7] * 256 + data[i + 8];
+						break;
+					}
+				}
+			}
+		}
+		else {
+			fclose(image);
+			return false;
+		}
+	}
+	else {
+		fclose(image);
+		return false;
+	}
+	fclose(image);
 	return true;
 }
