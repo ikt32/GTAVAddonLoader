@@ -153,6 +153,13 @@ std::string guessModelName(Hash hash) {
 		}
 	}
 
+	// Do we have it stashed from the images?
+	for (auto metadata : g_addonImageMetadata) {
+		auto fileName = std::get<0>(metadata);
+		std::string modelName = fs::path(fileName).stem().string();
+		if (hash == joaat(modelName)) return modelName;
+	}
+
 	// Try display name otherwise (correct vehicles.meta, other package name)
 	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 	std::transform(displayName.begin(), displayName.end(), displayName.begin(), ::tolower);
