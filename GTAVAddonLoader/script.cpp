@@ -217,7 +217,7 @@ void buildDLClist() {
 		{ DLC("The High Life", HighLifeVehicles) },
 		{ DLC("I'm Not A Hipster", HipsterVehicles) },
 		{ DLC("Independence Day", MURKAVehicles) },
-		{ DLC("SA Flught School", FlightSchoolVehicles) },
+		{ DLC("SA Flight School", FlightSchoolVehicles) },
 		{ DLC("Last Team Standing", LTSVehicles) },
 		{ DLC("Festive Surprise", FestiveVehicles) },
 		{ DLC("Heists", HeistsVehicles) },
@@ -255,8 +255,6 @@ void cacheAddons() {
 	std::vector<Hash> allVehicles;
 
 	auto vehicleModelList = MemoryAccess::GenerateVehicleModelList();
-	int i = 0;
-	int g = 0;
 	for (auto vehicleModelVector : vehicleModelList) {
 		for (auto hash : vehicleModelVector) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
@@ -264,9 +262,7 @@ void cacheAddons() {
 			if (name) {
 				allVehicles.push_back(hash);
 			}
-			i++;
 		}
-		g++;
 	}
 
 	std::sort(allVehicles.begin(), allVehicles.end(), predicateHashByName);
@@ -314,11 +310,7 @@ void buildBlacklist() {
 	}
 }
 
-
-
 void init() {
-
-
 	settings.ReadSettings();
 	menu.ReadSettings();
 	logger.Write("Settings read");
