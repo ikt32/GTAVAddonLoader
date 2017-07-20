@@ -468,7 +468,7 @@ void update_menu() {
 
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
-		menu.Subtitle(DISPLAY_VERSION);
+		menu.Subtitle(DISPLAY_VERSION, false);
 		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) { settings.SaveSettings(); }
 
 		if (settings.SpawnByName) {
