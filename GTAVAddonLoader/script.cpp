@@ -197,6 +197,8 @@ void updateSettings() {
 void sortDLCVehicles() {
 	for (auto &dlc : dlcs) {
 		for (auto hash : dlc.Hashes) {
+			if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
+				continue;
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			std::string className = UI::_GET_LABEL_TEXT(buffer);
@@ -517,6 +519,10 @@ void update_menu() {
 
 			for (auto className : dlc.Classes) {
 				menu.MenuOption(className, dlc.Name + " " + className);
+			}
+			if (dlc.Classes.empty()) {
+				menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
+				"Game version: " + eGameVersionToString(getGameVersion())});
 			}
 		}
 		for (auto className : dlc.Classes) {
