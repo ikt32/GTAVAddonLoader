@@ -1,4 +1,12 @@
 # Changelog
+## v1.1.1
+Config changes: Enabled all options by default. You can leave your old configs.
+
+* Add support for image previews!
+* Add modkit ID reading
+* Use image names to help figuring out model name
+* Fix unavailable DLCs showing UNKNOWNs in Compact class
+
 ## v1.1.0
 Config changes: Moved menu origin
 
