@@ -33,8 +33,18 @@ using AddonImageMeta = std::tuple<std::string, int, int>;
 // className, vehicleHash
 using AddonVehicle = std::pair<std::string, Hash>;
 
-// dict, name, textureNameHash
-using SpriteInfo = std::tuple<std::string, std::string, Hash>;
+class SpriteInfo {
+public:
+	SpriteInfo(): HashedName(0), ResX(0), ResY(0) {}
+	SpriteInfo(std::string dict, std::string name, Hash hash, uint16_t resX, uint16_t resY) :
+			   Dict(dict), Name(name), HashedName(hash), ResX(resX), ResY(resY) { }
+
+	std::string Dict;
+	std::string Name;
+	Hash HashedName;
+	uint16_t ResX;
+	uint16_t ResY;
+};
 
 NativeMenu::Menu menu;
 NativeMenu::MenuControls controls;
@@ -62,56 +72,6 @@ std::vector<std::thread> threads;
 int noImageHandle;
 
 std::vector<SpriteInfo> g_spriteInfos;
-
-
-std::vector<std::string> websiteDicts = {
-	"candc_apartments",
-	"candc_default",
-	"candc_executive1",
-	"candc_gunrunning",
-	"candc_importexport",
-	"candc_truck",
-	"dock_default",
-	"dock_dlc_executive1",
-	"elt_default",
-	"elt_dlc_apartments",
-	"elt_dlc_executive1",
-	"elt_dlc_pilot",
-	"foreclosures_bunker",
-	"lgm_default",
-	"lgm_dlc_apartments",
-	"lgm_dlc_biker",
-	"lgm_dlc_business2",
-	"lgm_dlc_business",
-	"lgm_dlc_executive1",
-	"lgm_dlc_gunrunning",
-	"lgm_dlc_heist",
-	"lgm_dlc_importexport",
-	"lgm_dlc_jan2016",
-	"lgm_dlc_lts_creator",
-	"lgm_dlc_luxe",
-	"lgm_dlc_pilot",
-	"lgm_dlc_specialraces",
-	"lgm_dlc_stunt",
-	"lgm_dlc_valentines2",
-	"lgm_dlc_valentines",
-	"lsc_default",
-	"lsc_dlc_import_export",
-	"lsc_lowrider2",
-	"pandm_default",
-	"sssa_default",
-	"sssa_dlc_bikersssa_dlc_business",
-	"sssa_dlc_business2",
-	"sssa_dlc_christmas_3",
-	"sssa_dlc_executive_1",
-	"sssa_dlc_halloween",
-	"sssa_dlc_heist",
-	"sssa_dlc_hipster",
-	"sssa_dlc_independence",
-	"sssa_dlc_lts_creator",
-	"sssa_dlc_mp_to_sp",
-	"sssa_dlc_stunt"
-};
 
 class DLC {
 public:
@@ -144,16 +104,14 @@ Hash joaat(std::string s) {
 
 void resolveVehicleSpriteInfo() {
 	g_spriteInfos.clear();
-	for (std::string dict : websiteDicts) {
-		logger.Write("[" + dict + "]");
+	for (std::string dict : WebsiteDicts) {
 		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED(CharAdapter(dict))) {
 			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT(CharAdapter(dict), false);
 		}
 		Hash hash = joaat(dict);
-		std::vector<std::string> textures = MemoryAccess::GetTexturesFromTxd(hash);
-		for (std::string texture : textures) {
-			g_spriteInfos.push_back(std::make_tuple(dict, texture, joaat(texture)));
-			logger.Write(dict + " " + texture);
+		std::vector<rage::grcTexture *> textures = MemoryAccess::GetTexturesFromTxd(hash);
+		for (auto texture : textures) {
+			g_spriteInfos.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
 		}
 	}
 }
@@ -187,11 +145,10 @@ bool isPresentinAddonImages(Hash hash, AddonImage *addonImageResult) {
 
 bool isPresentinTextures(Hash hash, SpriteInfo * spriteResult) {
 	auto sprite = std::find_if(g_spriteInfos.begin(), g_spriteInfos.end(), [&hash](const SpriteInfo& element) {
-		return std::get<2>(element) == hash;
+		return element.HashedName == hash;
 	});
 	if (g_spriteInfos.end() != sprite) {
-		if (spriteResult != nullptr)
-			*spriteResult = *sprite;
+		*spriteResult = *sprite;
 		return true;
 	}
 	return false;
@@ -493,10 +450,10 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 	}
 	else if (hashIt != Vehicles.end() && isPresentinTextures(addonVehicle.second, &spriteInfo)) {
 		extras.push_back(menu.SpritePrefix +
-			std::get<0>(spriteInfo) + " " +
-			std::get<1>(spriteInfo) + " " +
-			"W" + std::to_string(320) +
-			"H" + std::to_string(180));
+			spriteInfo.Dict + " " +
+			spriteInfo.Name + " " +
+			"W" + std::to_string(spriteInfo.ResX) +
+			"H" + std::to_string(spriteInfo.ResY));
 	}
 	else {
 		extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +

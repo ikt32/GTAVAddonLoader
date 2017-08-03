@@ -127,8 +127,8 @@ void MemoryAccess::initTxdStore() {
 	g_dataSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
 }
 
-std::vector<std::string> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
-	std::vector<std::string> vecTextures;
+std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
+	std::vector<rage::grcTexture *> vecTextures;
 
 	if (g_fwTxdStore && g_fwTxdStore != 7)
 	{
@@ -157,7 +157,8 @@ std::vector<std::string> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 							for (uint16_t j = 0; j < count; j++)
 							{
 								if (textures[j] == nullptr) continue;
-								vecTextures.push_back(textures[j]->name);
+								//vecTextures.push_back(textures[j]->name);
+								vecTextures.push_back(textures[j]);
 							}
 						}
 					}
