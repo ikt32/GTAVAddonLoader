@@ -2,9 +2,7 @@
 #include <vector>
 #include "inc/types.h"
 
-std::vector<Hash> Vehicles;
-
-std::vector<Hash> OriginalVehicles = {
+static const std::vector<Hash> OriginalVehicles = {
 	// No DLC
 	1033245328, //  Dinghy
 	276773164, //  Dinghy2
@@ -308,7 +306,7 @@ std::vector<Hash> OriginalVehicles = {
 	0x2D3BD401, //  ZTYPE               ztype               Z - Type
 };
 
-std::vector<Hash> BeachBumVehicles = {
+static const std::vector<Hash> BeachBumVehicles = {
 	// Beach Bum
 	231083307, //  Speeder
 	3945366167, //  Bifta
@@ -316,7 +314,7 @@ std::vector<Hash> BeachBumVehicles = {
 	1488164764, //  Paradise
 };
 
-std::vector<Hash> BikersVehicles = {
+static const std::vector<Hash> BikersVehicles = {
 	// Bikers
 	2179174271, //  Avarus
 	3854198872, //  Blazer4
@@ -344,7 +342,7 @@ std::vector<Hash> BikersVehicles = {
 	1026149675, //  Youga2
 };
 
-std::vector<Hash> CunningStuntsVehicles = {
+static const std::vector<Hash> CunningStuntsVehicles = {
 	// Cunning Stunts
 	1549126457, //  Brioso
 	86520421, //  BF400
@@ -364,13 +362,24 @@ std::vector<Hash> CunningStuntsVehicles = {
 	2067820283, //  Tyrus
 };
 
-std::vector<Hash> DropzoneVehicles = {
+static const std::vector<Hash> DropzoneVehicles = {
 	// Drop zone
 	633712403, //  Banshee2
 	3999278268, //  SultanRS
 };
 
-std::vector<Hash> ExecutiveVehicles = {
+static const std::vector<Hash> LowriderCCVehicles = {
+	// Lowriders: Custom Classics
+	3395457658, //  Virgo2
+	16646064, //  Virgo3
+	1119641113, //  SlamVan3
+	2255212070, //  Faction3
+	223258115, //  SabreGT2
+	2497353967, //  Tornado5
+	3168702960, //  Minivan2
+};
+
+static const std::vector<Hash> ExecutiveVehicles = {
 	// Executives and other Criminals
 	867467158, //  Dinghy4
 	3983945033, //  Seashark3
@@ -398,7 +407,7 @@ std::vector<Hash> ExecutiveVehicles = {
 	2634021974, //  Mamba
 };
 
-std::vector<Hash> FestiveVehicles = {
+static const std::vector<Hash> FestiveVehicles = {
 	// Festive Surprise
 	3705788919, //  RatLoader2
 	729783779, //  SlamVan
@@ -406,7 +415,7 @@ std::vector<Hash> FestiveVehicles = {
 	3663206819, //  Massacro2
 };
 
-std::vector<Hash> FinanceFelonyVehicles = {
+static const std::vector<Hash> FinanceFelonyVehicles = {
 	// Further Adventures in Finance and Felony
 	2194326579, //  Tug
 	2364918497, //  Windsor2
@@ -424,7 +433,7 @@ std::vector<Hash> FinanceFelonyVehicles = {
 	1475773103, //  Rumpo3
 };
 
-std::vector<Hash> IllGottenGainsPt1Vehicles = {
+static const std::vector<Hash> IllGottenGainsPt1Vehicles = {
 	// Ill Gotten Gains Part 1
 	1581459400, //  Windsor
 	1075432268, //  Swift2
@@ -434,7 +443,7 @@ std::vector<Hash> IllGottenGainsPt1Vehicles = {
 	1987142870, //  Osiris
 };
 
-std::vector<Hash> IllGottenGainsPt2Vehicles = {
+static const std::vector<Hash> IllGottenGainsPt2Vehicles = {
 	// Ill Gotten Gains Part 2
 	1070967343, //  Toro
 	2941886209, //  Vindicator
@@ -444,13 +453,13 @@ std::vector<Hash> IllGottenGainsPt2Vehicles = {
 	1663218586, //  T20
 };
 
-std::vector<Hash> HalloweenVehicles = {
+static const std::vector<Hash> HalloweenVehicles = {
 	// Halloween
 	2068293287, //  Lurcher
 	3463132580, //  BType2
 };
 
-std::vector<Hash> HeistsVehicles = {
+static const std::vector<Hash> HeistsVehicles = {
 	// Heists
 	509498602, //  Dinghy3
 	2242229361, //  Mule3
@@ -475,7 +484,7 @@ std::vector<Hash> HeistsVehicles = {
 	296357396, //  GBurrito2
 };
 
-std::vector<Hash> HipsterVehicles = {
+static const std::vector<Hash> HipsterVehicles = {
 	// I'm Not a Hipster
 	3863274624, //  Panto
 	841808271, //  Rhapsody
@@ -486,20 +495,20 @@ std::vector<Hash> HipsterVehicles = {
 	1078682497, //  Pigalle
 };
 
-std::vector<Hash> MURKAVehicles = {
+static const std::vector<Hash> MURKAVehicles = {
 	// Independence Day
 	743478836, //  Sovereign
 	3449006043, //  Monster
 };
 
-std::vector<Hash> LTSVehicles = {
+static const std::vector<Hash> LTSVehicles = {
 	// Last Team Standing
 	1265391242, //  Hakuchou
 	4135840458, //  Innovation
 	3205927392, //  Furoregt
 };
 
-std::vector<Hash> LowriderVehicles = {
+static const std::vector<Hash> LowriderVehicles = {
 	// Lowrider
 	3281516360, //  Buccaneer2
 	2933279331, //  Chino2
@@ -511,7 +520,7 @@ std::vector<Hash> LowriderVehicles = {
 	2254540506, //  Primo2
 };
 
-std::vector<Hash> BusinessVehicles = {
+static const std::vector<Hash> BusinessVehicles = {
 	// Business Update
 	1341619767, //  Vestra
 	767087018, //  Alpha
@@ -519,7 +528,7 @@ std::vector<Hash> BusinessVehicles = {
 	408192225, //  Turismor
 };
 
-std::vector<Hash> HighLifeVehicles = {
+static const std::vector<Hash> HighLifeVehicles = {
 	// The High Life
 	1836027715, //  Thrust
 	486987393, //  Huntley
@@ -527,7 +536,7 @@ std::vector<Hash> HighLifeVehicles = {
 	2891838741, //  Zentorno
 };
 
-std::vector<Hash> FlightSchoolVehicles = {
+static const std::vector<Hash> FlightSchoolVehicles = {
 	// Flight School
 	3955379698, //  Swift
 	1824333165, //  Besra
@@ -535,14 +544,14 @@ std::vector<Hash> FlightSchoolVehicles = {
 	1011753235, //  Coquette2
 };
 
-std::vector<Hash> ValentineVehicles = {
+static const std::vector<Hash> ValentineVehicles = {
 	// Valentine Day
 	117401876, //  BType
 	972671128, //  Tampa
 	3692679425, //  BType3
 };
 
-std::vector<Hash> SPUpgradeVehicles = {
+static const std::vector<Hash> SPUpgradeVehicles = {
 	// Console to PC
 	3228633070, //  Submersible2
 	1039032026, //  Blista2
@@ -559,7 +568,7 @@ std::vector<Hash> SPUpgradeVehicles = {
 	237764926, //  Buffalo3
 };
 
-std::vector<Hash> CunningStunts2Vehicles = {
+static const std::vector<Hash> CunningStunts2Vehicles = {
 	// Cunning_Stunts Special Vehicle Circuit
 	0x4992196C, //  GP1                 gp1                 GP1
 	0xC575DF11, //  TURISMO2            turismo2            Turismo Classic
@@ -567,7 +576,7 @@ std::vector<Hash> CunningStunts2Vehicles = {
 	0xAC33179C, //  INFERNUS2           infernus2           Infernus Classic
 };
 
-std::vector<Hash> ImportExportVehicles = {
+static const std::vector<Hash> ImportExportVehicles = {
 	// Import/Export
 	0x28AD20E1, //  BOXVILLE5           boxville5           Armored Boxville
 	0xA1355F67, //  BLAZER5             blazer5             Blazer Aqua
@@ -595,7 +604,7 @@ std::vector<Hash> ImportExportVehicles = {
 	0x8E08EC82, //  WASTLNDR            NOTFOUND            Wastelander
 };
 
-std::vector<Hash> GunrunningVehicles = {
+static const std::vector<Hash> GunrunningVehicles = {
 	// Gunrunning
 	0x2189D250, //  APC                 apc                 APC
 	0x8FD54EBB, //  TRSMALL2            NOTFOUND            Anti - Aircraft Trailer
@@ -616,14 +625,4 @@ std::vector<Hash> GunrunningVehicles = {
 	0x7397224C, //  VAGNER              vagner              Vagner
 	0xB7D9F7F1, //  TAMPA3              tampa3              Weaponized Tampa
 	0x36B4A8A9, //  XA21                xa21                XA - 21
-};
-
-std::vector<Hash> LowriderCCVehicles = {
-	3395457658, //  Virgo2
-	16646064, //  Virgo3
-	1119641113, //  SlamVan3
-	2255212070, //  Faction3
-	223258115, //  SabreGT2
-	2497353967, //  Tornado5
-	3168702960, //  Minivan2
 };

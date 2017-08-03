@@ -112,3 +112,59 @@ uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 
 	return 0;
 }
+
+uint64_t g_fwTxdStore;
+uint32_t g_dataSize;
+using Hash = unsigned long;
+
+void MemoryAccess::initTxdStore() {
+	uint64_t patternAddr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
+									   "xxx????x????xxx");
+	g_fwTxdStore = patternAddr + *(int*)(patternAddr + 3) + 7;
+
+	patternAddr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
+							  "xxx????xxxxxxxxx");
+	g_dataSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
+}
+
+std::vector<std::string> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
+	std::vector<std::string> vecTextures;
+
+	if (g_fwTxdStore && g_fwTxdStore != 7)
+	{
+		uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
+		if (txds)
+		{
+			uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
+			for (uint16_t i = 0; i < size - 1; i++)
+			{
+				Hash hash = *(Hash*)(txds + i * 8);
+				if (hash != txdHash) continue;
+
+				uint16_t index = *(uint16_t*)(txds + i * 8 + 4);
+				if (index == -1) continue;
+
+				uint64_t pgDictionaryCollection = *(uint64_t*)(g_fwTxdStore + 0x38);
+				if (pgDictionaryCollection)
+				{
+					rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_dataSize);
+					if (dictionary)
+					{
+						rage::grcTexture** textures = dictionary->textures;
+						if (textures)
+						{
+							uint16_t count = dictionary->textureCount;
+							for (uint16_t j = 0; j < count; j++)
+							{
+								if (textures[j] == nullptr) continue;
+								vecTextures.push_back(textures[j]->name);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return vecTextures;
+}

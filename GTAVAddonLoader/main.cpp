@@ -54,7 +54,7 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 			logger.Write(("dlcpacks scan success: " + std::to_string(dlcpackFolders.size()) + " folders").c_str());
 		}
 		else {
-			logger.Write("dlcpacks scan failed");
+			logger.Write("dlcpacks scan failed! Not using a mods folder?");
 		}
 		break;
 	case DLL_PROCESS_DETACH:

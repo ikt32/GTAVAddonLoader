@@ -33,6 +33,9 @@ using AddonImageMeta = std::tuple<std::string, int, int>;
 // className, vehicleHash
 using AddonVehicle = std::pair<std::string, Hash>;
 
+// dict, name, textureNameHash
+using SpriteInfo = std::tuple<std::string, std::string, Hash>;
+
 NativeMenu::Menu menu;
 NativeMenu::MenuControls controls;
 Settings settings;
@@ -45,6 +48,8 @@ Ped playerPed;
 
 int prevNotification;
 
+std::vector<Hash> Vehicles;
+
 std::vector<AddonVehicle> g_addonVehicles;
 std::set<std::string> g_addonClasses;
 
@@ -55,6 +60,58 @@ std::vector<std::future<void>> futures;
 std::vector<std::thread> threads;
 
 int noImageHandle;
+
+std::vector<SpriteInfo> g_spriteInfos;
+
+
+std::vector<std::string> websiteDicts = {
+	"candc_apartments",
+	"candc_default",
+	"candc_executive1",
+	"candc_gunrunning",
+	"candc_importexport",
+	"candc_truck",
+	"dock_default",
+	"dock_dlc_executive1",
+	"elt_default",
+	"elt_dlc_apartments",
+	"elt_dlc_executive1",
+	"elt_dlc_pilot",
+	"foreclosures_bunker",
+	"lgm_default",
+	"lgm_dlc_apartments",
+	"lgm_dlc_biker",
+	"lgm_dlc_business2",
+	"lgm_dlc_business",
+	"lgm_dlc_executive1",
+	"lgm_dlc_gunrunning",
+	"lgm_dlc_heist",
+	"lgm_dlc_importexport",
+	"lgm_dlc_jan2016",
+	"lgm_dlc_lts_creator",
+	"lgm_dlc_luxe",
+	"lgm_dlc_pilot",
+	"lgm_dlc_specialraces",
+	"lgm_dlc_stunt",
+	"lgm_dlc_valentines2",
+	"lgm_dlc_valentines",
+	"lsc_default",
+	"lsc_dlc_import_export",
+	"lsc_lowrider2",
+	"pandm_default",
+	"sssa_default",
+	"sssa_dlc_bikersssa_dlc_business",
+	"sssa_dlc_business2",
+	"sssa_dlc_christmas_3",
+	"sssa_dlc_executive_1",
+	"sssa_dlc_halloween",
+	"sssa_dlc_heist",
+	"sssa_dlc_hipster",
+	"sssa_dlc_independence",
+	"sssa_dlc_lts_creator",
+	"sssa_dlc_mp_to_sp",
+	"sssa_dlc_stunt"
+};
 
 class DLC {
 public:
@@ -84,6 +141,24 @@ Hash joaat(std::string s) {
 	return hash;
 }
 
+
+void resolveVehicleSpriteInfo() {
+	g_spriteInfos.clear();
+	for (std::string dict : websiteDicts) {
+		logger.Write("[" + dict + "]");
+		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED(CharAdapter(dict))) {
+			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT(CharAdapter(dict), false);
+		}
+		Hash hash = joaat(dict);
+		std::vector<std::string> textures = MemoryAccess::GetTexturesFromTxd(hash);
+		for (std::string texture : textures) {
+			g_spriteInfos.push_back(std::make_tuple(dict, texture, joaat(texture)));
+			logger.Write(dict + " " + texture);
+		}
+	}
+}
+
+
 void resolveImgs() {
 	g_addonImageMetadata.clear();
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
@@ -105,6 +180,18 @@ bool isPresentinAddonImages(Hash hash, AddonImage *addonImageResult) {
 	if (g_addonImages.end() != addonImage) {
 		if (addonImageResult != nullptr) 
 			*addonImageResult = *addonImage;
+		return true;
+	}
+	return false;
+}
+
+bool isPresentinTextures(Hash hash, SpriteInfo * spriteResult) {
+	auto sprite = std::find_if(g_spriteInfos.begin(), g_spriteInfos.end(), [&hash](const SpriteInfo& element) {
+		return std::get<2>(element) == hash;
+	});
+	if (g_spriteInfos.end() != sprite) {
+		if (spriteResult != nullptr)
+			*spriteResult = *sprite;
 		return true;
 	}
 	return false;
@@ -245,6 +332,8 @@ void cacheDLCs() {
 }
 
 void cacheAddons() {
+	resolveVehicleSpriteInfo();
+
 	std::packaged_task<void()> task(&resolveImgs);
 	auto f = task.get_future();
 	std::thread thread(std::move(task));
@@ -379,6 +468,52 @@ void spawnVehicle(Hash hash) {
 	}
 }
 
+
+std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle) {
+	std::vector<std::string> extras;
+
+	auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.second);
+	std::string modkitsInfo;
+	for (auto kit : modkits) {
+		if (kit == modkits.back()) {
+			modkitsInfo += std::to_string(kit);
+		}
+		else {
+			modkitsInfo += std::to_string(kit) + ", ";
+		}
+	}
+
+	auto hashIt = std::find(Vehicles.begin(), Vehicles.end(), addonVehicle.second);
+	AddonImage addonImage;
+	SpriteInfo spriteInfo;
+	if (isPresentinAddonImages(addonVehicle.second, &addonImage)) {
+		extras.push_back(menu.ImagePrefix + std::to_string(std::get<1>(addonImage)) +
+			"W" + std::to_string(std::get<2>(addonImage)) +
+			"H" + std::to_string(std::get<3>(addonImage)));
+	}
+	else if (hashIt != Vehicles.end() && isPresentinTextures(addonVehicle.second, &spriteInfo)) {
+		extras.push_back(menu.SpritePrefix +
+			std::get<0>(spriteInfo) + " " +
+			std::get<1>(spriteInfo) + " " +
+			"W" + std::to_string(320) +
+			"H" + std::to_string(180));
+	}
+	else {
+		extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
+			"W" + std::to_string(320) +
+			"H" + std::to_string(180));
+	}
+
+	extras.push_back("Model name: \t" + guessModelName(addonVehicle.second));
+	if (modkitsInfo.size() > 0) {
+		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
+	}
+	else {
+		extras.push_back("Mod kit ID(s): \tNone");
+	}
+	return extras;
+}
+
 void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles) {
 	menu.Title(className);
 	menu.Subtitle("");
@@ -389,41 +524,15 @@ void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles) {
 			if (displayName == "NULL") {
 				displayName = name;
 			}
-			auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.second);
-			std::string modkitsInfo;
-			for( auto kit : modkits ) {
-				if (kit == modkits.back()) {
-					modkitsInfo += std::to_string(kit);
-				} 
-				else {
-					modkitsInfo += std::to_string(kit) + ", ";
-				}
-			}
 
-			std::vector<std::string> extras;
-			
-			AddonImage addonImage;
-			if (isPresentinAddonImages(addonVehicle.second, &addonImage)) {
-				extras.push_back(menu.ImagePrefix + std::to_string(std::get<1>(addonImage)) +
-								 "W" + std::to_string(std::get<2>(addonImage)) +
-								 "H" + std::to_string(std::get<3>(addonImage)));
-			}
-			else {
-				extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
-									"W" + std::to_string(320) +
-									"H" + std::to_string(180));
-			}
-
-			extras.push_back("Model name: \t" + guessModelName(addonVehicle.second));
-			if (modkitsInfo.size() > 0) {
-				extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
-			}
-			else {
-				extras.push_back("Mod kit ID(s): \tNone");
-			}
-
-			if (menu.OptionPlus(displayName, extras, nullptr, nullptr, "Add-on info", {})) {
+			std::vector<std::string> extras = {};
+			bool visible = false;
+			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Add-on info", {})) {
 				spawnVehicle(addonVehicle.second);
+			}
+			if (visible) {
+				extras = resolveVehicleInfo(addonVehicle);
+				menu.OptionPlusPlus(extras, "Add-on info");
 			}
 		}
 	}
@@ -560,6 +669,8 @@ void update_game() {
 
 void main() {
 	logger.Write("Script started");
+
+	MemoryAccess::initTxdStore();
 
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
 	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";

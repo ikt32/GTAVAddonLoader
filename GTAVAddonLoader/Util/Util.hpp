@@ -21,19 +21,18 @@ void showNotification(const char* message, int *prevNotification = nullptr);
 void showSubtitle(std::string message, int duration = 2500);
 
 //http://stackoverflow.com/questions/36789380/how-to-store-a-const-char-to-a-char
-class CharAdapter
-{
+class CharAdapter {
 public:
 	explicit CharAdapter(const char* s) : m_s(::_strdup(s)) { }
+	explicit CharAdapter(std::string str) : m_s(::_strdup(str.c_str())) { }
+
 	CharAdapter(const CharAdapter& other) = delete; // non construction-copyable
 	CharAdapter& operator=(const CharAdapter&) = delete; // non copyable
-	
-	~CharAdapter() /*free memory on destruction*/
-	{
+
+	~CharAdapter() /*free memory on destruction*/ {
 		::free(m_s); /*use free to release strdup memory*/
 	}
-	operator char*() /*implicit cast to char* */
-	{
+	operator char*() /*implicit cast to char* */ {
 		return m_s;
 	}
 
