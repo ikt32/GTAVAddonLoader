@@ -7,7 +7,6 @@
 #include <array>
 #include <vector>
 
-
 // This is ripped straight from ScriptHookVDotNet/zorg93!
 inline bool bittest(int data, unsigned char index)
 {
@@ -114,7 +113,7 @@ uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 }
 
 uint64_t g_fwTxdStore;
-uint32_t g_dataSize;
+uint32_t g_txdCollectionItemSize;
 using Hash = unsigned long;
 
 void MemoryAccess::initTxdStore() {
@@ -124,40 +123,36 @@ void MemoryAccess::initTxdStore() {
 
 	patternAddr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
 							  "xxx????xxxxxxxxx");
-	g_dataSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
+	g_txdCollectionItemSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
 }
 
+// Thank you, Unknown Modder!
 std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 	std::vector<rage::grcTexture *> vecTextures;
 
-	if (g_fwTxdStore && g_fwTxdStore != 7)
-	{
+	if (g_fwTxdStore && g_fwTxdStore != 7) {
 		uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
-		if (txds)
-		{
+		if (txds) {
 			uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
-			for (uint16_t i = 0; i < size - 1; i++)
-			{
+			
+			// This doesn't quite work somehow for me.
+			//for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
+			for (uint16_t i = 0; i < size - 1; i++) {
 				Hash hash = *(Hash*)(txds + i * 8);
 				if (hash != txdHash) continue;
 
 				uint16_t index = *(uint16_t*)(txds + i * 8 + 4);
-				if (index == -1) continue;
+				if (index == -1) break;
 
 				uint64_t pgDictionaryCollection = *(uint64_t*)(g_fwTxdStore + 0x38);
-				if (pgDictionaryCollection)
-				{
-					rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_dataSize);
-					if (dictionary)
-					{
+				if (pgDictionaryCollection) {
+					rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_txdCollectionItemSize);
+					if (dictionary) {
 						rage::grcTexture** textures = dictionary->textures;
-						if (textures)
-						{
+						if (textures) {
 							uint16_t count = dictionary->textureCount;
-							for (uint16_t j = 0; j < count; j++)
-							{
+							for (uint16_t j = 0; j < count; j++) {
 								if (textures[j] == nullptr) continue;
-								//vecTextures.push_back(textures[j]->name);
 								vecTextures.push_back(textures[j]);
 							}
 						}
@@ -166,6 +161,5 @@ std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 			}
 		}
 	}
-
 	return vecTextures;
 }
