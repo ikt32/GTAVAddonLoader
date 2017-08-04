@@ -104,9 +104,9 @@ Hash joaat(std::string s) {
 
 void resolveVehicleSpriteInfo() {
 	g_spriteInfos.clear();
-	for (std::string dict : WebsiteDicts) {
-		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED(CharAdapter(dict))) {
-			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT(CharAdapter(dict), false);
+	for (auto dict : WebsiteDicts) {
+		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
+			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
 		}
 		Hash hash = joaat(dict);
 		std::vector<rage::grcTexture *> textures = MemoryAccess::GetTexturesFromTxd(hash);
@@ -551,7 +551,7 @@ void update_menu() {
 			}
 
 			if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
-				spawnVehicle(GAMEPLAY::GET_HASH_KEY(CharAdapter(manualVehicleName.c_str())));
+				spawnVehicle(GAMEPLAY::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
 			}
 		}
 
