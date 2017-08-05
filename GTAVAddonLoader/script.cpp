@@ -63,6 +63,9 @@ std::vector<Hash> Vehicles;
 std::vector<AddonVehicle> g_addonVehicles;
 std::set<std::string> g_addonClasses;
 
+std::vector<AddonVehicle> g_dlcVehicles;
+std::set<std::string> g_dlcClasses;
+
 std::vector<AddonImage> g_addonImages;
 std::vector<AddonImageMeta> g_addonImageMetadata;
 
@@ -108,15 +111,14 @@ void resolveVehicleSpriteInfo() {
 		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
 			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
 		}
-		Hash hash = joaat(dict);
-		std::vector<rage::grcTexture *> textures = MemoryAccess::GetTexturesFromTxd(hash);
+		auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
 		for (auto texture : textures) {
 			g_spriteInfos.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
 		}
 	}
 }
 
-
+// Uses file operations
 void resolveImgs() {
 	g_addonImageMetadata.clear();
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
@@ -154,6 +156,7 @@ bool isPresentinTextures(Hash hash, SpriteInfo * spriteResult) {
 	return false;
 }
 
+// Uses createTexture()
 void resolveImgs2() {
 	for (auto metadata : g_addonImageMetadata) {
 		auto fileName = std::get<0>(metadata);
@@ -168,6 +171,7 @@ void resolveImgs2() {
 			noImageHandle = handle;
 		g_addonImages.push_back(std::make_tuple(hash, handle, width, height));
 	}
+	logger.Write("Found " + std::to_string(g_addonImages.size()) + " preview images.");
 }
 
 void checkThread() {
@@ -232,6 +236,16 @@ bool predicateHashByName(Hash h1, Hash h2) {
 	return name1 < name2;
 }
 
+// use better names, ikt.
+bool predicateAddonVehicleHashByName(AddonVehicle a1, AddonVehicle a2) {
+	std::string name1 = prettyNameFromHash(a1.second);
+	std::string name2 = prettyNameFromHash(a2.second);
+	if (name1 == name2) {
+		return guessModelName(a1.second) < guessModelName(a2.second);
+	}
+	return name1 < name2;
+}
+
 void updateSettings() {
 	settings.SaveSettings();
 	settings.ReadSettings();
@@ -240,17 +254,28 @@ void updateSettings() {
 
 void sortDLCVehicles() {
 	for (auto &dlc : dlcs) {
+		dlc.Vehicles.clear();
 		for (auto hash : dlc.Hashes) {
 			if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
 				continue;
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			std::string className = UI::_GET_LABEL_TEXT(buffer);
-
 			dlc.Vehicles.push_back(std::make_pair(className, hash));
 			dlc.Classes.emplace(className);
 		}
 	}
+	g_dlcVehicles.clear();
+	g_dlcClasses.clear();
+	for (auto dlc : dlcs) {
+		for (AddonVehicle vehicle : dlc.Vehicles) {
+			g_dlcVehicles.push_back(vehicle);
+		}
+		for (auto dlcClass : dlc.Classes) {
+			g_dlcClasses.emplace(dlcClass);
+		}
+	}
+	std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), predicateAddonVehicleHashByName);
 }
 
 void buildDLClist() {
@@ -289,15 +314,6 @@ void cacheDLCs() {
 }
 
 void cacheAddons() {
-	resolveVehicleSpriteInfo();
-
-	std::packaged_task<void()> task(&resolveImgs);
-	auto f = task.get_future();
-	std::thread thread(std::move(task));
-	futures.push_back(std::move(f));
-	thread.detach();
-
-	updateSettings();
 	if (!g_addonVehicles.empty())
 		return;
 	std::vector<Hash> allVehicles;
@@ -356,19 +372,6 @@ void buildBlacklist() {
 			Vehicles.push_back(hash);
 		}
 	}
-}
-
-void init() {
-	settings.ReadSettings();
-	menu.ReadSettings();
-	logger.Write("Settings read");
-	logger.Write("Initialization finished");
-	buildDLClist();
-	buildBlacklist();
-	cacheAddons();
-
-	if (settings.ListAllDLCs)
-		cacheDLCs();
 }
 
 void spawnVehicle(Hash hash) {
@@ -471,9 +474,9 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 	return extras;
 }
 
-void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles) {
+void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles, std::string origin) {
 	menu.Title(className);
-	menu.Subtitle("");
+	menu.Subtitle(origin);
 	for (auto addonVehicle : addonVehicles) {
 		if (className == addonVehicle.first) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.second);
@@ -527,7 +530,22 @@ std::string evaluateInput() {
 	return manualVehicleName;
 }
 
-void clearStuff() {
+void onMenuOpen() {
+	updateSettings();
+
+	cacheAddons();
+	cacheDLCs();
+
+	resolveVehicleSpriteInfo();
+
+	std::packaged_task<void()> task(&resolveImgs);
+	auto f = task.get_future();
+	std::thread thread(std::move(task));
+	futures.push_back(std::move(f));
+	thread.detach();
+}
+
+void onMenuExit() {
 	manualVehicleName.clear();
 }
 
@@ -537,7 +555,8 @@ void update_menu() {
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
 		menu.Subtitle(DISPLAY_VERSION, false);
-		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) { settings.SaveSettings(); }
+
+		menu.MenuOption("Settings","settingsmenu");
 
 		if (settings.SpawnByName) {
 			std::vector<std::string> extraSpawnInfo = {
@@ -556,7 +575,12 @@ void update_menu() {
 		}
 
 		if (settings.ListAllDLCs) {
-			menu.MenuOption("Spawn official DLCs", "officialdlcmenu");
+			if (settings.MergeDLCs) {
+				menu.MenuOption("Spawn official DLCs", "officialdlcmergedmenu");
+			}
+			else {
+				menu.MenuOption("Spawn official DLCs", "officialdlcmenu");
+			}
 		}
 
 		for (auto className : g_addonClasses) {
@@ -564,39 +588,85 @@ void update_menu() {
 		}
 	}
 
-	for (auto className : g_addonClasses) {
-		if (menu.CurrentMenu(className)) { spawnMenu(className, g_addonVehicles); }
-	}
+	if (menu.CurrentMenu("settingsmenu")) {
+		menu.Title("Settings");
+		menu.Subtitle("Add-on spawner settings");
 
-	if (menu.CurrentMenu("officialdlcmenu")) {
-		menu.Title("Official DLC");
-		menu.Subtitle("");
+		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) {
+			settings.SaveSettings();
+		}
+		if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
+			settings.SaveSettings();
+		}
+		if (menu.BoolOption("List all DLCs", settings.ListAllDLCs, 
+			{ "Show all official DLC vehicles."
+			  " These will appear in their own submenu, sorted per class, per DLC."})) {
+			settings.SaveSettings();
+		}
+		if (menu.BoolOption("Merge DLCs", settings.MergeDLCs, 
+			{ "Don't sort per DLC and just show the vehicles per class."})) {
+			settings.SaveSettings();
+		}
+		if (menu.Option("Reload previews", { "Reload your image previews. Not required when adding previews, "
+											 "but useful if previews are changed."})) {
+			resolveVehicleSpriteInfo();
+			g_addonImages.clear();
 
-		for (auto dlc : dlcs) {
-			menu.MenuOption(dlc.Name, dlc.Name);
+			std::packaged_task<void()> task(&resolveImgs);
+			auto f = task.get_future();
+			std::thread thread(std::move(task));
+			futures.push_back(std::move(f));
+			thread.detach();
 		}
 	}
 
+	for (auto className : g_addonClasses) {
+		if (menu.CurrentMenu(className)) { spawnMenu(className, g_addonVehicles, "Add-on vehicles"); }
+	}
 
-	for (auto dlc : dlcs) {
-		if (menu.CurrentMenu(dlc.Name)) {
-			menu.Title(dlc.Name);
+	if (!settings.MergeDLCs) {
+		if (menu.CurrentMenu("officialdlcmenu")) {
+			menu.Title("Official DLC");
 			menu.Subtitle("");
 
-			for (auto className : dlc.Classes) {
-				menu.MenuOption(className, dlc.Name + " " + className);
-			}
-			if (dlc.Classes.empty()) {
-				menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
-				"Game version: " + eGameVersionToString(getGameVersion())});
+			for (auto dlc : dlcs) {
+				menu.MenuOption(dlc.Name, dlc.Name);
 			}
 		}
-		for (auto className : dlc.Classes) {
-			if (menu.CurrentMenu(dlc.Name + " " + className)) {
-				menu.Title(className);
 
-				spawnMenu(className, dlc.Vehicles);
+		for (auto dlc : dlcs) {
+			if (menu.CurrentMenu(dlc.Name)) {
+				menu.Title(dlc.Name);
+				menu.Subtitle("By DLC");
+
+				for (auto className : dlc.Classes) {
+					menu.MenuOption(className, dlc.Name + " " + className);
+				}
+				if (dlc.Classes.empty()) {
+					menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
+								"Game version: " + eGameVersionToString(getGameVersion()) });
+				}
 			}
+			for (auto className : dlc.Classes) {
+				if (menu.CurrentMenu(dlc.Name + " " + className)) {
+					menu.Title(className);
+
+					spawnMenu(className, dlc.Vehicles, dlc.Name);
+				}
+			}
+		}
+	}
+	else {
+		if (menu.CurrentMenu("officialdlcmergedmenu")) {
+			menu.Title("Official DLC");
+			menu.Subtitle("Merged");
+
+			for (auto className : g_dlcClasses) {
+				menu.MenuOption(className, "dlc_" + className);
+			}
+		}
+		for (auto className : g_dlcClasses) {
+			if (menu.CurrentMenu("dlc_" + className)) { spawnMenu(className, g_dlcVehicles, "Original + All DLCs"); }
 		}
 	}
 
@@ -627,17 +697,26 @@ void update_game() {
 void main() {
 	logger.Write("Script started");
 
-	MemoryAccess::initTxdStore();
-
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
 	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
 	settings.SetFiles(settingsGeneralFile);
-	logger.Write("Loading " + settingsGeneralFile);
-	menu.RegisterOnMain(std::bind(cacheAddons));
-	menu.RegisterOnExit(std::bind(clearStuff));
-	menu.SetFiles(settingsMenuFile);
+	settings.ReadSettings();
 
-	init();
+	menu.RegisterOnMain(std::bind(onMenuOpen));
+	menu.RegisterOnExit(std::bind(onMenuExit));
+	menu.SetFiles(settingsMenuFile);
+	menu.ReadSettings();
+
+	logger.Write("Settings read");
+
+	MemoryAccess::initTxdStore();
+	buildDLClist();
+	buildBlacklist();
+	cacheAddons();
+	cacheDLCs();
+
+	logger.Write("Initialization finished");
+
 	while (true) {
 		update_game();
 		WAIT(0);

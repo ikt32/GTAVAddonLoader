@@ -18,6 +18,7 @@ public:
 	bool SpawnInside = false;
 	bool SpawnByName = false;
 	bool ListAllDLCs = false;
+	bool MergeDLCs = false;
 
 private:
 	std::string settingsGeneralFile;

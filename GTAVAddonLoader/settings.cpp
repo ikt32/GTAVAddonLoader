@@ -18,6 +18,7 @@ void Settings::ReadSettings() {
 	SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
 	SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
 	ListAllDLCs = settingsGeneral.GetBoolValue("OPTIONS", "ListAllDLCs", false);
+	MergeDLCs = settingsGeneral.GetBoolValue("OPTIONS", "MergeDLCs", false);
 }
 
 
@@ -27,5 +28,9 @@ void Settings::SaveSettings() {
 	settings.LoadFile(settingsGeneralFile.c_str());
 
 	settings.SetBoolValue("OPTIONS", "SpawnInside", SpawnInside);
+	settings.SetBoolValue("OPTIONS", "SpawnByName", SpawnByName);
+	settings.SetBoolValue("OPTIONS", "ListAllDLCs", ListAllDLCs);
+	settings.SetBoolValue("OPTIONS", "MergeDLCs", MergeDLCs);
+
 	settings.SaveFile(settingsGeneralFile.c_str());
 }
