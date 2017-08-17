@@ -127,9 +127,9 @@ void resolveImgs() {
 		int width;
 		int height;
 		fileName << file;
-		if (!GetIMGDimensions(fileName.str(), &width, &height))
-			continue;
-		g_addonImageMetadata.push_back(std::make_tuple(fileName.str(), width, height));
+		if (GetIMGDimensions(fileName.str(), &width, &height)) {
+			g_addonImageMetadata.push_back(std::make_tuple(fileName.str(), width, height));
+		}
 	}
 }
 

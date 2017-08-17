@@ -137,7 +137,7 @@ std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 			
 			// This doesn't quite work somehow for me.
 			//for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
-			for (uint16_t i = 0; i < size - 1; i++) {
+			for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
 				Hash hash = *(Hash*)(txds + i * 8);
 				if (hash != txdHash) continue;
 
