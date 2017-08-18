@@ -153,3 +153,27 @@ bool GetJPGDimensions(std::string file, int *width, int *height) {
 	fclose(image);
 	return true;
 }
+
+Hash joaat(std::string s) {
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+
+	Hash hash = 0;
+	for (int i = 0; i < s.size(); i++) {
+		hash += s[i];
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+	return hash;
+}
+
+std::string prettyNameFromHash(Hash hash) {
+	char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+	std::string displayName = UI::_GET_LABEL_TEXT(name);
+	if (displayName == "NULL") {
+		displayName = name;
+	}
+	return displayName;
+}

@@ -8,10 +8,21 @@ http://dev-c.com
 
 #include <string>
 #include <vector>
+#include <inc/types.h>
+#include "ExtraTypes.h"
 
 const std::string modDir  = "\\AddonSpawner";
 
 void ScriptMain();
-void joinRemainingThreads();
+
+void cacheAddons();
+void cacheDLCs();
+void resolveVehicleSpriteInfo();
+void resolveImgs();
+void update_menu();
+void onMenuOpen();
+void onMenuExit();
+void spawnVehicle(Hash hash);
+std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle);
 
 extern std::vector<std::string> dlcpackFolders;

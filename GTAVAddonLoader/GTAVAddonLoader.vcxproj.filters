@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\GTAVMenuBase\menuutils.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -79,6 +80,7 @@
     <ClInclude Include="..\..\GTAVMenuBase\menuutils.h">
       <Filter>Menu</Filter>
     </ClInclude>
+    <ClInclude Include="ExtraTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">

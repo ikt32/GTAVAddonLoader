@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "inc/types.h"
+#include <algorithm>
 
 struct Color {
 	int R;
@@ -42,3 +43,20 @@ bool GetIMGDimensions(std::string file, int *width, int *height);
 
 bool GetPNGDimensions(std::string file, int *width, int *height);
 bool GetJPGDimensions(std::string file, int *width, int *height);
+
+Hash joaat(std::string s);
+
+std::string prettyNameFromHash(Hash hash);
+
+template<typename T>
+bool isHashInImgVector(Hash hash, std::vector<T> things, T *result) {
+	auto addonImage = std::find_if(things.begin(), things.end(), [&hash](const T& element) {
+		return element.HashedName == hash;
+	});
+	if (things.end() != addonImage) {
+		if (result != nullptr)
+			*result = *addonImage;
+		return true;
+	}
+	return false;
+}

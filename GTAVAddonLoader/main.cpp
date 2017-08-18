@@ -59,7 +59,6 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 		break;
 	case DLL_PROCESS_DETACH:
 		scriptUnregister(hInstance);
-		joinRemainingThreads();
 		break;
 	}
 	return TRUE;
