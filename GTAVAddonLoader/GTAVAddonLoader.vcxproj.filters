@@ -31,6 +31,9 @@
       <Filter>Menu</Filter>
     </ClCompile>
     <ClCompile Include="ScriptMenu.cpp" />
+    <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp">
+      <Filter>thirdparty</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -81,6 +84,9 @@
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="ExtraTypes.h" />
+    <ClInclude Include="..\thirdparty\lodepng\lodepng.h">
+      <Filter>thirdparty</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">
@@ -91,6 +97,9 @@
     </Filter>
     <Filter Include="SDK">
       <UniqueIdentifier>{f35098a6-2e30-436c-9f96-a5d325064032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty">
+      <UniqueIdentifier>{371be4fb-f341-4041-adea-08b5ef342bb0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -66,8 +66,8 @@ void resolveImgs() {
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
 		std::stringstream fileName;
-		int width;
-		int height;
+		unsigned width;
+		unsigned height;
 		fileName << file;
 		if (GetIMGDimensions(fileName.str(), &width, &height)) {
 			g_addonImageMetadata.push_back(std::make_tuple(fileName.str(), width, height));
@@ -275,7 +275,6 @@ void spawnVehicle(Hash hash) {
 				return;
 			}
 		}
-
 
 		float offsetX = 0.0f;
 		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {

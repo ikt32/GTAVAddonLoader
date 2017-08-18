@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <fstream>
 #include <experimental/filesystem>
+#include <lodepng/lodepng.h>
+#include "Logger.hpp"
 
 namespace fs = std::experimental::filesystem;
 
@@ -77,18 +79,8 @@ void GameSound::Stop() {
 	Active = false;
 }
 
-// https://codereview.stackexchange.com/questions/149717/implementation-of-c-standard-library-function-ntohl
-uint32_t my_ntohl(uint32_t const net) {
-	uint8_t data[4] = {};
-	memcpy(&data, &net, sizeof(data));
 
-	return ((uint32_t)data[3] << 0)
-		| ((uint32_t)data[2] << 8)
-		| ((uint32_t)data[1] << 16)
-		| ((uint32_t)data[0] << 24);
-}
-
-bool GetIMGDimensions(std::string file, int *width, int *height) {
+bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height) {
 	auto ext = fs::path(file).extension();
 	if (ext == ".png" || ext == ".PNG")
 		return GetPNGDimensions(file, width, height);
@@ -97,22 +89,18 @@ bool GetIMGDimensions(std::string file, int *width, int *height) {
 	return false;
 }
 
-bool GetPNGDimensions(std::string file, int *width, int *height) {
-	std::ifstream in(file);
-	int _width, _height;
-
-	in.seekg(16);
-	in.read((char *)&_width, 4);
-	in.read((char *)&_height, 4);
-
-	*width = my_ntohl(_width);
-	*height = my_ntohl(_height);
-
+bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height) {
+	std::vector<unsigned char> image;
+	unsigned error = lodepng::decode(image, *width, *height, file);
+	if (error) {
+		logger.Write("ERROR: decoder error " + std::to_string(error) + ": " + lodepng_error_text(error));
+		return false;
+	}
 	return true;
 }
 
 //https://stackoverflow.com/questions/17847171/c-library-for-getting-the-jpeg-image-size
-bool GetJPGDimensions(std::string file, int *width, int *height) {
+bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
 	FILE *image = nullptr;
 
 	errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file

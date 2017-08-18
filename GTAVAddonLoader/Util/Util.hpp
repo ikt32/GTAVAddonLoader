@@ -39,10 +39,10 @@ private:
 	int m_prevNotification;
 };
 
-bool GetIMGDimensions(std::string file, int *width, int *height);
+bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height);
 
-bool GetPNGDimensions(std::string file, int *width, int *height);
-bool GetJPGDimensions(std::string file, int *width, int *height);
+bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height);
+bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height);
 
 Hash joaat(std::string s);
 
