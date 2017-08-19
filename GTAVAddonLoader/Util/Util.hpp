@@ -18,7 +18,7 @@ const Color solidWhite = {
 
 // Natives called
 void showText(float x, float y, float scale, const char* text, int font = 0, const Color &rgba = solidWhite, bool outline = false);
-void showNotification(const char* message, int *prevNotification = nullptr);
+void showNotification(std::string message, int *prevNotification = nullptr);
 void showSubtitle(std::string message, int duration = 2500);
 
 //https://github.com/CamxxCore/AirSuperiority
@@ -48,6 +48,11 @@ Hash joaat(std::string s);
 
 std::string prettyNameFromHash(Hash hash);
 
+
+/*
+* stl search thingy for checking if a *thing* is in a vector of *things*,
+* based on the public member named "HashedName".
+*/
 template<typename T>
 bool isHashInImgVector(Hash hash, std::vector<T> things, T *result) {
 	auto addonImage = std::find_if(things.begin(), things.end(), [&hash](const T& element) {

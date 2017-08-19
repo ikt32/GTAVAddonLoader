@@ -61,13 +61,11 @@ void updateSettings() {
 }
 
 void onMenuOpen() {
-	logger.Write("Menu opened");
 	updateSettings();
 	cacheAddons();
 	cacheDLCs();
 	resolveVehicleSpriteInfo();
 	resolveImgs();
-	logger.Write("Done whatever");
 }
 
 void onMenuExit() {
@@ -125,10 +123,14 @@ void update_menu() {
 
 		if (settings.ListAllDLCs) {
 			if (settings.MergeDLCs) {
-				menu.MenuOption("Spawn official DLCs", "officialdlcmergedmenu");
+				if (menu.MenuOption("Spawn official DLCs", "officialdlcmergedmenu")) {
+					resolveVehicleSpriteInfo();
+				}
 			}
 			else {
-				menu.MenuOption("Spawn official DLCs", "officialdlcmenu");
+				if (menu.MenuOption("Spawn official DLCs", "officialdlcmenu")) {
+					resolveVehicleSpriteInfo();
+				}
 			}
 		}
 
@@ -158,7 +160,12 @@ void update_menu() {
 		}
 		if (menu.Option("Reload previews", { "Reload your image previews. Not required when adding previews, "
 			"but useful if previews are changed." })) {
+
+			g_spriteInfos.clear();
 			resolveVehicleSpriteInfo();
+			
+			g_addonImages.clear();
+			g_addonImageMetadata.clear();
 			resolveImgs();
 		}
 	}
@@ -173,7 +180,9 @@ void update_menu() {
 			menu.Subtitle("");
 
 			for (auto dlc : g_dlcs) {
-				menu.MenuOption(dlc.Name, dlc.Name);
+				if (menu.MenuOption(dlc.Name, dlc.Name)) {
+					resolveVehicleSpriteInfo();
+				}
 			}
 		}
 
@@ -183,7 +192,9 @@ void update_menu() {
 				menu.Subtitle("By DLC");
 
 				for (auto className : dlc.Classes) {
-					menu.MenuOption(className, dlc.Name + " " + className);
+					if (menu.MenuOption(className, dlc.Name + " " + className)) {
+						resolveVehicleSpriteInfo();
+					}
 				}
 				if (dlc.Classes.empty()) {
 					menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",

@@ -6,6 +6,7 @@
 #include <set>
 #include <sstream>
 #include <vector>
+#include <chrono>
 
 #include <inc/natives.h>
 #include <menu.h>
@@ -46,54 +47,80 @@ std::vector<AddonImageMeta> g_addonImageMetadata;
 std::vector<SpriteInfo> g_spriteInfos;
 std::vector<DLC> g_dlcs;
 
+/*
+ * Keep searching for sprites until we're all done. The current value applies for
+ * b1103, but if people care to contribute, the texture count for other versions
+ * can be added too.
+ * Since this function is pretty fast (thanks to Unknown Modder), running it lots
+ * shouldn't be problematic.
+ * Strangely, it takes multiple tries to get all dictionaries loaded. Calling
+ * this a bunch of times when opening DLC-related menus should populate the
+ * list fully before the user arrived at something with a picture.
+ */
 void resolveVehicleSpriteInfo() {
-	g_spriteInfos.clear();
+	if (g_spriteInfos.size() == expectedPreviewSprites)
+		return;
+
 	for (auto dict : WebsiteDicts) {
-		if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
-			GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
-		}
+		GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
+	}
+	for (auto dict : WebsiteDicts) {
+		GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
 		auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
 		for (auto texture : textures) {
-			g_spriteInfos.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
+			SpriteInfo thing;
+			if (!isHashInImgVector(joaat(texture->name), g_spriteInfos, &thing)) {
+				g_spriteInfos.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
+			}
 		}
 	}
+	logger.Write("Found " + std::to_string(g_spriteInfos.size()) + " preview sprites (dict)");
 }
 
-// Uses file operations
+/*
+ * Resolving images takes a while on first open, but after it's done
+ * we can just skip this. 
+ */
 void resolveImgs() {
-	g_addonImages.clear();
-	g_addonImageMetadata.clear();
+	if (!g_addonImages.empty())
+		return;
+
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
-		std::stringstream fileName;
+		Hash hash = joaat(fs::path(file).stem().string());
+		std::string fileName = fs::path(file).string();
 		unsigned width;
 		unsigned height;
-		fileName << file;
-		if (GetIMGDimensions(fileName.str(), &width, &height)) {
-			g_addonImageMetadata.push_back(std::make_tuple(fileName.str(), width, height));
+		if (GetIMGDimensions(fileName, &width, &height)) {
+			g_addonImageMetadata.push_back(std::make_tuple(fs::path(file).string(), width, height));
 		}
-	}
-	for (auto metadata : g_addonImageMetadata) {
-		auto fileName = std::get<0>(metadata);
-		Hash hash = joaat(fs::path(fileName).stem().string());
-		AddonImage thing;
-		if (isHashInImgVector(hash, g_addonImages, &thing)) {
-			continue;
-		}
-		auto width = std::get<1>(metadata);
-		auto height = std::get<2>(metadata);
 		int handle = createTexture(fileName.c_str());
 		if (hash == joaat("noimage"))
 			noImageHandle = handle;
 		g_addonImages.push_back(AddonImage(handle, hash, width, height));
 	}
-	logger.Write("Found " + std::to_string(g_addonImages.size()) + " preview images.");
+	logger.Write("Found " + std::to_string(g_addonImages.size()) + " preview images (img/)");
 }
 
+/*
+ * Guess model names based on 
+ * 1. model name
+ * 2. dlcpacks folder name
+ * 3. add-on image
+ */
 std::string guessModelName(Hash hash) {
+	// Try display name otherwise (correct vehicles.meta, other package name)
+	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+	if (joaat(displayName) == hash) return displayName;
+	for (int i = 0; i <= 9; i++) {
+		if (joaat(displayName + std::to_string(i)) == hash) return displayName + std::to_string(i);
+	}
+	for (char c = 'a'; c <= 'z'; c++) {
+		if (joaat(displayName + c) == hash) return displayName + c;
+	}
+
 	// Try dlcpacks dir name (if said DLC only contains the car + variations)
 	for (auto folderName : dlcpackFolders) {
-		std::transform(folderName.begin(), folderName.end(), folderName.begin(), ::tolower);
 		if (joaat(folderName) == hash) return folderName;
 		for (int i = 0; i <= 9; i++) {
 			if (joaat(folderName + std::to_string(i)) == hash) return folderName + std::to_string(i);
@@ -110,25 +137,17 @@ std::string guessModelName(Hash hash) {
 		if (hash == joaat(modelName)) return modelName;
 	}
 
-	// Try display name otherwise (correct vehicles.meta, other package name)
-	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-	std::transform(displayName.begin(), displayName.end(), displayName.begin(), ::tolower);
-	if (joaat(displayName) == hash) return displayName;
-	for (int i = 0; i <= 9; i++) {
-		if (joaat(displayName + std::to_string(i)) == hash) return displayName + std::to_string(i);
-	}
-	for (char c = 'a'; c <= 'z'; c++) {
-		if (joaat(displayName + c) == hash) return displayName + c;
-	}
 	return "NOTFOUND";
 }
 
+// sorting thing
 bool predicateHashByName(Hash h1, Hash h2) {
 	std::string name1 = prettyNameFromHash(h1);
 	std::string name2 = prettyNameFromHash(h2);
 	return name1 < name2;
 }
 
+// sorting thing 2
 bool predicateAddonVehicleHashByName(AddonVehicle a1, AddonVehicle a2) {
 	std::string name1 = prettyNameFromHash(a1.second);
 	std::string name2 = prettyNameFromHash(a2.second);
@@ -194,11 +213,22 @@ void buildDLClist() {
 	};
 }
 
+/*
+ * Initialize DLCs and used classes. Categorizes things, though it
+ * does feel bad that the specific DLCs aren't retrievable. Adding
+ * is easy though, so no harm done.
+ */
 void cacheDLCs() {
+	if (!g_dlcVehicles.empty())
+		return;
 	buildDLClist();
 	cacheDLCVehicles();
 }
 
+/*
+ * Initialize add-ons and used classes. This is ran first so
+ * the log outputs a thing.
+ */
 void cacheAddons() {
 	if (!g_addonVehicles.empty())
 		return;
@@ -251,6 +281,9 @@ void cacheAddons() {
 	}
 }
 
+/*
+ * Filter the official DLCs from the list of all vehicles.
+ */
 void buildBlacklist() {
 	Vehicles.clear();
 	for (auto dlc : g_dlcs) {
@@ -260,6 +293,13 @@ void buildBlacklist() {
 	}
 }
 
+/*
+ * Spawns a vehicle with the chosen model hash. Put it on the player when not
+ * already in a vehicle, and puts it to the right when a vehicle is already 
+ * occupied. Bounding-box dependent, so spawning two jumbojets should have
+ * clearance for non-explodiness, and two bikes are spaced without too much
+ * distance between 'em.
+ */
 void spawnVehicle(Hash hash) {
 	if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash)) {
 		STREAMING::REQUEST_MODEL(hash);
@@ -367,7 +407,6 @@ void update_game() {
 	player = PLAYER::PLAYER_ID();
 	playerPed = PLAYER::PLAYER_PED_ID();
 
-	// check if player ped exists and control is on (e.g. not in a cutscene)
 	if (!ENTITY::DOES_ENTITY_EXIST(playerPed)) {
 		menu.CloseMenu();
 		return;

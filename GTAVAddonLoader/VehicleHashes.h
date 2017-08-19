@@ -628,6 +628,7 @@ static const std::vector<Hash> GunrunningVehicles = {
 };
 
 
+static const unsigned expectedPreviewSprites = 893;
 
 static const std::vector<std::string> WebsiteDicts = {
 	"candc_apartments",

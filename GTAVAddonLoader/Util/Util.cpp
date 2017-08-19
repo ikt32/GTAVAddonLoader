@@ -2,7 +2,6 @@
 #include "../../../ScriptHookV_SDK/inc/natives.h"
 #include "Util.hpp"
 #include <algorithm>
-#include <fstream>
 #include <experimental/filesystem>
 #include <lodepng/lodepng.h>
 #include "Logger.hpp"
@@ -21,13 +20,13 @@ void showText(float x, float y, float scale, const char* text, int font, const C
 	UI::END_TEXT_COMMAND_DISPLAY_TEXT(x, y);
 }
 
-void showNotification(const char* message, int *prevNotification) {
+void showNotification(std::string message, int *prevNotification) {
 	if (prevNotification != nullptr && *prevNotification != 0) {
 		UI::_REMOVE_NOTIFICATION(*prevNotification);
 	}
 	UI::_SET_NOTIFICATION_TEXT_ENTRY("STRING");
 
-	UI::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message));
+	UI::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.c_str()));
 	
 	int id = UI::_DRAW_NOTIFICATION(false, false);
 	if (prevNotification != nullptr) {
@@ -35,7 +34,6 @@ void showNotification(const char* message, int *prevNotification) {
 	}
 }
 
-// gracefully borrowed from FiveM <3
 void showSubtitle(std::string message, int duration) {
 	UI::BEGIN_TEXT_COMMAND_PRINT("CELL_EMAIL_BCON");
 
