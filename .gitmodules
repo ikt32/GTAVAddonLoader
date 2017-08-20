@@ -4,3 +4,6 @@
 [submodule "thirdparty/simpleini"]
 	path = thirdparty/simpleini
 	url = https://github.com/brofield/simpleini
+[submodule "thirdparty/easyexif"]
+	path = thirdparty/easyexif
+	url = https://github.com/mayanklahiri/easyexif
