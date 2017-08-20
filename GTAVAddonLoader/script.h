@@ -18,7 +18,6 @@ void ScriptMain();
 void cacheAddons();
 void cacheDLCs();
 void resolveVehicleSpriteInfo();
-void resolveImgs();
 void update_menu();
 void onMenuOpen();
 void onMenuExit();

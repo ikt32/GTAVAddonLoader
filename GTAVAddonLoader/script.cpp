@@ -35,9 +35,11 @@ Player player;
 Ped playerPed;
 
 int prevNotification;
-int noImageHandle;
+
+AddonImage noImage;
 
 std::vector<Hash> Vehicles;
+std::vector<Hash> g_missingImage;
 std::vector<AddonVehicle> g_addonVehicles;
 std::set<std::string> g_addonClasses;
 std::vector<AddonVehicle> g_dlcVehicles;
@@ -78,28 +80,30 @@ void resolveVehicleSpriteInfo() {
 }
 
 /*
- * Resolving images takes a while on first open, but after it's done
- * we can just skip this. 
+ * Resolving images only when we need it. Should take just 1 tick after an option is selected.
+ * Only runs once per image.
  */
-void resolveImgs() {
-	if (!g_addonImages.empty())
-		return;
-
+void resolveImage(Hash selected) {
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
 		Hash hash = joaat(fs::path(file).stem().string());
+		if (hash != selected) continue;
+
 		std::string fileName = fs::path(file).string();
 		unsigned width;
 		unsigned height;
 		if (GetIMGDimensions(fileName, &width, &height)) {
 			g_addonImageMetadata.push_back(std::make_tuple(fs::path(file).string(), width, height));
 		}
+		else {
+			width = 480;
+			height = 270;
+		}
 		int handle = createTexture(fileName.c_str());
-		if (hash == joaat("noimage"))
-			noImageHandle = handle;
 		g_addonImages.push_back(AddonImage(handle, hash, width, height));
+		return;
 	}
-	logger.Write("Found " + std::to_string(g_addonImages.size()) + " preview images (img/)");
+	g_missingImage.push_back(selected);
 }
 
 /*
@@ -388,9 +392,13 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 			"H" + std::to_string(spriteInfo.ResY));
 	}
 	else {
-		extras.push_back(menu.ImagePrefix + std::to_string(noImageHandle) +
-			"W" + std::to_string(320) +
-			"H" + std::to_string(180));
+		extras.push_back(menu.ImagePrefix + std::to_string(noImage.TextureID) +
+			"W" + std::to_string(noImage.ResX) +
+			"H" + std::to_string(noImage.ResY));
+
+		if (std::find(g_missingImage.begin(), g_missingImage.end(), addonVehicle.second) == g_missingImage.end()) {
+			resolveImage(addonVehicle.second);
+		}
 	}
 
 	extras.push_back("Model name: \t" + guessModelName(addonVehicle.second));
@@ -436,6 +444,23 @@ void main() {
 	cacheAddons();
 	cacheDLCs();
 
+	Hash hash = joaat("noimage");
+	std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
+	if (FileExists(fileName)) {
+		unsigned width;
+		unsigned height;
+		if (!GetIMGDimensions(fileName, &width, &height)) {
+			width = 800;
+			height = 450;
+			logger.Write("Failed to get image proportions for noimage.png, using default values");
+		}
+		int handle = createTexture(fileName.c_str());
+		noImage = AddonImage(handle, hash, width, height);
+	}
+	else {
+		logger.Write("Missing img/noimage.png!");
+	}
+	
 	logger.Write("Initialization finished");
 
 	while (true) {

@@ -65,7 +65,6 @@ void onMenuOpen() {
 	cacheAddons();
 	cacheDLCs();
 	resolveVehicleSpriteInfo();
-	resolveImgs();
 }
 
 void onMenuExit() {
@@ -158,15 +157,12 @@ void update_menu() {
 		{ "Don't sort per DLC and just show the vehicles per class." })) {
 			settings.SaveSettings();
 		}
-		if (menu.Option("Reload previews", { "Reload your image previews. Not required when adding previews, "
-			"but useful if previews are changed." })) {
-
-			g_spriteInfos.clear();
+		if (menu.Option("Reload previews", { "Use for when you changed an image "
+			"that's already been loaded."})) {
 			resolveVehicleSpriteInfo();
 			
 			g_addonImages.clear();
 			g_addonImageMetadata.clear();
-			resolveImgs();
 		}
 	}
 

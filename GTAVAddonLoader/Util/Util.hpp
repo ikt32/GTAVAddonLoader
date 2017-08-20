@@ -65,3 +65,6 @@ bool isHashInImgVector(Hash hash, std::vector<T> things, T *result) {
 	}
 	return false;
 }
+
+bool FileExists(const std::string& name);
+
