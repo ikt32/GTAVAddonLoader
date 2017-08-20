@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <experimental/filesystem>
 #include <lodepng/lodepng.h>
+#include <easyexif/exif.h>
 #include "Logger.hpp"
 
 namespace fs = std::experimental::filesystem;
@@ -99,44 +100,16 @@ bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height) {
 
 //https://stackoverflow.com/questions/17847171/c-library-for-getting-the-jpeg-image-size
 bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
-	FILE *image = nullptr;
-
-	errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file
-	if (!image || err) {
+	easyexif::EXIFInfo result;
+	int error = result.parseFrom(file);
+	if (error) {
+		logger.Write("Error parsing EXIF: code " + std::to_string(error));
+		*width = 480;
+		*height = 270;
 		return false;
 	}
-	fseek(image, 0, SEEK_END);
-	int size = ftell(image);
-	fseek(image, 0, SEEK_SET);
-	unsigned char *data = (unsigned char *)malloc(size);
-	fread(data, 1, size, image);
-	/* verify valid JPEG header */
-	int i = 0;
-	if (data[i] == 0xFF && data[i + 1] == 0xD8 && data[i + 2] == 0xFF && data[i + 3] == 0xE0) {
-		i += 4;
-		/* Check for null terminated JFIF */
-		if (data[i + 2] == 'J' && data[i + 3] == 'F' && data[i + 4] == 'I' && data[i + 5] == 'F' && data[i + 6] == 0x00) {
-			while (i < size) {
-				i++;
-				if (data[i] == 0xFF) {
-					if (data[i + 1] == 0xC0) {
-						*height = data[i + 5] * 256 + data[i + 6];
-						*width = data[i + 7] * 256 + data[i + 8];
-						break;
-					}
-				}
-			}
-		}
-		else {
-			fclose(image);
-			return false;
-		}
-	}
-	else {
-		fclose(image);
-		return false;
-	}
-	fclose(image);
+	*width = result.ImageWidth;
+	*height = result.ImageHeight;
 	return true;
 }
 

@@ -34,6 +34,9 @@
     <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp">
       <Filter>thirdparty</Filter>
     </ClCompile>
+    <ClCompile Include="..\thirdparty\easyexif\exif.cpp">
+      <Filter>thirdparty</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="ExtraTypes.h" />
     <ClInclude Include="..\thirdparty\lodepng\lodepng.h">
+      <Filter>thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\easyexif\exif.h">
       <Filter>thirdparty</Filter>
     </ClInclude>
   </ItemGroup>
