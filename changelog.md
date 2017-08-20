@@ -1,6 +1,6 @@
 # Changelog
 ## v1.1.2
-Config changes: ???
+Config changes: No incompatible changes.
 
 * Add official image previews
 * Add submenu for mod options
@@ -8,7 +8,7 @@ Config changes: ???
 * Improve speed with many add-ons with previews
 * Improve image loading speed
 * Improve PNG resolution detection (lodepng lib)
-
+* Improve JPG resolution detection
 
 ## v1.1.1
 Config changes: Enabled all options by default. You can leave your old configs.

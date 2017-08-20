@@ -4,7 +4,8 @@
 #include <algorithm>
 #include <experimental/filesystem>
 #include <lodepng/lodepng.h>
-#include <easyexif/exif.h>
+#include <jpegsize.h>
+
 #include "Logger.hpp"
 
 namespace fs = std::experimental::filesystem;
@@ -98,19 +99,25 @@ bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height) {
 	return true;
 }
 
-//https://stackoverflow.com/questions/17847171/c-library-for-getting-the-jpeg-image-size
 bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
-	easyexif::EXIFInfo result;
-	int error = result.parseFrom(file);
-	if (error) {
-		logger.Write("Error parsing EXIF: code " + std::to_string(error));
-		*width = 480;
-		*height = 270;
+	FILE *image = nullptr;
+
+	errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file
+	if (!image || err) {
+		logger.Write("JPEG: " + fs::path(file).filename().string() + ": Failed to open file");
 		return false;
 	}
-	*width = result.ImageWidth;
-	*height = result.ImageHeight;
-	return true;
+	int w, h;
+	int result = scanhead(image, &w, &h);
+	if (result == 1) {
+		*width = w;
+		*height = h;
+		return true;
+	}
+	logger.Write("JPEG: " + fs::path(file).filename().string() + ": getting size failed, using defaults (480 x 270)");
+	*width = 480;
+	*height = 270;
+	return false;
 }
 
 Hash joaat(std::string s) {

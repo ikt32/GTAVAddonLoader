@@ -34,7 +34,7 @@
     <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp">
       <Filter>thirdparty</Filter>
     </ClCompile>
-    <ClCompile Include="..\thirdparty\easyexif\exif.cpp">
+    <ClCompile Include="..\thirdparty\jpegsize.cpp">
       <Filter>thirdparty</Filter>
     </ClCompile>
   </ItemGroup>
@@ -87,7 +87,7 @@
     <ClInclude Include="..\thirdparty\lodepng\lodepng.h">
       <Filter>thirdparty</Filter>
     </ClInclude>
-    <ClInclude Include="..\thirdparty\easyexif\exif.h">
+    <ClInclude Include="..\thirdparty\jpegsize.h">
       <Filter>thirdparty</Filter>
     </ClInclude>
   </ItemGroup>
