@@ -5,8 +5,8 @@ Config changes: No incompatible changes.
 * Add official image previews
 * Add submenu for mod options
 * Add option to list all DLCs at once
-* Improve speed with many add-ons with previews
-* Improve image loading speed
+* Improve menu performance with many add-ons with previews
+* Improve image loading speed (loads on demand now, thanks Eddlm!)
 * Improve PNG resolution detection (lodepng lib)
 * Improve JPG resolution detection
 
