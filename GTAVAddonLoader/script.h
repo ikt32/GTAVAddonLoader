@@ -21,6 +21,7 @@ void resolveVehicleSpriteInfo();
 void update_menu();
 void onMenuOpen();
 void onMenuExit();
+void storeImageNames();
 void spawnVehicle(Hash hash);
 std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle);
 

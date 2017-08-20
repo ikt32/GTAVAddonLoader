@@ -16,6 +16,8 @@ extern NativeMenu::MenuControls controls;
 extern Settings settings;
 extern Ped playerPed;
 
+extern std::vector<Hash> GameVehicles;
+extern std::vector<Hash> g_missingImages;
 extern std::vector<AddonVehicle> g_addonVehicles;
 extern std::set<std::string> g_addonClasses;
 extern std::vector<AddonVehicle> g_dlcVehicles;
@@ -24,6 +26,7 @@ extern std::vector<AddonImage> g_addonImages;
 extern std::vector<AddonImageMeta> g_addonImageMetadata;
 extern std::vector<SpriteInfo> g_spriteInfos;
 extern std::vector<DLC> g_dlcs;
+extern std::vector<std::string> g_addonImageNames;
 
 std::string evaluateInput() {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -160,9 +163,13 @@ void update_menu() {
 		if (menu.Option("Reload previews", { "Use for when you changed an image "
 			"that's already been loaded."})) {
 			resolveVehicleSpriteInfo();
-			
+
+			g_addonImageNames.clear();
+			g_missingImages.clear();
 			g_addonImages.clear();
 			g_addonImageMetadata.clear();
+			storeImageNames();
+
 		}
 	}
 

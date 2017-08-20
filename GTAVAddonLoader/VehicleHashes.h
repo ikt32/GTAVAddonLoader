@@ -627,6 +627,35 @@ static const std::vector<Hash> GunrunningVehicles = {
 	0x36B4A8A9, //  XA21                xa21                XA - 21
 };
 
+inline std::vector<DLC> buildDLClist() {
+	return {
+		{ DLC("Original game", OriginalVehicles) },
+		{ DLC("Returning Player", SPUpgradeVehicles) } ,
+		{ DLC("Beach Bum", BeachBumVehicles) },
+		{ DLC("Valentines Day Massacre", ValentineVehicles) },
+		{ DLC("The Business Update", BusinessVehicles) },
+		{ DLC("The High Life", HighLifeVehicles) },
+		{ DLC("I'm Not A Hipster", HipsterVehicles) },
+		{ DLC("Independence Day", MURKAVehicles) },
+		{ DLC("SA Flight School", FlightSchoolVehicles) },
+		{ DLC("Last Team Standing", LTSVehicles) },
+		{ DLC("Festive Surprise", FestiveVehicles) },
+		{ DLC("Heists", HeistsVehicles) },
+		{ DLC("Ill-Gotten Gains Pt1", IllGottenGainsPt1Vehicles) },
+		{ DLC("Ill-Gotten Gains Pt2", IllGottenGainsPt2Vehicles) },
+		{ DLC("Lowriders", LowriderVehicles) },
+		{ DLC("Halloween Surprise", HalloweenVehicles) },
+		{ DLC("Executives and Other Criminals", ExecutiveVehicles) },
+		{ DLC("Drop Zone", DropzoneVehicles) },
+		{ DLC("Lowriders: Custom Classics", LowriderCCVehicles) },
+		{ DLC("Further Adventures in Finance and Felony", FinanceFelonyVehicles) },
+		{ DLC("Cunning Stunts", CunningStuntsVehicles) },
+		{ DLC("Bikers", BikersVehicles) },
+		{ DLC("Import/Export", ImportExportVehicles) },
+		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
+		{ DLC("Gunrunning", GunrunningVehicles) }
+	};
+}
 
 static const unsigned expectedPreviewSprites = 893;
 
