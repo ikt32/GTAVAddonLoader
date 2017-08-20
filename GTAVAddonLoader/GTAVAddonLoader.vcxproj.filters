@@ -64,9 +64,6 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="NativeMemory.hpp" />
-    <ClInclude Include="Util\simpleini\SimpleIni.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="VehicleHashes.h" />
     <ClInclude Include="..\..\GTAVMenuBase\menu.h">
       <Filter>Menu</Filter>

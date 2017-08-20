@@ -1,4 +1,15 @@
 # Changelog
+## v1.1.2
+Config changes: ???
+
+* Add official image previews
+* Add submenu for mod options
+* Add option to list all DLCs at once
+* Improve speed with many add-ons with previews
+* Improve image loading speed
+* Improve PNG resolution detection (lodepng lib)
+
+
 ## v1.1.1
 Config changes: Enabled all options by default. You can leave your old configs.
 

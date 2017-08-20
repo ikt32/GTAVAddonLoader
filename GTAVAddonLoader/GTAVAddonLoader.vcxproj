@@ -183,7 +183,6 @@
     <ClInclude Include="settings.h" />
     <ClInclude Include="Util\Logger.hpp" />
     <ClInclude Include="Util\Paths.h" />
-    <ClInclude Include="Util\simpleini\SimpleIni.h" />
     <ClInclude Include="Util\Util.hpp" />
     <ClInclude Include="Util\Versions.h" />
     <ClInclude Include="VehicleHashes.h" />
