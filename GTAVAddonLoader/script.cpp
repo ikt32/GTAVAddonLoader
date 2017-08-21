@@ -438,6 +438,9 @@ void main() {
 		noImage = AddonImage(handle, hash, width, height);
 	}
 	else {
+		unsigned width = 480;
+		unsigned height = 270;
+		noImage = AddonImage(-1, hash, width, height);
 		logger.Write("Missing img/noimage.png!");
 	}
 	
