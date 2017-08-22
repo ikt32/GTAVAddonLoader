@@ -20,6 +20,7 @@ void Settings::ReadSettings() {
 	ListAllDLCs = settingsGeneral.GetBoolValue("OPTIONS", "ListAllDLCs", false);
 	MergeDLCs = settingsGeneral.GetBoolValue("OPTIONS", "MergeDLCs", false);
 	Persistent = settingsGeneral.GetBoolValue("OPTIONS", "Persistent", false);
+	CategorizeMake = settingsGeneral.GetBoolValue("OPTIONS", "CategorizeMake", false);
 }
 
 
@@ -33,6 +34,7 @@ void Settings::SaveSettings() {
 	settings.SetBoolValue("OPTIONS", "ListAllDLCs", ListAllDLCs);
 	settings.SetBoolValue("OPTIONS", "MergeDLCs", MergeDLCs);
 	settings.SetBoolValue("OPTIONS", "Persistent", Persistent);
+	settings.SetBoolValue("OPTIONS", "CategorizeMake", CategorizeMake);
 
 	settings.SaveFile(settingsGeneralFile.c_str());
 }

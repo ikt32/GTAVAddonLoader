@@ -20,6 +20,7 @@ public:
 	bool ListAllDLCs = false;
 	bool MergeDLCs = false;
 	bool Persistent = false;
+	bool CategorizeMake = false;
 
 private:
 	std::string settingsGeneralFile;

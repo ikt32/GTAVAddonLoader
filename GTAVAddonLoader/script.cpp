@@ -206,6 +206,9 @@ void cacheDLCVehicles() {
 		for (auto dlcClass : dlc.Classes) {
 			g_dlcClasses.emplace(dlcClass);
 		}
+		for (auto dlcMake : dlc.Makes) {
+			g_dlcMakes.emplace(dlcMake);
+		}
 	}
 	std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), predicateAddonVehicleHashByName);
 }
@@ -275,6 +278,7 @@ void cacheAddons() {
 
 			g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
 			g_addonClasses.emplace(className);
+			g_addonMakes.emplace(makeName);
 		}
 	}
 }
@@ -374,6 +378,7 @@ void spawnVehicle(Hash hash) {
  * instead of everything. 
  * Significant performance improvement! 30-ish FPS @ 20 vehicles in class.
  */
+
 std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle) {
 	std::vector<std::string> extras;
 
