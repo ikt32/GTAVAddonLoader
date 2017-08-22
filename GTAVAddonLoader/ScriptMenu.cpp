@@ -79,36 +79,11 @@ void onMenuExit() {
 	manualVehicleName.clear();
 }
 
-void spawnMenu(std::string className, std::vector<ModelInfo> addonVehicles, std::string origin) {
-	menu.Title(className);
+void spawnMenu(std::string category, std::vector<ModelInfo> addonVehicles, std::string origin, bool asMake) {
+	menu.Title(category);
 	menu.Subtitle(origin);
 	for (auto addonVehicle : addonVehicles) {
-		if (className == addonVehicle.ClassName) {
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
-			std::string displayName = UI::_GET_LABEL_TEXT(name);
-			if (displayName == "NULL") {
-				displayName = name;
-			}
-
-			std::vector<std::string> extras = {};
-			bool visible = false;
-			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Add-on info", {})) {
-				spawnVehicle(addonVehicle.ModelHash);
-			}
-			if (visible) {
-				extras = resolveVehicleInfo(addonVehicle);
-				menu.OptionPlusPlus(extras, "Add-on info");
-			}
-		}
-	}
-}
-
-void spawnMenuMake(std::string makeName, std::vector<ModelInfo> addonVehicles, std::string origin) {
-	std::string makeName_ = makeName == "NULL" ? "No make" : makeName;
-	menu.Title(makeName_);
-	menu.Subtitle(origin);
-	for (auto addonVehicle : addonVehicles) {
-		if (makeName == addonVehicle.MakeName) {
+		if (category == (asMake ? addonVehicle.MakeName : addonVehicle.ClassName)) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
 			std::string displayName = UI::_GET_LABEL_TEXT(name);
 			if (displayName == "NULL") {
@@ -130,7 +105,8 @@ void spawnMenuMake(std::string makeName, std::vector<ModelInfo> addonVehicles, s
 
 void update_menu() {
 	menu.CheckKeys();
-	
+	std::set<std::string> addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
+
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
 		menu.Subtitle(DISPLAY_VERSION, false);
@@ -166,9 +142,8 @@ void update_menu() {
 			}
 		}
 
-		std::set<std::string> thing = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
-		for (auto className : thing) {
-			menu.MenuOption(className, className);
+		for (auto category : addonCats) {
+			menu.MenuOption(category, category);
 		}
 	}
 
@@ -185,9 +160,10 @@ void update_menu() {
 		if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
 			settings.SaveSettings();
 		}
-		menu.BoolOption("Categorize by make", settings.CategorizeMake, 
-		{ "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "."});
-
+		if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
+		{ "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "."})) {
+			settings.SaveSettings();
+		}
 		if (menu.BoolOption("List all DLCs", settings.ListAllDLCs,
 		{ "Show all official DLC vehicles."
 			" These will appear in their own submenu, sorted per class, per DLC." })) {
@@ -216,17 +192,9 @@ void update_menu() {
 		}
 	}
 
-	if (settings.CategorizeMake) {
-		for (auto makeName : g_addonMakes) {
-			if (menu.CurrentMenu(makeName)) { spawnMenuMake(makeName, g_addonVehicles, "Add-on vehicles"); }
-		}
-	}
-	else {
-		for (auto className : g_addonClasses) {
-			if (menu.CurrentMenu(className)) { spawnMenu(className, g_addonVehicles, "Add-on vehicles"); }
-		}
-	}
-	
+	for (auto category : addonCats) {
+		if (menu.CurrentMenu(category)) { spawnMenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake); }
+	}	
 
 	if (!settings.MergeDLCs) {
 		if (menu.CurrentMenu("officialdlcmenu")) {
@@ -241,50 +209,44 @@ void update_menu() {
 		}
 
 		for (auto dlc : g_dlcs) {
-			std::set<std::string> category = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+			std::set<std::string> dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
 			if (menu.CurrentMenu(dlc.Name)) {
 				menu.Title(dlc.Name);
 				menu.Subtitle("By DLC");
 
 
-				for (auto className : category) {
-					if (menu.MenuOption(className, dlc.Name + " " + className)) {
+				for (auto category : dlcCats) {
+					if (menu.MenuOption(category, dlc.Name + " " + category)) {
 						resolveVehicleSpriteInfo();
 					}
 				}
-				if (category.empty()) {
+				if (dlcCats.empty()) {
 					menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
 						"Game version: " + eGameVersionToString(getGameVersion()) });
 				}
 			}
-			for (auto className : category) {
+			for (auto className : dlcCats) {
 				if (menu.CurrentMenu(dlc.Name + " " + className)) {
 					menu.Title(className);
-					if (settings.CategorizeMake)
-						spawnMenuMake(className, dlc.Vehicles, dlc.Name);
-					else
-						spawnMenu(className, dlc.Vehicles, dlc.Name);
+					spawnMenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
 				}
 			}
 		}
 	}
 	else {
-		std::set<std::string> category = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
+		std::set<std::string> categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
 
 		if (menu.CurrentMenu("officialdlcmergedmenu")) {
 			menu.Title("Official DLC");
 			menu.Subtitle("Merged");
-			for (auto className : category) {
-				menu.MenuOption(className, "dlc_" + className);
+			for (auto category : categories) {
+				menu.MenuOption(category, "dlc_" + category);
 			}
 		}
-		for (auto className : category) {
-			if (menu.CurrentMenu("dlc_" + className)) {
-				if (settings.CategorizeMake)
-					spawnMenuMake(className, g_dlcVehicles, "Original + All DLCs");
-				else
-					spawnMenu(className, g_dlcVehicles, "Original + All DLCs");
+		for (auto category : categories) {
+			if (menu.CurrentMenu("dlc_" + category)) {
+				spawnMenu(category, g_dlcVehicles, "Original + All DLCs", settings.CategorizeMake);
 			}
 		}
 	}

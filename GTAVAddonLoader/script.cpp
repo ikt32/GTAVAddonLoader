@@ -419,7 +419,7 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 	}
 
 	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
-	extras.push_back("Make name: " + std::string(UI::_GET_LABEL_TEXT(makeName)) + " (" + std::string(makeName) + ")");
+	extras.push_back("Make name: \t" + std::string(UI::_GET_LABEL_TEXT(makeName)) + " (" + std::string(makeName) + ")");
 	extras.push_back("Model name: \t" + guessModelName(addonVehicle.ModelHash));
 	if (modkitsInfo.size() > 0) {
 		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
