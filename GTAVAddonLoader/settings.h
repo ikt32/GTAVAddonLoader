@@ -19,6 +19,7 @@ public:
 	bool SpawnByName = false;
 	bool ListAllDLCs = false;
 	bool MergeDLCs = false;
+	bool Persistent = false;
 
 private:
 	std::string settingsGeneralFile;

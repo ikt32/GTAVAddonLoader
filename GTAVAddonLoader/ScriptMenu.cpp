@@ -27,6 +27,7 @@ extern std::vector<AddonImageMeta> g_addonImageMetadata;
 extern std::vector<SpriteInfo> g_spriteInfos;
 extern std::vector<DLC> g_dlcs;
 extern std::vector<std::string> g_addonImageNames;
+extern std::vector<Vehicle> g_persistentVehicles;
 
 std::string evaluateInput() {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -148,6 +149,9 @@ void update_menu() {
 		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) {
 			settings.SaveSettings();
 		}
+		if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
+			settings.SaveSettings();
+		}
 		if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
 			settings.SaveSettings();
 		}
@@ -169,7 +173,13 @@ void update_menu() {
 			g_addonImages.clear();
 			g_addonImageMetadata.clear();
 			storeImageNames();
+		}
 
+		if (settings.Persistent) {
+			if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 
+				"Persistent vehicles: " + std::to_string(g_persistentVehicles.size())})) {
+				clearPersistentVehicles();
+			}
 		}
 	}
 

@@ -25,4 +25,7 @@ void storeImageNames();
 void spawnVehicle(Hash hash);
 std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle);
 
+void clearPersistentVehicles();
+
+
 extern std::vector<std::string> dlcpackFolders;

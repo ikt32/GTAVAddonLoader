@@ -19,6 +19,7 @@ void Settings::ReadSettings() {
 	SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
 	ListAllDLCs = settingsGeneral.GetBoolValue("OPTIONS", "ListAllDLCs", false);
 	MergeDLCs = settingsGeneral.GetBoolValue("OPTIONS", "MergeDLCs", false);
+	Persistent = settingsGeneral.GetBoolValue("OPTIONS", "Persistent", false);
 }
 
 
@@ -31,6 +32,7 @@ void Settings::SaveSettings() {
 	settings.SetBoolValue("OPTIONS", "SpawnByName", SpawnByName);
 	settings.SetBoolValue("OPTIONS", "ListAllDLCs", ListAllDLCs);
 	settings.SetBoolValue("OPTIONS", "MergeDLCs", MergeDLCs);
+	settings.SetBoolValue("OPTIONS", "Persistent", Persistent);
 
 	settings.SaveFile(settingsGeneralFile.c_str());
 }

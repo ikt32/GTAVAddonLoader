@@ -50,6 +50,8 @@ std::vector<SpriteInfo> g_spriteInfos;
 std::vector<DLC> g_dlcs;
 std::vector<std::string> g_addonImageNames;
 
+std::vector<Vehicle> g_persistentVehicles;
+
 /*
  * Keep searching for sprites until we're all done. The current value applies for
  * b1103, but if people care to contribute, the texture count for other versions
@@ -276,6 +278,15 @@ void buildBlacklist() {
 	}
 }
 
+void clearPersistentVehicles() {
+	for (Vehicle veh : g_persistentVehicles) {
+		ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
+		ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+	}
+	g_persistentVehicles.clear();
+}
+
+
 /*
  * Spawns a vehicle with the chosen model hash. Put it on the player when not
  * already in a vehicle, and puts it to the right when a vehicle is already 
@@ -327,7 +338,16 @@ void spawnVehicle(Hash hash) {
 
 		WAIT(0);
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
-		ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
+		//ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
+
+		if (settings.Persistent) {
+			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, true, false);
+			g_persistentVehicles.push_back(veh);
+		}
+		else {
+			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
+			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+		}
 
 		showSubtitle("Spawned " + prettyNameFromHash(hash) + " (" + guessModelName(hash) + ")");
 	}
