@@ -6,6 +6,7 @@
 
 #include <array>
 #include <vector>
+#include "Util/Logger.hpp"
 
 // This is ripped straight from ScriptHookVDotNet/zorg93!
 inline bool bittest(int data, unsigned char index)
@@ -123,6 +124,25 @@ uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 	return 0;
 }
 
+uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const char* startAddress, size_t size) {
+	const char* address_end = startAddress + size;
+	const auto mask_length = static_cast<size_t>(strlen(mask) - 1);
+
+	for (size_t i = 0; startAddress < address_end; startAddress++) {
+		if (*startAddress == pattern[i] || mask[i] == '?') {
+			if (mask[i + 1] == '\0') {
+				return reinterpret_cast<uintptr_t>(startAddress) - mask_length;
+			}
+			i++;
+		}
+		else {
+			i = 0;
+		}
+	}
+
+	return 0;
+}
+
 uint64_t g_fwTxdStore;
 uint32_t g_txdCollectionItemSize;
 using Hash = unsigned long;
@@ -145,9 +165,6 @@ std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 		uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
 		if (txds) {
 			uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
-			
-			// This doesn't quite work somehow for me.
-			//for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
 			for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
 				Hash hash = *(Hash*)(txds + i * 8);
 				if (hash != txdHash) continue;
@@ -173,4 +190,81 @@ std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 		}
 	}
 	return vecTextures;
+}
+
+// from EnableMPCars by drp4lyf
+GlobalTable globalTable;
+ScriptTable* scriptTable;
+ScriptHeader* shopController;
+bool MemoryAccess::findPatterns() {
+	__int64 patternAddr = FindPattern("\x4C\x8D\x05\x00\x00\x00\x00\x4D\x8B\x08\x4D\x85\xC9\x74\x11", "xxx????xxxxxxxx");
+	if (!patternAddr) {
+		logger.Write("ERROR: finding address 0");
+		logger.Write("Aborting...");
+		return false;
+	}
+	globalTable.GlobalBasePtr = (__int64**)(patternAddr + *(int*)(patternAddr + 3) + 7);
+
+
+	patternAddr = FindPattern("\x48\x03\x15\x00\x00\x00\x00\x4C\x23\xC2\x49\x8B\x08", "xxx????xxxxxx");
+	if (!patternAddr) {
+		logger.Write("ERROR: finding address 1");
+		logger.Write("Aborting...");
+		return false;
+	}
+	scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
+
+	while (!globalTable.IsInitialised())
+		Sleep(100); //Wait for GlobalInitialisation before continuing
+	
+	logger.Write("Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
+
+	ScriptTableItem* Item = scriptTable->FindScript(0x39DA738B);
+	if (Item == NULL) {
+		logger.Write("ERROR: finding address 2");
+		logger.Write("Aborting...");
+		return false;
+	}
+	while (!Item->IsLoaded())
+		Sleep(100);
+	
+	shopController = Item->Header;
+	logger.Write("found shopcontroller");
+	return true;
+}
+
+
+void MemoryAccess::enableCarsGlobal() {
+	for (int i = 0; i < shopController->CodePageCount(); i++) {
+		__int64 sigAddress = FindPattern("\x28\x26\xCE\x6B\x86\x39\x03", "xxxxxxx", (const char*)shopController->GetCodePageAddress(i), shopController->GetCodePageSize(i));
+		if (!sigAddress) {
+			continue;
+		}
+		logger.Write("Pattern Found in codepage" + std::to_string(i) + "at memory address " + std::to_string(sigAddress));
+		int RealCodeOff = (int)(sigAddress - (__int64)shopController->GetCodePageAddress(i) + (i << 14));
+		for (int j = 0; j < 2000; j++) {
+			if (*(int*)shopController->GetCodePositionAddress(RealCodeOff - j) == 0x0008012D) {
+				int funcOff = *(int*)shopController->GetCodePositionAddress(RealCodeOff - j + 6) & 0xFFFFFF;
+				//DEBUGMSG("found Function codepage address at %x", funcOff);
+				for (int k = 0x5; k < 0x40; k++) {
+					if ((*(int*)shopController->GetCodePositionAddress(funcOff + k) & 0xFFFFFF) == 0x01002E) {
+						for (k = k + 1; k < 30; k++) {
+							if (*(unsigned char*)shopController->GetCodePositionAddress(funcOff + k) == 0x5F) {
+								int globalindex = *(int*)shopController->GetCodePositionAddress(funcOff + k + 1) & 0xFFFFFF;
+								//DEBUGMSG("Found Global Variable %d, address = %llX", globalindex, (__int64)globalTable.AddressOf(globalindex));
+								logger.Write("Setting Global Variable " + std::to_string(globalindex) + " to true");
+								*globalTable.AddressOf(globalindex) = 1;
+								logger.Write("MP Cars enabled");
+								return;
+							}
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+		break;
+	}
+	logger.Write("Global Variable not found, check game version >= 1.0.678.1");
 }

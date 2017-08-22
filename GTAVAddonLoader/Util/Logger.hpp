@@ -6,6 +6,7 @@ public:
 	Logger();
 	void Clear() const;
 	void Write(const std::string& text) const;
+//	void Write(const char *args,...);
 	void SetFile(const std::string &fileName);
 
 private:

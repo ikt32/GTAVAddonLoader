@@ -457,6 +457,9 @@ void main() {
 
 	logger.Write("Settings read");
 
+	if (MemoryAccess::findPatterns())
+		MemoryAccess::enableCarsGlobal();
+	
 	MemoryAccess::initTxdStore();
 	g_dlcs = buildDLClist();
 	buildBlacklist();
