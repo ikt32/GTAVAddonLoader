@@ -46,7 +46,7 @@ bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height);
 
 Hash joaat(std::string s);
 std::string removeSpecialChars(std::string input);
-std::string getGxtName(Hash hash);
+std::string getGxtName(Hash hash); // gxt name from model
 
 
 /*
@@ -56,7 +56,7 @@ std::string getGxtName(Hash hash);
 template<typename T>
 bool isHashInImgVector(Hash hash, std::vector<T> things, T *result) {
 	auto addonImage = std::find_if(things.begin(), things.end(), [&hash](const T& element) {
-		return element.HashedName == hash;
+		return element.ModelHash == hash;
 	});
 	if (things.end() != addonImage) {
 		if (result != nullptr)

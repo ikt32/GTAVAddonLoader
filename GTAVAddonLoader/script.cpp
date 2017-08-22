@@ -38,19 +38,22 @@ int prevNotification;
 
 AddonImage noImage;
 
-std::vector<Hash> GameVehicles;
 std::vector<Hash> g_missingImages;
-std::vector<AddonVehicle> g_addonVehicles;
+std::vector<Vehicle> g_persistentVehicles;
+
 std::set<std::string> g_addonClasses;
-std::vector<AddonVehicle> g_dlcVehicles;
-std::set<std::string> g_dlcClasses;
+std::set<std::string> g_addonMakes;
+std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
 std::vector<AddonImage> g_addonImages;
 std::vector<AddonImageMeta> g_addonImageMetadata;
-std::vector<SpriteInfo> g_spriteInfos;
-std::vector<DLC> g_dlcs;
-std::vector<std::string> g_addonImageNames;
+std::vector<std::string> g_addonImageNames; // just all filenames separately for hashing in begin
 
-std::vector<Vehicle> g_persistentVehicles;
+std::vector<Hash> GameVehicles;             // all base vehicles
+std::vector<DLC> g_dlcs;
+std::set<std::string> g_dlcClasses;
+std::set<std::string> g_dlcMakes;
+std::vector<ModelInfo> g_dlcVehicles;
+std::vector<SpriteInfo> g_dlcSprites;
 
 /*
  * Keep searching for sprites until we're all done. The current value applies for
@@ -63,7 +66,7 @@ std::vector<Vehicle> g_persistentVehicles;
  * list fully before the user arrived at something with a picture.
  */
 void resolveVehicleSpriteInfo() {
-	if (g_spriteInfos.size() == expectedPreviewSprites)
+	if (g_dlcSprites.size() == expectedPreviewSprites)
 		return;
 
 	for (auto dict : WebsiteDicts) {
@@ -74,12 +77,12 @@ void resolveVehicleSpriteInfo() {
 		auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
 		for (auto texture : textures) {
 			SpriteInfo thing;
-			if (!isHashInImgVector(joaat(texture->name), g_spriteInfos, &thing)) {
-				g_spriteInfos.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
+			if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &thing)) {
+				g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
 			}
 		}
 	}
-	logger.Write("Found " + std::to_string(g_spriteInfos.size()) + " preview sprites (dict)");
+	logger.Write("Found " + std::to_string(g_dlcSprites.size()) + " preview sprites (dict)");
 }
 
 /*
@@ -170,11 +173,11 @@ bool predicateHashByName(Hash h1, Hash h2) {
 }
 
 // sorting thing 2
-bool predicateAddonVehicleHashByName(AddonVehicle a1, AddonVehicle a2) {
-	std::string name1 = getGxtName(a1.second);
-	std::string name2 = getGxtName(a2.second);
+bool predicateAddonVehicleHashByName(ModelInfo a1, ModelInfo a2) {
+	std::string name1 = getGxtName(a1.ModelHash);
+	std::string name2 = getGxtName(a2.ModelHash);
 	if (name1 == name2) {
-		return guessModelName(a1.second) < guessModelName(a2.second);
+		return guessModelName(a1.ModelHash) < guessModelName(a2.ModelHash);
 	}
 	return name1 < name2;
 }
@@ -188,14 +191,16 @@ void cacheDLCVehicles() {
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			std::string className = UI::_GET_LABEL_TEXT(buffer);
-			dlc.Vehicles.push_back(std::make_pair(className, hash));
+			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
+			dlc.Vehicles.push_back(ModelInfo(className, makeName, hash));
 			dlc.Classes.emplace(className);
+			dlc.Makes.emplace(makeName);
 		}
 	}
 	g_dlcVehicles.clear();
 	g_dlcClasses.clear();
 	for (auto dlc : g_dlcs) {
-		for (AddonVehicle vehicle : dlc.Vehicles) {
+		for (ModelInfo vehicle : dlc.Vehicles) {
 			g_dlcVehicles.push_back(vehicle);
 		}
 		for (auto dlcClass : dlc.Classes) {
@@ -266,7 +271,9 @@ void cacheAddons() {
 
 			logger.Write(logStream.str());
 
-			g_addonVehicles.push_back(std::make_pair(className, hash));
+			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
+
+			g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
 			g_addonClasses.emplace(className);
 		}
 	}
@@ -367,10 +374,10 @@ void spawnVehicle(Hash hash) {
  * instead of everything. 
  * Significant performance improvement! 30-ish FPS @ 20 vehicles in class.
  */
-std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle) {
+std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle) {
 	std::vector<std::string> extras;
 
-	auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.second);
+	auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
 	std::string modkitsInfo;
 	for (auto kit : modkits) {
 		if (kit == modkits.back()) {
@@ -381,15 +388,15 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 		}
 	}
 
-	auto hashIt = std::find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.second);
+	auto hashIt = std::find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash);
 	AddonImage addonImage;
 	SpriteInfo spriteInfo;
-	if (isHashInImgVector(addonVehicle.second, g_addonImages, &addonImage)) {
+	if (isHashInImgVector(addonVehicle.ModelHash, g_addonImages, &addonImage)) {
 		extras.push_back(menu.ImagePrefix + std::to_string(addonImage.TextureID) +
 			"W" + std::to_string(addonImage.ResX) +
 			"H" + std::to_string(addonImage.ResY));
 	}
-	else if (hashIt != GameVehicles.end() && isHashInImgVector(addonVehicle.second, g_spriteInfos, &spriteInfo)) {
+	else if (hashIt != GameVehicles.end() && isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
 		extras.push_back(menu.SpritePrefix +
 			spriteInfo.Dict + " " +
 			spriteInfo.Name + " " +
@@ -401,14 +408,14 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 			"W" + std::to_string(noImage.ResX) +
 			"H" + std::to_string(noImage.ResY));
 
-		if (std::find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.second) == g_missingImages.end()) {
-			resolveImage(addonVehicle.second);
+		if (std::find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
+			resolveImage(addonVehicle.ModelHash);
 		}
 	}
 
-	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.second);
+	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
 	extras.push_back("Make name: " + std::string(UI::_GET_LABEL_TEXT(makeName)) + " (" + std::string(makeName) + ")");
-	extras.push_back("Model name: \t" + guessModelName(addonVehicle.second));
+	extras.push_back("Model name: \t" + guessModelName(addonVehicle.ModelHash));
 	if (modkitsInfo.size() > 0) {
 		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
 	}

@@ -16,18 +16,22 @@ extern NativeMenu::MenuControls controls;
 extern Settings settings;
 extern Ped playerPed;
 
-extern std::vector<Hash> GameVehicles;
 extern std::vector<Hash> g_missingImages;
-extern std::vector<AddonVehicle> g_addonVehicles;
+extern std::vector<Vehicle> g_persistentVehicles;
+
 extern std::set<std::string> g_addonClasses;
-extern std::vector<AddonVehicle> g_dlcVehicles;
-extern std::set<std::string> g_dlcClasses;
+extern std::set<std::string> g_addonMakes;
+extern std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
 extern std::vector<AddonImage> g_addonImages;
 extern std::vector<AddonImageMeta> g_addonImageMetadata;
-extern std::vector<SpriteInfo> g_spriteInfos;
+extern std::vector<std::string> g_addonImageNames; // just all filenames separately for hashing in begin
+
+extern std::vector<Hash> GameVehicles;             // all base vehicles
 extern std::vector<DLC> g_dlcs;
-extern std::vector<std::string> g_addonImageNames;
-extern std::vector<Vehicle> g_persistentVehicles;
+extern std::set<std::string> g_dlcClasses;
+extern std::set<std::string> g_dlcMakes;
+extern std::vector<ModelInfo> g_dlcVehicles;
+extern std::vector<SpriteInfo> g_dlcSprites;
 
 std::string evaluateInput() {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -75,12 +79,12 @@ void onMenuExit() {
 	manualVehicleName.clear();
 }
 
-void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles, std::string origin) {
+void spawnMenu(std::string className, std::vector<ModelInfo> addonVehicles, std::string origin) {
 	menu.Title(className);
 	menu.Subtitle(origin);
 	for (auto addonVehicle : addonVehicles) {
-		if (className == addonVehicle.first) {
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.second);
+		if (className == addonVehicle.ClassName) {
+			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
 			std::string displayName = UI::_GET_LABEL_TEXT(name);
 			if (displayName == "NULL") {
 				displayName = name;
@@ -89,7 +93,7 @@ void spawnMenu(std::string className, std::vector<AddonVehicle> addonVehicles, s
 			std::vector<std::string> extras = {};
 			bool visible = false;
 			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Add-on info", {})) {
-				spawnVehicle(addonVehicle.second);
+				spawnVehicle(addonVehicle.ModelHash);
 			}
 			if (visible) {
 				extras = resolveVehicleInfo(addonVehicle);

@@ -23,7 +23,7 @@ void onMenuOpen();
 void onMenuExit();
 void storeImageNames();
 void spawnVehicle(Hash hash);
-std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_type addonVehicle);
+std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle);
 
 void clearPersistentVehicles();
 

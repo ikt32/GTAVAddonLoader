@@ -9,18 +9,30 @@
 using AddonImageMeta = std::tuple<std::string, int, int>;
 
 // className, vehicleHash
-using AddonVehicle = std::pair<std::string, Hash>;
+//using AddonVehicle = std::pair<std::string, Hash>;
+
+class ModelInfo {
+public:
+	ModelInfo(): ModelHash(0) { }
+
+	ModelInfo(std::string className, std::string makeName, Hash hash) :
+			  ClassName(className), MakeName(makeName), ModelHash(hash) { }
+
+	std::string ClassName;
+	std::string MakeName;
+	Hash ModelHash;
+};
 
 class AddonImage {
 public:
-	AddonImage() : HashedName(0), ResX(0), ResY(0), TextureID(0) {}
+	AddonImage() : ModelHash(0), ResX(0), ResY(0), TextureID(0) {}
 	AddonImage(int textureId, Hash hash, uint16_t resX, uint16_t resY) :
-		HashedName(hash),
+		ModelHash(hash),
 		ResX(resX),
 		ResY(resY),
 		TextureID(textureId) { }
 
-	Hash HashedName;
+	Hash ModelHash;
 	uint16_t ResX;
 	uint16_t ResY;
 	int TextureID;
@@ -28,13 +40,13 @@ public:
 
 class SpriteInfo {
 public:
-	SpriteInfo() : HashedName(0), ResX(0), ResY(0) {}
+	SpriteInfo() : ModelHash(0), ResX(0), ResY(0) {}
 	SpriteInfo(std::string dict, std::string name, Hash hash, uint16_t resX, uint16_t resY) :
-		Dict(dict), Name(name), HashedName(hash), ResX(resX), ResY(resY) { }
+		Dict(dict), Name(name), ModelHash(hash), ResX(resX), ResY(resY) { }
 
 	std::string Dict;
 	std::string Name;
-	Hash HashedName;
+	Hash ModelHash;
 	uint16_t ResX;
 	uint16_t ResY;
 };
@@ -46,6 +58,8 @@ public:
 	{ }
 	std::string Name;
 	std::set<std::string> Classes;
+	std::set<std::string> Makes;
 	std::vector<Hash> Hashes;
-	std::vector<std::pair<std::string, Hash>> Vehicles;
+	//std::vector<std::pair<std::string, Hash>> Vehicles;
+	std::vector<ModelInfo> Vehicles;
 };
