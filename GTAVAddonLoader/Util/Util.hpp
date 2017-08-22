@@ -45,8 +45,8 @@ bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height);
 bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height);
 
 Hash joaat(std::string s);
-
-std::string prettyNameFromHash(Hash hash);
+std::string removeSpecialChars(std::string input);
+std::string getGxtName(Hash hash);
 
 
 /*

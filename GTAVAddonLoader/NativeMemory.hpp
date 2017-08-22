@@ -37,4 +37,6 @@ public:
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
 	static std::array<std::vector<int>, 0x20> GenerateVehicleModelList();
 	static std::vector<uint8_t> GetVehicleModKits(int modelHash);
+	static char *GetVehicleGameName(int modelHash);
+	static char *GetVehicleMakeName(int modelHash);
 };

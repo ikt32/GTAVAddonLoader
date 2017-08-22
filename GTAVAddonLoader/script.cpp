@@ -153,20 +153,26 @@ std::string guessModelName(Hash hash) {
 		if (hash == joaat(modelName)) return modelName;
 	}
 
+	std::string gxtName = getGxtName(hash);
+	if (joaat(gxtName) == hash) return gxtName;
+
+	gxtName = removeSpecialChars(gxtName);
+	if (joaat(gxtName) == hash) return gxtName;
+
 	return "NOTFOUND";
 }
 
 // sorting thing
 bool predicateHashByName(Hash h1, Hash h2) {
-	std::string name1 = prettyNameFromHash(h1);
-	std::string name2 = prettyNameFromHash(h2);
+	std::string name1 = getGxtName(h1);
+	std::string name2 = getGxtName(h2);
 	return name1 < name2;
 }
 
 // sorting thing 2
 bool predicateAddonVehicleHashByName(AddonVehicle a1, AddonVehicle a2) {
-	std::string name1 = prettyNameFromHash(a1.second);
-	std::string name2 = prettyNameFromHash(a2.second);
+	std::string name1 = getGxtName(a1.second);
+	std::string name2 = getGxtName(a2.second);
 	if (name1 == name2) {
 		return guessModelName(a1.second) < guessModelName(a2.second);
 	}
@@ -256,7 +262,7 @@ void cacheAddons() {
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << guessModelName(hash);
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << prettyNameFromHash(hash);
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
 
 			logger.Write(logStream.str());
 
@@ -349,7 +355,7 @@ void spawnVehicle(Hash hash) {
 			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
 		}
 
-		showSubtitle("Spawned " + prettyNameFromHash(hash) + " (" + guessModelName(hash) + ")");
+		showSubtitle("Spawned " + getGxtName(hash) + " (" + guessModelName(hash) + ")");
 	}
 	else {
 		showSubtitle("Vehicle doesn't exist");
@@ -400,6 +406,8 @@ std::vector<std::string> resolveVehicleInfo(std::vector<AddonVehicle>::value_typ
 		}
 	}
 
+	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.second);
+	extras.push_back("Make name: " + std::string(UI::_GET_LABEL_TEXT(makeName)) + " (" + std::string(makeName) + ")");
 	extras.push_back("Model name: \t" + guessModelName(addonVehicle.second));
 	if (modkitsInfo.size() > 0) {
 		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);

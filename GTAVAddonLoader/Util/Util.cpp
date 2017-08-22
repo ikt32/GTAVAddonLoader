@@ -135,7 +135,7 @@ Hash joaat(std::string s) {
 	return hash;
 }
 
-std::string prettyNameFromHash(Hash hash) {
+std::string getGxtName(Hash hash) {
 	char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 	std::string displayName = UI::_GET_LABEL_TEXT(name);
 	if (displayName == "NULL") {
@@ -147,4 +147,10 @@ std::string prettyNameFromHash(Hash hash) {
 bool FileExists(const std::string& name) {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0);
+}
+
+std::string removeSpecialChars(std::string input) {
+	input.erase(std::remove(input.begin(), input.end(), ' '), input.end());
+	input.erase(std::remove(input.begin(), input.end(), '-'), input.end());
+	return input;
 }

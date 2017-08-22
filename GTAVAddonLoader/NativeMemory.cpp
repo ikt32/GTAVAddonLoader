@@ -85,6 +85,17 @@ std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 	return modKits;
 }
 
+char *MemoryAccess::GetVehicleGameName(int modelHash) {
+	int index = 0xFFFF;
+	uint64_t modelInfo = GetModelInfo(modelHash, &index);
+	return (char*)(modelInfo + 0x270);
+
+}
+char *MemoryAccess::GetVehicleMakeName(int modelHash) {
+	int index = 0xFFFF;
+	uint64_t modelInfo = GetModelInfo(modelHash, &index);
+	return (char*)(modelInfo + 0x27C);
+}
 
 uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
 	MODULEINFO modInfo = {nullptr};
