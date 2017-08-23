@@ -54,6 +54,103 @@ std::set<std::string> g_dlcClasses;
 std::set<std::string> g_dlcMakes;
 std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
+std::vector<SpriteInfo> g_dlcSpriteOverrides;
+
+/*
+ * Some sprites don't match up with the actual vehicle or don't have the
+ * same name as the model. We'll go through this (small) list first.
+ * R* pls more consistent pls
+ */
+void addVehicleSpriteOverrides() {
+	// No DLC
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "elegy_a", joaat("elegy2"), 1024, 512)); // prettier
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "banshee2_a", joaat("banshee"), 1024, 512)); // prettier
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "sultan2_a", joaat("sultan"), 1024, 512)); // prettier
+
+	// Lowriders
+	// TODO
+
+	// Halloween is ok
+
+	// Executives and Other Criminals / apartments
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "dinghy3", joaat("dinghy4"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "seashark", joaat("seashark3"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "speeder", joaat("speeder2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "toro", joaat("toro2"), 1024, 512));
+
+
+	g_dlcSpriteOverrides.push_back(SpriteInfo("elt_dlc_apartments", "svolito", joaat("supervolito"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("elt_dlc_apartments", "svolito2", joaat("supervolito2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_default", "valkyrie", joaat("valkyrie2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_default", "cargobob", joaat("cargobob4"), 1024, 512));
+
+
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "baller3_web_vehicle_regular_b", joaat("baller3"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "baller3_web_vehicle_armoured_b", joaat("baller5"), 512, 512));														 
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "baller4_web_vehicle_regular_b", joaat("baller4"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "baller4_web_vehicle_armoured_b", joaat("baller6"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "cog55_web_vehicle_regular_b", joaat("cog55"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "cog55_web_vehicle_armoured_b", joaat("cog552"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "cognosc_web_vehicle_regular_b", joaat("cognoscenti"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "cognosc_web_vehicle_armoured_b", joaat("cognoscenti2"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "schafter3_web_vehicle_regular_b", joaat("schafter3"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "schafter3_web_vehicle_armoured_b", joaat("schafter5"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "schafter4_web_vehicle_regular_b", joaat("schafter4"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "schafter4_web_vehicle_armoured_b", joaat("schafter6"), 512, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "niteshad", joaat("nightshade"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_apartments", "verlier", joaat("verlierer2"), 1024, 512));
+
+
+	// Drop zone
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "banshee2_b", joaat("banshee2"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "sultan2_b", joaat("sultanrs"), 1024, 512)); // correct custom version
+
+
+	// Lowriders Custom Classics Lowriders2
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "faction3_b", joaat("faction3"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "minivan2_b", joaat("minivan2"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "sabregt2_b", joaat("sabregt2"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "slamvan3_b", joaat("slamvan3"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "tornado5_b", joaat("tornado5"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "virgo2_b", joaat("virgo2"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_lowrider2", "virgo2_a", joaat("virgo3"), 1024, 512)); // correct custom version
+
+	// Finance and Felony / Executive1
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_executive1", "xls_web_vehicle_regular_b", joaat("xls"), 512, 512)); // matches xls2
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_executive1", "xls_web_vehicle_armoured_b", joaat("xls2"), 512, 512));
+
+	// Cunning Stunts
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_stunt", "trophy", joaat("trophytruck"), 512, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_stunt", "trophy2", joaat("trophytruck2"), 512, 256));
+
+	// Bikers is good
+
+	// Import/Export
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "comet3_b", joaat("comet3"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "elegy_b", joaat("elegy"), 1024, 512)); // correct custom version
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "specter2_a", joaat("specter"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "specter2_b", joaat("specter2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "italigtb2_a", joaat("italigtb"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "italigtb2_b", joaat("italigtb2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "nero2_a", joaat("nero"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "nero2_b", joaat("nero2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "diablous2_a", joaat("diablous"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "diablous2_b", joaat("diablous2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "fcr2_a", joaat("fcr"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "fcr2_b", joaat("fcr2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_importexport", "wastlndr", joaat("wastelander"), 512, 256));
+
+	// Cunning Stunts 2 is good
+
+	// Gunrunning
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_default", "insurgent", joaat("insurgent3"), 256, 128)); // pick-up
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_default", "technical", joaat("technical3"), 256, 128)); // same-ish
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_gunrunning", "trsmall2", joaat("trailersmall2"), 512, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_truck", "cab_0", joaat("phantom3"), 256, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_truck", "thumbnail", joaat("trailerlarge"), 256, 128));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("foreclosures_bunker", "transportationb_2", joaat("caddy3"), 512, 256));
+}
 
 /*
  * Keep searching for sprites until we're all done. The current value applies for
@@ -393,7 +490,6 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 		}
 	}
 
-	auto hashIt = std::find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash);
 	AddonImage addonImage;
 	SpriteInfo spriteInfo;
 	if (isHashInImgVector(addonVehicle.ModelHash, g_addonImages, &addonImage)) {
@@ -401,7 +497,15 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 			"W" + std::to_string(addonImage.ResX) +
 			"H" + std::to_string(addonImage.ResY));
 	}
-	else if (hashIt != GameVehicles.end() && isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
+	else if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSpriteOverrides, &spriteInfo)) {
+		extras.push_back(menu.SpritePrefix +
+			spriteInfo.Dict + " " +
+			spriteInfo.Name + " " +
+			"W" + std::to_string(spriteInfo.ResX) +
+			"H" + std::to_string(spriteInfo.ResY));
+	}
+	else if (std::find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash) != GameVehicles.end() &&
+			isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
 		extras.push_back(menu.SpritePrefix +
 			spriteInfo.Dict + " " +
 			spriteInfo.Name + " " +
@@ -466,6 +570,7 @@ void main() {
 	storeImageNames();
 	cacheAddons();
 	cacheDLCs();
+	addVehicleSpriteOverrides();
 
 	Hash hash = joaat("noimage");
 	std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
