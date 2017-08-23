@@ -66,9 +66,65 @@ void addVehicleSpriteOverrides() {
 	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_dlc_import_export", "elegy_a", joaat("elegy2"), 1024, 512)); // prettier
 	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "banshee2_a", joaat("banshee"), 1024, 512)); // prettier
 	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_jan2016", "sultan2_a", joaat("sultan"), 1024, 512)); // prettier
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_truck", "cab_0", joaat("phantom3"), 256, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256));
+
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "dinghy3", joaat("dinghy"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "dinghy3", joaat("dinghy2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "seashark", joaat("seashark2"), 1024, 512)); // the inaccurate but ok
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "tropic", joaat("tropic2"), 1024, 512));
+	// submersible rip
+	// predator rip
+
+
+	// Returning player
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_mp_to_sp", "dukes", joaat("dukes"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_mp_to_sp", "stallion", joaat("stalion"), 1024, 512)); // wtf
+	g_dlcSpriteOverrides.push_back(SpriteInfo("dock_default", "sub2", joaat("submersible2"), 1024, 512)); // wtf kraken
+	// blimp2 rip
+	// blista3 rip (go go monkey)
+
+	// Beach Bum is ok
+
+	// Valentines day massacre
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_valentines", "roosevelt", joaat("btype"), 512, 256));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_valentines2", "roosevelt2", joaat("btype3"), 512, 256));
+
+	// The Business Update is ok
+	// The High Life is ok
+	// Not a Hipster is ok
+	// Independence Day is ok
+	// Flight school is ok
+
+	// LTS
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lgm_dlc_lts_creator", "furore", joaat("furoregt"), 512, 256));
+
+	// Festive surprise / Christmas2
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_christmas_2", "rloader2", joaat("ratloader2"), 1024, 512)); // wrong but better than nothing
+
+	// Heists
+	g_dlcSpriteOverrides.push_back(SpriteInfo("candc_default", "barracks", joaat("barracks3"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("sssa_dlc_christmas_2", "slamvan", joaat("slamvan2"), 1024, 512)); // wrong but better than nothing
+	// trash2 missing
+	// tanker2 missing
+
+	// Ill Gotten Gains Pt1 is ok
+	// Ill Gotten Gains Pt2 is ok
 
 	// Lowriders
-	// TODO
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "buccaneer2_a", joaat("buccaneer"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "buccaneer2_b", joaat("buccaneer2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "chino2_a", joaat("chino"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "chino2_b", joaat("chino2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "faction2_a", joaat("faction"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "faction2_b", joaat("faction2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "moonbeam2_a", joaat("moonbeam"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "moonbeam2_b", joaat("moonbeam2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "primo2_a", joaat("primo"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "primo2_b", joaat("primo2"), 1024, 512));
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "voodoo_a", joaat("voodoo"), 1024, 512));	// no dlc
+	g_dlcSpriteOverrides.push_back(SpriteInfo("lsc_default", "voodoo_b", joaat("voodoo2"), 1024, 512));
+
 
 	// Halloween is ok
 
