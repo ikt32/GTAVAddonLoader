@@ -1,5 +1,19 @@
 # Changelog
-## v1.1.2
+## v1.2.0
+Config changes: No incompatible changes.
+
+* Add submenu for mod options
+* Add option to list all DLCs at once
+* Add option to list by vehicle make
+* Add option to make spawned vehicles persistent
+* Add official image previews
+* Add drp4lyf's MP vehicles patch
+* Improve menu performance with many add-ons with previews
+* Improve image loading speed (loads on demand now, thanks Eddlm!)
+* Improve PNG resolution detection (lodepng lib)
+* Improve JPG resolution detection
+
+## v1.1.2 (No GTA5-Mods release)
 Config changes: No incompatible changes.
 
 * Add official image previews

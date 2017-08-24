@@ -109,7 +109,7 @@ void update_menu() {
 
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
-		menu.Subtitle(DISPLAY_VERSION, false);
+		menu.Subtitle(DISPLAY_VERSION);
 
 		menu.MenuOption("Settings", "settingsmenu");
 
@@ -149,7 +149,7 @@ void update_menu() {
 
 	if (menu.CurrentMenu("settingsmenu")) {
 		menu.Title("Settings");
-		menu.Subtitle("Add-on spawner settings");
+		menu.Subtitle("");
 
 		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) {
 			settings.SaveSettings();
@@ -213,7 +213,7 @@ void update_menu() {
 
 			if (menu.CurrentMenu(dlc.Name)) {
 				menu.Title(dlc.Name);
-				menu.Subtitle("By DLC");
+				menu.Subtitle("Sort by DLC");
 
 
 				for (auto category : dlcCats) {
