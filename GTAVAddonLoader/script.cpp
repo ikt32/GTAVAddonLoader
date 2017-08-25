@@ -617,10 +617,7 @@ void main() {
 
 	logger.Write("Settings read");
 
-	if (MemoryAccess::findPatterns())
-		MemoryAccess::enableCarsGlobal();
-	
-	MemoryAccess::initTxdStore();
+	MemoryAccess::Init();
 	g_dlcs = buildDLClist();
 	buildBlacklist();
 	storeImageNames();

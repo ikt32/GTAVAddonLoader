@@ -1,6 +1,12 @@
+/*
+ * Generating vehicle model list: ScriptHookVDotNet source (drp4lyf/zorg93)
+ * Getting vehicle modkit IDs:    Unknown Modder
+ * Getting textures from dicts:   Unknown Modder
+ * Find enable mp vehicles:       drp4lyf/zorg93
+ */
+
 #include "NativeMemory.hpp"
 
-#include "../../ScriptHookV_SDK/inc/main.h"
 #include <Windows.h>
 #include <Psapi.h>
 
@@ -8,19 +14,46 @@
 #include <vector>
 #include "Util/Logger.hpp"
 
-// This is ripped straight from ScriptHookVDotNet/zorg93!
-inline bool bittest(int data, unsigned char index)
-{
-	return (data & (1 << index)) != 0;
+typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
+GetModelInfo_t GetModelInfo;
+
+uint64_t g_fwTxdStore;
+uint32_t g_txdCollectionItemSize;
+
+GlobalTable globalTable;
+ScriptTable* scriptTable;
+ScriptHeader* shopController;
+
+void MemoryAccess::Init() {
+	// init txd store
+	uint64_t patternAddr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
+		"xxx????x????xxx");
+	g_fwTxdStore = patternAddr + *(int*)(patternAddr + 3) + 7;
+
+	patternAddr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
+		"xxx????xxxxxxxxx");
+	g_txdCollectionItemSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
+
+	// init GetModelInfo
+	GetModelInfo = (GetModelInfo_t)FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
+		                                       "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
+		                                       "\x0F\x84\x00\x00\x00\x00"
+		                                       "\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48"
+		                                       "\x8B\x05\x00\x00\x00\x00"
+		                                       "\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
+		                                       "xxx????xxxxxxxxxxx????"
+		                                       "xxxxxxxxxxxxxx????xxxxxxxxxxx");
+
+	// find enable MP cars patterns
+	if (findShopController())
+		enableCarsGlobal();
+
 }
 
-struct HashNode
-{
-	int hash;
-	UINT16 data;
-	UINT16 padding;
-	HashNode* next;
-};
+// ScriptHookVDotNet/zorg93
+inline bool bittest(int data, unsigned char index) {
+	return (data & (1 << index)) != 0;
+}
 
 std::array<std::vector<int>, 0x20> MemoryAccess::GenerateVehicleModelList() {
 	uintptr_t address = FindPattern("\x66\x81\xF9\x00\x00\x74\x10\x4D\x85\xC0", "xxx??xxxxx") - 0x21;
@@ -35,25 +68,18 @@ std::array<std::vector<int>, 0x20> MemoryAccess::GenerateVehicleModelList() {
 
 	HashNode** HashMap = reinterpret_cast<HashNode**>(modelHashTable);
 	std::array<std::vector<int>, 0x20> hashes;
-	for (int i = 0; i<0x20; i++)
-	{
+	for (int i = 0; i<0x20; i++) {
 		hashes[i] = std::vector<int>();
 	}
-	for (int i = 0; i < modelHashEntries; i++)
-	{
-		for (HashNode* cur = HashMap[i]; cur; cur = cur->next)
-		{
+	for (int i = 0; i < modelHashEntries; i++) {
+		for (HashNode* cur = HashMap[i]; cur; cur = cur->next) {
 			UINT16 data = cur->data;
-			if ((int)data < modelNum1 && bittest(*reinterpret_cast<int*>(modelNum2 + (4 * data >> 5)), data & 0x1F))
-			{
+			if ((int)data < modelNum1 && bittest(*reinterpret_cast<int*>(modelNum2 + (4 * data >> 5)), data & 0x1F)) {
 				UINT64 addr1 = modelNum4 + modelNum3 * data;
-				if (addr1)
-				{
+				if (addr1) {
 					UINT64 addr2 = *reinterpret_cast<PUINT64>(addr1);
-					if (addr2)
-					{
-						if ((*reinterpret_cast<PBYTE>(addr2 + 157) & 0x1F) == 5)
-						{
+					if (addr2) {
+						if ((*reinterpret_cast<PBYTE>(addr2 + 157) & 0x1F) == 5) {
 							hashes[*reinterpret_cast<PBYTE>(addr2 + vehClassOff) & 0x1F].push_back(cur->hash);
 						}
 					}
@@ -65,10 +91,6 @@ std::array<std::vector<int>, 0x20> MemoryAccess::GenerateVehicleModelList() {
 }
 
 // Thank you, Unknown Modder!
-typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
-GetModelInfo_t GetModelInfo = (GetModelInfo_t)MemoryAccess::FindPattern("\x0F\xB7\x05\x00\x00\x00\x00\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0\x0F\x84\x00\x00\x00\x00\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48\x8B\x05\x00\x00\x00\x00\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
-																		"xxx????xxxxxxxxxxx????xxxxxxxxxxxxxx????xxxxxxxxxxx");
-
 std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 	std::vector<uint8_t> modKits;
 
@@ -98,32 +120,6 @@ char *MemoryAccess::GetVehicleMakeName(int modelHash) {
 	return (char*)(modelInfo + 0x27C);
 }
 
-uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
-	MODULEINFO modInfo = {nullptr};
-	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &modInfo, sizeof(MODULEINFO));
-
-	const char* start_offset = reinterpret_cast<const char *>(modInfo.lpBaseOfDll);
-	const uintptr_t size = static_cast<uintptr_t>(modInfo.SizeOfImage);
-
-	intptr_t pos = 0;
-	const uintptr_t searchLen = static_cast<uintptr_t>(strlen(mask) - 1);
-
-	for (const char* retAddress = start_offset; retAddress < start_offset + size; retAddress++) {
-		if (*retAddress == pattern[pos] || mask[pos] == '?') {
-			if (mask[pos + 1] == '\0') {
-				return (reinterpret_cast<uintptr_t>(retAddress) - searchLen);
-			}
-
-			pos++;
-		}
-		else {
-			pos = 0;
-		}
-	}
-
-	return 0;
-}
-
 uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const char* startAddress, size_t size) {
 	const char* address_end = startAddress + size;
 	const auto mask_length = static_cast<size_t>(strlen(mask) - 1);
@@ -139,22 +135,14 @@ uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const
 			i = 0;
 		}
 	}
-
 	return 0;
 }
 
-uint64_t g_fwTxdStore;
-uint32_t g_txdCollectionItemSize;
-using Hash = unsigned long;
+uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
+	MODULEINFO modInfo = { };
+	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &modInfo, sizeof(MODULEINFO));
 
-void MemoryAccess::initTxdStore() {
-	uint64_t patternAddr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
-									   "xxx????x????xxx");
-	g_fwTxdStore = patternAddr + *(int*)(patternAddr + 3) + 7;
-
-	patternAddr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
-							  "xxx????xxxxxxxxx");
-	g_txdCollectionItemSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
+	return FindPattern(pattern, mask, reinterpret_cast<const char *>(modInfo.lpBaseOfDll), modInfo.SizeOfImage);
 }
 
 // Thank you, Unknown Modder!
@@ -193,10 +181,8 @@ std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
 }
 
 // from EnableMPCars by drp4lyf
-GlobalTable globalTable;
-ScriptTable* scriptTable;
-ScriptHeader* shopController;
-bool MemoryAccess::findPatterns() {
+bool MemoryAccess::findShopController() {
+	// FindPatterns
 	__int64 patternAddr = FindPattern("\x4C\x8D\x05\x00\x00\x00\x00\x4D\x8B\x08\x4D\x85\xC9\x74\x11", "xxx????xxxxxxxx");
 	if (!patternAddr) {
 		logger.Write("ERROR: finding address 0");
@@ -214,10 +200,11 @@ bool MemoryAccess::findPatterns() {
 	}
 	scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
 
+	// FindScriptAddresses
 	while (!globalTable.IsInitialised())
 		Sleep(100); //Wait for GlobalInitialisation before continuing
 	
-	logger.Write("Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
+	//logger.Write("Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
 
 	ScriptTableItem* Item = scriptTable->FindScript(0x39DA738B);
 	if (Item == NULL) {
@@ -229,10 +216,9 @@ bool MemoryAccess::findPatterns() {
 		Sleep(100);
 	
 	shopController = Item->Header;
-	logger.Write("found shopcontroller");
+	//logger.Write("Found shopcontroller");
 	return true;
 }
-
 
 void MemoryAccess::enableCarsGlobal() {
 	for (int i = 0; i < shopController->CodePageCount(); i++) {
@@ -240,7 +226,7 @@ void MemoryAccess::enableCarsGlobal() {
 		if (!sigAddress) {
 			continue;
 		}
-		logger.Write("Pattern Found in codepage" + std::to_string(i) + "at memory address " + std::to_string(sigAddress));
+		//logger.Write("Pattern found in codepage " + std::to_string(i) + " at memory address " + std::to_string(sigAddress));
 		int RealCodeOff = (int)(sigAddress - (__int64)shopController->GetCodePageAddress(i) + (i << 14));
 		for (int j = 0; j < 2000; j++) {
 			if (*(int*)shopController->GetCodePositionAddress(RealCodeOff - j) == 0x0008012D) {

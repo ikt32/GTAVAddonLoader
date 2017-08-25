@@ -30,8 +30,7 @@ namespace rage {
 }
 
 
-struct ScriptHeader
-{
+struct ScriptHeader {
 	char padding1[16];					//0x0
 	unsigned char** codeBlocksOffset;	//0x10
 	char padding2[4];					//0x18
@@ -54,48 +53,39 @@ struct ScriptHeader
 
 	bool IsValid() const { return codeLength > 0; }
 	int CodePageCount() const { return (codeLength + 0x3FFF) >> 14; }
-	int GetCodePageSize(int page) const
-	{
+	int GetCodePageSize(int page) const {
 		return (page < 0 || page >= CodePageCount() ? 0 : (page == CodePageCount() - 1) ? codeLength & 0x3FFF : 0x4000);
 	}
 	unsigned char* GetCodePageAddress(int page) const { return codeBlocksOffset[page]; }
-	unsigned char* GetCodePositionAddress(int codePosition) const
-	{
+	unsigned char* GetCodePositionAddress(int codePosition) const {
 		return codePosition < 0 || codePosition >= codeLength ? NULL : &codeBlocksOffset[codePosition >> 14][codePosition & 0x3FFF];
 	}
-	char* GetString(int stringPosition)const
-	{
+	char* GetString(int stringPosition)const {
 		return stringPosition < 0 || stringPosition >= stringSize ? NULL : &stringsOffset[stringPosition >> 14][stringPosition & 0x3FFF];
 	}
 
 };
-struct ScriptTableItem
-{
+
+struct ScriptTableItem {
 	ScriptHeader* Header;
 	char padding[4];
 	int hash;
 
-	inline bool IsLoaded() const
-	{
+	inline bool IsLoaded() const {
 		return Header != NULL;
 	}
 };
 
-struct ScriptTable
-{
+struct ScriptTable {
 	ScriptTableItem* TablePtr;
 	char padding[16];
 	int count;
-	ScriptTableItem* FindScript(int hash)
-	{
-		if (TablePtr == NULL)
-		{
+	ScriptTableItem* FindScript(int hash) {
+		if (TablePtr == NULL) {
 			return NULL;//table initialisation hasnt happened yet
 		}
-		for (int i = 0; i<count; i++)
-		{
-			if (TablePtr[i].hash == hash)
-			{
+		for (int i = 0; i<count; i++) {
+			if (TablePtr[i].hash == hash) {
 				return &TablePtr[i];
 			}
 		}
@@ -103,23 +93,31 @@ struct ScriptTable
 	}
 };
 
-struct GlobalTable
-{
+struct GlobalTable {
 	__int64** GlobalBasePtr;
 	__int64* AddressOf(int index) const { return &GlobalBasePtr[index >> 18 & 0x3F][index & 0x3FFFF]; }
 	bool IsInitialised()const { return *GlobalBasePtr != NULL; }
 };
 
+struct HashNode {
+	int hash;
+	UINT16 data;
+	UINT16 padding;
+	HashNode* next;
+};
+
 class MemoryAccess {
 public:
-	static uintptr_t FindPattern(const char* pattern, const char* mask);
 	static uintptr_t FindPattern(const char *pattern, const char *mask, const char *startAddress, size_t size);
-	static void initTxdStore();
+	static uintptr_t FindPattern(const char* pattern, const char* mask);
+	static void Init();
+	static char *GetVehicleGameName(int modelHash);
+	static char *GetVehicleMakeName(int modelHash);
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
 	static std::array<std::vector<int>, 0x20> GenerateVehicleModelList();
 	static std::vector<uint8_t> GetVehicleModKits(int modelHash);
-	static char *GetVehicleGameName(int modelHash);
-	static char *GetVehicleMakeName(int modelHash);
+private:
+	static bool findShopController();
 	static void enableCarsGlobal();
-	static bool findPatterns();
+
 };
