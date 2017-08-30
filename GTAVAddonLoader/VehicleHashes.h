@@ -712,3 +712,151 @@ static const std::vector<std::string> WebsiteDicts = {
 	"sssa_dlc_stunt",
 	"sssa_dlc_valentines",
 };
+
+inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
+	return {
+		// No DLC
+		(SpriteInfo("lsc_dlc_import_export", "elegy_a", joaat("elegy2"), 1024, 512)), // prettier
+		(SpriteInfo("lsc_jan2016", "banshee2_a", joaat("banshee"), 1024, 512)), // prettier
+		(SpriteInfo("lsc_jan2016", "sultan2_a", joaat("sultan"), 1024, 512)), // prettier
+		(SpriteInfo("candc_truck", "cab_0", joaat("phantom3"), 256, 256)),
+		(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256)),
+
+		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy"), 1024, 512)),
+		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy2"), 1024, 512)),
+		(SpriteInfo("dock_default", "seashark", joaat("seashark2"), 1024, 512)), // the inaccurate but ok
+		(SpriteInfo("dock_default", "tropic", joaat("tropic2"), 1024, 512)),
+		// submersible rip
+		// predator rip
+
+
+		// Returning player
+		(SpriteInfo("sssa_dlc_mp_to_sp", "dukes", joaat("dukes"), 1024, 512)),
+		(SpriteInfo("sssa_dlc_mp_to_sp", "stallion", joaat("stalion"), 1024, 512)), // wtf
+		(SpriteInfo("dock_default", "sub2", joaat("submersible2"), 1024, 512)), // wtf kraken
+		// blimp2 rip
+		// blista3 rip (go go monkey)
+
+		// Beach Bum is ok
+
+		// Valentines day massacre
+		(SpriteInfo("lgm_dlc_valentines", "roosevelt", joaat("btype"), 512, 256)),
+		(SpriteInfo("lgm_dlc_valentines2", "roosevelt2", joaat("btype3"), 512, 256)),
+
+		// The Business Update is ok
+		// The High Life is ok
+		// Not a Hipster is ok
+		// Independence Day is ok
+		// Flight school is ok
+
+		// LTS
+		(SpriteInfo("lgm_dlc_lts_creator", "furore", joaat("furoregt"), 512, 256)),
+
+		// Festive surprise / Christmas2
+		(SpriteInfo("sssa_dlc_christmas_2", "rloader2", joaat("ratloader2"), 1024, 512)), // wrong but better than nothing
+
+		// Heists
+		(SpriteInfo("candc_default", "barracks", joaat("barracks3"), 1024, 512)),
+		(SpriteInfo("sssa_dlc_christmas_2", "slamvan", joaat("slamvan2"), 1024, 512)), // wrong but better than nothing
+		// trash2 missing
+		// tanker2 missing
+
+		// Ill Gotten Gains Pt1 is ok
+		// Ill Gotten Gains Pt2 is ok
+
+		// Lowriders
+		(SpriteInfo("lsc_default", "buccaneer2_a", joaat("buccaneer"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "buccaneer2_b", joaat("buccaneer2"), 1024, 512)),
+		(SpriteInfo("lsc_default", "chino2_a", joaat("chino"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "chino2_b", joaat("chino2"), 1024, 512)),
+		(SpriteInfo("lsc_default", "faction2_a", joaat("faction"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "faction2_b", joaat("faction2"), 1024, 512)),
+		(SpriteInfo("lsc_default", "moonbeam2_a", joaat("moonbeam"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "moonbeam2_b", joaat("moonbeam2"), 1024, 512)),
+		(SpriteInfo("lsc_default", "primo2_a", joaat("primo"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "primo2_b", joaat("primo2"), 1024, 512)),
+		(SpriteInfo("lsc_default", "voodoo_a", joaat("voodoo"), 1024, 512)),	// no dlc
+		(SpriteInfo("lsc_default", "voodoo_b", joaat("voodoo2"), 1024, 512)),
+
+
+		// Halloween is ok
+
+		// Executives and Other Criminals / apartments
+		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy4"), 1024, 512)),
+		(SpriteInfo("dock_default", "seashark", joaat("seashark3"), 1024, 512)),
+		(SpriteInfo("dock_default", "speeder", joaat("speeder2"), 1024, 512)),
+		(SpriteInfo("dock_default", "toro", joaat("toro2"), 1024, 512)),
+
+
+		(SpriteInfo("elt_dlc_apartments", "svolito", joaat("supervolito"), 1024, 512)),
+		(SpriteInfo("elt_dlc_apartments", "svolito2", joaat("supervolito2"), 1024, 512)),
+		(SpriteInfo("candc_default", "valkyrie", joaat("valkyrie2"), 1024, 512)),
+		(SpriteInfo("candc_default", "cargobob", joaat("cargobob4"), 1024, 512)),
+
+
+		(SpriteInfo("lgm_dlc_apartments", "baller3_web_vehicle_regular_b", joaat("baller3"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "baller3_web_vehicle_armoured_b", joaat("baller5"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "baller4_web_vehicle_regular_b", joaat("baller4"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "baller4_web_vehicle_armoured_b", joaat("baller6"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "cog55_web_vehicle_regular_b", joaat("cog55"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "cog55_web_vehicle_armoured_b", joaat("cog552"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "cognosc_web_vehicle_regular_b", joaat("cognoscenti"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "cognosc_web_vehicle_armoured_b", joaat("cognoscenti2"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "schafter3_web_vehicle_regular_b", joaat("schafter3"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "schafter3_web_vehicle_armoured_b", joaat("schafter5"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "schafter4_web_vehicle_regular_b", joaat("schafter4"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "schafter4_web_vehicle_armoured_b", joaat("schafter6"), 512, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "niteshad", joaat("nightshade"), 1024, 512)),
+		(SpriteInfo("lgm_dlc_apartments", "verlier", joaat("verlierer2"), 1024, 512)),
+
+
+		// Drop zone
+		(SpriteInfo("lsc_jan2016", "banshee2_b", joaat("banshee2"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_jan2016", "sultan2_b", joaat("sultanrs"), 1024, 512)), // correct custom version
+		
+		// Lowriders Custom Classics / Lowriders2
+		(SpriteInfo("lsc_lowrider2", "faction3_b", joaat("faction3"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "minivan2_b", joaat("minivan2"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "sabregt2_b", joaat("sabregt2"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "slamvan3_b", joaat("slamvan3"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "tornado5_b", joaat("tornado5"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "virgo2_b", joaat("virgo2"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_lowrider2", "virgo2_a", joaat("virgo3"), 1024, 512)), // correct custom version
+
+		// Finance and Felony / Executive1
+		(SpriteInfo("lgm_dlc_executive1", "xls_web_vehicle_regular_b", joaat("xls"), 512, 512)), // matches xls2
+		(SpriteInfo("lgm_dlc_executive1", "xls_web_vehicle_armoured_b", joaat("xls2"), 512, 512)),
+
+		// Cunning Stunts
+		(SpriteInfo("sssa_dlc_stunt", "trophy", joaat("trophytruck"), 512, 256)),
+		(SpriteInfo("sssa_dlc_stunt", "trophy2", joaat("trophytruck2"), 512, 256)),
+
+		// Bikers is good
+
+		// Import/Export
+		(SpriteInfo("lsc_dlc_import_export", "comet3_b", joaat("comet3"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_dlc_import_export", "elegy_b", joaat("elegy"), 1024, 512)), // correct custom version
+		(SpriteInfo("lsc_dlc_import_export", "specter2_a", joaat("specter"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "specter2_b", joaat("specter2"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "italigtb2_a", joaat("italigtb"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "italigtb2_b", joaat("italigtb2"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "nero2_a", joaat("nero"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "nero2_b", joaat("nero2"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "diablous2_a", joaat("diablous"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "diablous2_b", joaat("diablous2"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "fcr2_a", joaat("fcr"), 1024, 512)),
+		(SpriteInfo("lsc_dlc_import_export", "fcr2_b", joaat("fcr2"), 1024, 512)),
+		(SpriteInfo("candc_importexport", "wastlndr", joaat("wastelander"), 512, 256)),
+
+		// Cunning Stunts 2 is good
+
+		// Gunrunning
+		(SpriteInfo("candc_default", "insurgent", joaat("insurgent3"), 256, 128)), // pick-up
+		(SpriteInfo("candc_default", "technical", joaat("technical3"), 256, 128)), // same-ish
+		(SpriteInfo("candc_gunrunning", "trsmall2", joaat("trailersmall2"), 512, 256)),
+		(SpriteInfo("candc_truck", "cab_0", joaat("phantom3"), 256, 256)),
+		(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256)),
+		(SpriteInfo("candc_truck", "thumbnail", joaat("trailerlarge"), 256, 128)),
+		(SpriteInfo("foreclosures_bunker", "transportationb_2", joaat("caddy3"), 512, 256)) 
+	};
+}

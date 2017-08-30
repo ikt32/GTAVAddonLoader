@@ -47,7 +47,7 @@ bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height);
 Hash joaat(std::string s);
 std::string removeSpecialChars(std::string input);
 std::string getGxtName(Hash hash); // gxt name from model
-
+std::string to_lower(std::string data);
 
 /*
 * stl search thingy for checking if a *thing* is in a vector of *things*,

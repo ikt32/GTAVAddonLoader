@@ -144,6 +144,11 @@ std::string getGxtName(Hash hash) {
 	return displayName;
 }
 
+std::string to_lower(std::string data) {
+	std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+	return data;
+}
+
 bool FileExists(const std::string& name) {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0);

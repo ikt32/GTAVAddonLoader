@@ -92,12 +92,12 @@ void spawnMenu(std::string category, std::vector<ModelInfo> addonVehicles, std::
 
 			std::vector<std::string> extras = {};
 			bool visible = false;
-			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Add-on info", {})) {
+			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
 				spawnVehicle(addonVehicle.ModelHash);
 			}
 			if (visible) {
 				extras = resolveVehicleInfo(addonVehicle);
-				menu.OptionPlusPlus(extras, "Add-on info");
+				menu.OptionPlusPlus(extras, "Vehicle info");
 			}
 		}
 	}
