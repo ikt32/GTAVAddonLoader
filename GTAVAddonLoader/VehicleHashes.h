@@ -627,6 +627,30 @@ static const std::vector<Hash> GunrunningVehicles = {
 	0x36B4A8A9, //  XA21                xa21                XA - 21
 };
 
+static const std::vector<Hash> SmugglersRunVehicles = {
+	0x89BA59F5, //  HAVOK
+	0xFD707EDE, //  HUNTER
+	0x96E24857, //  microlight
+	0xD35698EF, //  MOGUL
+	0xC5DD6967, //  ROGUE
+	0x9A9EB7DE, //  STARLING
+	0xE8983F9F, //  SEABREEZE
+	0x3E2E4F8A, //  TULA
+	0xA52F6866, //  ALPHAZ1
+	0xC3F25753, //  HOWARD
+	0xAD6065C0, //  PYRO
+	0xFE0A508C, //  BOMBUSHKA
+	0x5D56F01B, //  MOLOTOK
+	0x3DC92356, //  NOKOTA
+	0x52FF9437, //  CYCLONE
+	0xC4810400, //  VISIONE
+	0xB5EF4C33, //  VIGILANTE
+	0x6DBD6C0A, //  RETINUE
+	0x7A2EF5E4, //  RAPIDGT3
+};
+
+
+
 inline std::vector<DLC> buildDLClist() {
 	return {
 		{ DLC("Original game", OriginalVehicles) },
@@ -653,7 +677,8 @@ inline std::vector<DLC> buildDLClist() {
 		{ DLC("Bikers", BikersVehicles) },
 		{ DLC("Import/Export", ImportExportVehicles) },
 		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
-		{ DLC("Gunrunning", GunrunningVehicles) }
+		{ DLC("Gunrunning", GunrunningVehicles) },
+		{ DLC("Smugger's Run", SmugglersRunVehicles) },
 	};
 }
 
