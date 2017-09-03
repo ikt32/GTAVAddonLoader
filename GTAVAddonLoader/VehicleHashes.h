@@ -682,8 +682,6 @@ inline std::vector<DLC> buildDLClist() {
 	};
 }
 
-static const unsigned expectedPreviewSprites = 893;
-
 static const std::vector<std::string> WebsiteDicts = {
 	"candc_apartments",
 	"candc_default",
@@ -736,6 +734,10 @@ static const std::vector<std::string> WebsiteDicts = {
 	"sssa_dlc_mp_to_sp",
 	"sssa_dlc_stunt",
 	"sssa_dlc_valentines",
+	"candc_smuggler",
+	"elt_dlc_smuggler",
+	"lgm_dlc_smuggler",
+	"sssa_dlc_smuggler",
 };
 
 inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
@@ -883,5 +885,7 @@ inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
 		(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256)),
 		(SpriteInfo("candc_truck", "thumbnail", joaat("trailerlarge"), 256, 128)),
 		(SpriteInfo("foreclosures_bunker", "transportationb_2", joaat("caddy3"), 512, 256)) 
+
+		// Smuggler's Run is good (omg thanks)
 	};
 }

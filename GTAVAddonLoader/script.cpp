@@ -21,6 +21,7 @@
 #include "settings.h"
 #include "VehicleHashes.h"
 #include "ExtraTypes.h"
+#include "Util/Versions.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -56,6 +57,15 @@ std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 
+
+//static const unsigned expectedPreviewSprites = 893;
+int getExpectedPreviewSprites(eGameVersion gameVersion) {
+	int sprites = gameVersion >= G_VER_1_0_1103_2_STEAM ? 893 : 893;
+	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM ? 933 : sprites;
+	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM + 2 ? 9999 : sprites;
+	return sprites;
+}
+
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
  * same name as the model. We'll go through this (small) list first.
@@ -76,7 +86,7 @@ void addVehicleSpriteOverrides() {
  * list fully before the user arrived at something with a picture.
  */
 void resolveVehicleSpriteInfo() {
-	if (g_dlcSprites.size() == expectedPreviewSprites)
+	if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
 		return;
 
 	for (auto dict : WebsiteDicts) {
@@ -93,6 +103,8 @@ void resolveVehicleSpriteInfo() {
 		}
 	}
 	logger.Write("Found " + std::to_string(g_dlcSprites.size()) + " preview sprites (dict)");
+	if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
+		logger.Write("All sprites indexed");
 }
 
 /*

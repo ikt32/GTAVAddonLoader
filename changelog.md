@@ -1,10 +1,11 @@
 # Changelog
-## v1.2.0
+## v1.1.3
 Config changes: No incompatible changes.
 
+* Update for Smuggler's Run
 * Add option to list by vehicle make
 * Add option to make spawned vehicles persistent
-* Fox some official image previews
+* Fix official image previews
 * Add drp4lyf's MP vehicles patch
 
 ## v1.1.2

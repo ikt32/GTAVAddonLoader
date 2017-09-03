@@ -59,11 +59,8 @@ static std::vector<std::string> GameVersionString = {
 	"VER_1_0_1103_2_STEAM", // 34
 	"VER_1_0_1103_2_NOSTEAM", // 35
 
-	"Smugger's Run_36_STEAM", // 36
-	"Smugger's Run_37_NOSTEAM", // 37
-
-	"???_38_STEAM", // 38
-	"???_39_NOSTEAM", // 39
+	"VER_1_0_1180_2_STEAM", // 36
+	"VER_1_0_1180_2_NOSTEAM", // 37
 
 };
 
@@ -121,6 +118,9 @@ enum G_GameVersion : int {
 
 	G_VER_1_0_1103_2_STEAM, // 34
 	G_VER_1_0_1103_2_NOSTEAM, // 35
+
+	G_VER_1_0_1180_2_STEAM, // 36
+	G_VER_1_0_1180_2_NOSTEAM, // 37
 };
 
 static std::string eGameVersionToString(int version) {
