@@ -678,7 +678,7 @@ inline std::vector<DLC> buildDLClist() {
 		{ DLC("Import/Export", ImportExportVehicles) },
 		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
 		{ DLC("Gunrunning", GunrunningVehicles) },
-		{ DLC("Smugger's Run", SmugglersRunVehicles) },
+		{ DLC("Smuggler's Run", SmugglersRunVehicles) },
 	};
 }
 
