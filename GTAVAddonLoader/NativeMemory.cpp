@@ -200,9 +200,18 @@ bool MemoryAccess::findShopController() {
 	}
 	scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
 
+	DWORD startTime = GetTickCount();
+	DWORD timeout = 10000; // in millis
+
 	// FindScriptAddresses
-	while (!globalTable.IsInitialised())
-		Sleep(100); //Wait for GlobalInitialisation before continuing
+	while (!globalTable.IsInitialised()) {
+		scriptWait(100); //Wait for GlobalInitialisation before continuing
+		if (GetTickCount() > startTime + timeout) {
+			logger.Write("ERROR: couldn't init global table");
+			logger.Write("Aborting...");
+			return false;
+		}
+	}
 	
 	//logger.Write("Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
 

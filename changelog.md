@@ -1,4 +1,10 @@
 # Changelog
+## v1.1.4
+Config changes: No
+
+* Fix MP vehicles patch breaking FiveM
+* Decrease smugness
+
 ## v1.1.3
 Config changes: No incompatible changes.
 
