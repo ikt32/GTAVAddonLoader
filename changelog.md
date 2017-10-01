@@ -1,5 +1,10 @@
 # Changelog
-## v1.1.4
+## v1.2.1
+Config changes: No
+
+* Add option to remove unused preview images
+
+## v1.1.4/v1.2.0
 Config changes: No
 
 * Fix MP vehicles patch breaking FiveM
