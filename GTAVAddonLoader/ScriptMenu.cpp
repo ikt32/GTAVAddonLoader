@@ -183,6 +183,17 @@ void update_menu() {
 			g_addonImageMetadata.clear();
 			storeImageNames();
 		}
+		if (menu.Option("Clean up image preview folder", { "Remove images from the preview folder "
+			"that aren't detected as add-ons." })) {
+			g_addonImageNames.clear();
+			g_missingImages.clear();
+			g_addonImages.clear();
+			g_addonImageMetadata.clear();
+
+			cleanImageDirectory(true);
+
+			storeImageNames();
+		}
 
 		if (settings.Persistent) {
 			if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 

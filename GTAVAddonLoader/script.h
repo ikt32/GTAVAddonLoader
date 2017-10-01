@@ -6,6 +6,8 @@ http://dev-c.com
 
 #pragma once
 
+#define DISPLAY_VERSION "v1.2.0"
+
 #include <string>
 #include <vector>
 #include <inc/types.h>
@@ -26,6 +28,7 @@ void spawnVehicle(Hash hash);
 std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle);
 
 void clearPersistentVehicles();
+void cleanImageDirectory(bool backup);
 
 
 extern std::vector<std::string> dlcpackFolders;

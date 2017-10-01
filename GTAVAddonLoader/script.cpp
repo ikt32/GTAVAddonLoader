@@ -146,6 +146,53 @@ void storeImageNames() {
 }
 
 /*
+ * Remove files from the img directory if they aren't present as add-on.
+ */
+void cleanImageDirectory(bool backup) {
+	logger.Write("Cleaning img dir");
+	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+	std::vector<fs::directory_entry> filesToDiscard;
+	for (auto &file : fs::directory_iterator(imgPath)) {
+		if (is_directory(fs::path(file))) continue;
+		Hash hash = joaat(fs::path(file).stem().string());
+		if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash)) {
+			filesToDiscard.push_back(file);
+			//logger.Write("Marked " + fs::path(file).stem().string());
+		}
+	}
+	std::string bakPath = "";
+	if (filesToDiscard.size() == 0) {
+		logger.Write("No files to discard");
+		return;
+	}
+	logger.Write("About to discard " + std::to_string(filesToDiscard.size()) + " files");
+
+	if (backup) {
+		logger.Write("Creating bak dir");
+		auto ms = std::chrono::duration_cast<std::chrono::milliseconds >(
+			std::chrono::system_clock::now().time_since_epoch()
+			).count();
+		bakPath = imgPath + "\\bak." + std::to_string(ms);
+		logger.Write("Bak dir: " + bakPath);
+		fs::create_directory(bakPath);
+	}
+
+	for (auto &file : filesToDiscard) {
+		std::string src = file.path().string();
+		std::wstring srcWide = std::wstring(src.begin(), src.end());
+		if (backup) {
+			std::string dst = bakPath + "\\" + file.path().filename().string();
+			//logger.Write("Moving file " + src + " to " + dst);
+			std::wstring dstWide = std::wstring(dst.begin(), dst.end());
+			MoveFileW(srcWide.c_str(), dstWide.c_str());
+		}
+		else {
+			DeleteFileW(srcWide.c_str());
+		}
+	}
+}
+
+/*
  * Guess model names based on 
  * 1. model name
  * 2. dlcpacks folder name
