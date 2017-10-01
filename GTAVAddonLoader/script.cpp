@@ -154,6 +154,7 @@ void cleanImageDirectory(bool backup) {
 	std::vector<fs::directory_entry> filesToDiscard;
 	for (auto &file : fs::directory_iterator(imgPath)) {
 		if (is_directory(fs::path(file))) continue;
+		if (fs::path(file).stem().string() == "noimage") continue;
 		Hash hash = joaat(fs::path(file).stem().string());
 		if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash)) {
 			filesToDiscard.push_back(file);

@@ -6,7 +6,7 @@ http://dev-c.com
 
 #pragma once
 
-#define DISPLAY_VERSION "v1.2.0"
+#define DISPLAY_VERSION "v1.2.1"
 
 #include <string>
 #include <vector>
