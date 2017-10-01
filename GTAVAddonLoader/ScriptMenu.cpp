@@ -109,7 +109,7 @@ void update_menu() {
 
 	if (menu.CurrentMenu("mainmenu")) {
 		menu.Title("Add-on spawner");
-		menu.Subtitle(DISPLAY_VERSION);
+		menu.Subtitle("~b~" + std::string(DISPLAY_VERSION) + "~w~");
 
 		menu.MenuOption("Settings", "settingsmenu");
 
