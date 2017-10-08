@@ -21,6 +21,7 @@ public:
 	bool MergeDLCs = false;
 	bool Persistent = false;
 	bool CategorizeMake = false;
+	bool SpawnInplace = false;
 
 private:
 	std::string settingsGeneralFile;

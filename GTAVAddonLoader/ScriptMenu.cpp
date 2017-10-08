@@ -151,7 +151,11 @@ void update_menu() {
 		menu.Title("Settings");
 		menu.Subtitle("");
 
-		if (menu.BoolOption("Spawn in car", settings.SpawnInside)) {
+		if (menu.BoolOption("Spawn inside vehicle", settings.SpawnInside)) {
+			settings.SaveSettings();
+		}
+		if (menu.BoolOption("Spawn inplace", settings.SpawnInplace, 
+		{ "Don't spawn to the right of the previous car, but spawn at the current position." })) {
 			settings.SaveSettings();
 		}
 		if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
@@ -161,7 +165,7 @@ void update_menu() {
 			settings.SaveSettings();
 		}
 		if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
-		{ "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "."})) {
+		{ "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "." })) {
 			settings.SaveSettings();
 		}
 		if (menu.BoolOption("List all DLCs", settings.ListAllDLCs,

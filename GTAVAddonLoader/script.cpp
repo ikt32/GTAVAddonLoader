@@ -58,7 +58,6 @@ std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 
 
-//static const unsigned expectedPreviewSprites = 893;
 int getExpectedPreviewSprites(eGameVersion gameVersion) {
 	int sprites = gameVersion >= G_VER_1_0_1103_2_STEAM ? 893 : 893;
 	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM ? 933 : sprites;
@@ -398,7 +397,16 @@ void spawnVehicle(Hash hash) {
 		}
 
 		float offsetX = 0.0f;
-		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
+		Vector3 oldVehiclePos;
+		if (settings.SpawnInplace) {
+			if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
+				Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+				oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
+				ENTITY::SET_ENTITY_AS_MISSION_ENTITY(oldVeh, true, true);
+				VEHICLE::DELETE_VEHICLE(&oldVeh);
+			}
+		}
+		else if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
 			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
 			Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
 			Vector3 newMin, newMax;
@@ -413,7 +421,13 @@ void spawnVehicle(Hash hash) {
 			offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
 		}
 		
-		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), offsetX, 0.0, 0);
+		Vector3 pos;
+		if (settings.SpawnInplace) {
+			pos = oldVehiclePos;
+		}
+		else {
+			pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), offsetX, 0.0, 0);
+		}
 
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
