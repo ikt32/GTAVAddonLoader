@@ -397,16 +397,7 @@ void spawnVehicle(Hash hash) {
 		}
 
 		float offsetX = 0.0f;
-		Vector3 oldVehiclePos;
-		if (settings.SpawnInplace) {
-			if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
-				Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
-				oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
-				ENTITY::SET_ENTITY_AS_MISSION_ENTITY(oldVeh, true, true);
-				VEHICLE::DELETE_VEHICLE(&oldVeh);
-			}
-		}
-		else if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
+		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
 			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
 			Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
 			Vector3 newMin, newMax;
@@ -421,13 +412,17 @@ void spawnVehicle(Hash hash) {
 			offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
 		}
 		
-		Vector3 pos;
-		if (settings.SpawnInplace) {
+		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, offsetX, 0.0, 0);
+
+		if (settings.SpawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
+			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+			Vector3 oldVehiclePos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+			oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
+			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(oldVeh, true, true);
+			VEHICLE::DELETE_VEHICLE(&oldVeh);
 			pos = oldVehiclePos;
 		}
-		else {
-			pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER::PLAYER_PED_ID(), offsetX, 0.0, 0);
-		}
+		
 
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
@@ -439,7 +434,6 @@ void spawnVehicle(Hash hash) {
 
 		WAIT(0);
 		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
-		//ENTITY::SET_VEHICLE_AS_NO_LONGER_NEEDED(&veh);
 
 		if (settings.Persistent) {
 			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, true, false);
