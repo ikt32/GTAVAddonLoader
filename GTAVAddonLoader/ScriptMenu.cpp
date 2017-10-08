@@ -122,6 +122,10 @@ void update_mainmenu(std::set<std::string> addonCats) {
 
 	menu.MenuOption("Settings", "settingsmenu");
 
+	if (settings.SearchMenu) {
+		menu.MenuOption("Search vehicles", "searchmenu");
+	}
+
 	if (settings.SpawnByName) {
 		std::vector<std::string> extraSpawnInfo = {
 			"Use Delete for backspace",
@@ -149,10 +153,6 @@ void update_mainmenu(std::set<std::string> addonCats) {
 				resolveVehicleSpriteInfo();
 			}
 		}
-	}
-
-	if (settings.SearchMenu) {
-		menu.MenuOption("Search vehicles", "searchmenu");
 	}
 
 	for (auto category : addonCats) {
@@ -234,15 +234,18 @@ void update_settingsmenu() {
 	if (menu.BoolOption("Spawn inside vehicle", settings.SpawnInside)) {
 		settings.SaveSettings();
 	}
-	if (menu.BoolOption("Spawn inplace", settings.SpawnInplace, 
+	if (menu.BoolOption("Spawn in place", settings.SpawnInplace, 
 	                    { "Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.",
 		                    "Only active if \"Spawn inside vehicle\" is turned on."})) {
 		settings.SaveSettings();
 	}
-	if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
+	if (menu.BoolOption("Enable persistence", settings.Persistent,
+						{ "Spawned cars don't disappear." })) {
 		settings.SaveSettings();
 	}
-	if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
+	if (menu.BoolOption("Spawn by name", settings.SpawnByName,
+						{ "Spawn vehicles by their model name.",
+							"This setting adds an option to the main menu." })) {
 		settings.SaveSettings();
 	}
 	if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
@@ -250,19 +253,20 @@ void update_settingsmenu() {
 		settings.SaveSettings();
 	}
 	if (menu.BoolOption("List all DLCs", settings.ListAllDLCs,
-	                    { "Show all official DLC vehicles."
-		                    " These will appear in their own submenu, sorted per class, per DLC." })) {
+	                    { "Show all official DLC vehicles. These will appear in their own submenu, sorted per class, per DLC." })) {
 		settings.SaveSettings();
 	}
 	if (menu.BoolOption("Merge DLCs", settings.MergeDLCs,
 	                    { "Don't sort per DLC and just show the vehicles per class." })) {
 		settings.SaveSettings();
 	}
-	if (menu.BoolOption("Enable search menu", settings.SearchMenu)) {
+	if (menu.BoolOption("Enable search menu", settings.SearchMenu, 
+						{ "Search for vehicles by their make, game name or model name.",
+							"This setting adds an option to the main menu." })) {
 		settings.SaveSettings();
 	}
 	if (menu.Option("Reload previews", 
-			{ "Use for when you changed an image that's already been loaded."})) {
+					{ "Use for when you changed an image that's already been loaded."})) {
 		resolveVehicleSpriteInfo();
 
 		g_addonImageNames.clear();
@@ -272,7 +276,8 @@ void update_settingsmenu() {
 		storeImageNames();
 	}
 	if (menu.Option("Clean up image preview folder", 
-					{ "Remove images from the preview folder that aren't detected as add-ons." })) {
+					{ "Remove images from the preview folder that aren't detected as add-ons.",
+						"Removed files are put in a \"bak.timestamp\" folder." })) {
 		g_addonImageNames.clear();
 		g_missingImages.clear();
 		g_addonImages.clear();
