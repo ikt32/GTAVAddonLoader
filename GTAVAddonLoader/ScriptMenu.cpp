@@ -83,9 +83,10 @@ void onMenuExit() {
 	manualVehicleName.clear();
 }
 
-void spawnMenu(std::string category, std::vector<ModelInfo> addonVehicles, std::string origin, bool asMake) {
+void update_spawnmenu(std::string category, std::vector<ModelInfo> addonVehicles, std::string origin, bool asMake) {
 	menu.Title(category);
 	menu.Subtitle(origin);
+
 	for (auto addonVehicle : addonVehicles) {
 		if (category == (asMake ? addonVehicle.MakeName : addonVehicle.ClassName)) {
 			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
@@ -107,229 +108,250 @@ void spawnMenu(std::string category, std::vector<ModelInfo> addonVehicles, std::
 	}
 }
 
+void update_mainmenu(std::set<std::string> addonCats) {
+	menu.Title("Add-on spawner");
+	menu.Subtitle("~b~" + std::string(DISPLAY_VERSION) + "~w~");
+
+	menu.MenuOption("Settings", "settingsmenu");
+
+	if (settings.SpawnByName) {
+		std::vector<std::string> extraSpawnInfo = {
+			"Use Delete for backspace",
+			"Enter car model:",
+			manualVehicleName,
+		};
+
+		if (manualSpawnSelected) {
+			evaluateInput(manualVehicleName);
+		}
+
+		if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
+			spawnVehicle(GAMEPLAY::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
+		}
+	}
+
+	if (settings.ListAllDLCs) {
+		if (settings.MergeDLCs) {
+			if (menu.MenuOption("Spawn official DLCs", "officialdlcmergedmenu")) {
+				resolveVehicleSpriteInfo();
+			}
+		}
+		else {
+			if (menu.MenuOption("Spawn official DLCs", "officialdlcmenu")) {
+				resolveVehicleSpriteInfo();
+			}
+		}
+	}
+
+	if (settings.SearchMenu) {
+		menu.MenuOption("Search vehicles", "searchmenu");
+	}
+
+	for (auto category : addonCats) {
+		menu.MenuOption(category, category);
+	}
+}
+
+void update_searchmenu() {
+	menu.Title("Search");
+	menu.Subtitle("");
+
+	std::vector<std::string> extraSpawnInfo = {
+		"Use Delete for backspace",
+		"Searching for:",
+		searchVehicleName,
+	};
+
+	if (searchEntrySelected) {
+		evaluateInput(searchVehicleName);
+	}
+
+	menu.StringArray("Search in", { "Game vehicles", "Add-on vehicles" }, settings.SearchCategory);
+
+	if (menu.OptionPlus("Search", extraSpawnInfo, &searchEntrySelected, nullptr, nullptr, "Search")) {
+	}
+
+	for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
+		char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
+		std::string displayName = UI::_GET_LABEL_TEXT(name);
+		std::string rawName = name; 
+		if (displayName == "NULL") {
+			displayName = name;
+		}
+		std::string modelName = guessModelName(addonVehicle.ModelHash);
+
+		std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
+		std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
+
+		if (findSubstring(rawName, searchVehicleName) != -1 ||
+			findSubstring(displayName, searchVehicleName) != -1 ||
+			findSubstring(modelName, searchVehicleName) != -1 ||
+			findSubstring(makeName, searchVehicleName) != -1 ||
+			findSubstring(makeNameRaw, searchVehicleName) != -1) {
+			std::vector<std::string> extras = {};
+			bool visible = false;
+			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
+				spawnVehicle(addonVehicle.ModelHash);
+			}
+			if (visible) {
+				extras = resolveVehicleInfo(addonVehicle);
+				menu.OptionPlusPlus(extras, "Vehicle info");
+			}
+		}
+	}
+}
+
+void update_settingsmenu() {
+	menu.Title("Settings");
+	menu.Subtitle("");
+
+	if (menu.BoolOption("Spawn inside vehicle", settings.SpawnInside)) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Spawn inplace", settings.SpawnInplace, 
+	                    { "Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.",
+		                    "Only active if \"Spawn inside vehicle\" is turned on."})) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
+	                    { "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "." })) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("List all DLCs", settings.ListAllDLCs,
+	                    { "Show all official DLC vehicles."
+		                    " These will appear in their own submenu, sorted per class, per DLC." })) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Merge DLCs", settings.MergeDLCs,
+	                    { "Don't sort per DLC and just show the vehicles per class." })) {
+		settings.SaveSettings();
+	}
+	if (menu.BoolOption("Enable search menu", settings.SearchMenu)) {
+		settings.SaveSettings();
+	}
+	if (menu.Option("Reload previews", 
+			{ "Use for when you changed an image that's already been loaded."})) {
+		resolveVehicleSpriteInfo();
+
+		g_addonImageNames.clear();
+		g_missingImages.clear();
+		g_addonImages.clear();
+		g_addonImageMetadata.clear();
+		storeImageNames();
+	}
+	if (menu.Option("Clean up image preview folder", 
+					{ "Remove images from the preview folder that aren't detected as add-ons." })) {
+		g_addonImageNames.clear();
+		g_missingImages.clear();
+		g_addonImages.clear();
+		g_addonImageMetadata.clear();
+
+		cleanImageDirectory(true);
+
+		storeImageNames();
+	}
+
+	if (settings.Persistent) {
+		if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 
+			                "Persistent vehicles: " + std::to_string(g_persistentVehicles.size())})) {
+			clearPersistentVehicles();
+		}
+	}
+}
+
+void update_officialdlcmergedmenu(std::set<std::string> categories) {
+	menu.Title("Official DLC");
+	menu.Subtitle("Merged");
+
+	for (auto category : categories) {
+		menu.MenuOption(category, "dlc_" + category);
+	}
+}
+
+void update_officialdlcmenu() {
+	menu.Title("Official DLC");
+	menu.Subtitle("Sort by DLC");
+
+	for (auto dlc : g_dlcs) {
+		if (menu.MenuOption(dlc.Name, dlc.Name)) {
+			resolveVehicleSpriteInfo();
+		}
+	}
+}
+
+void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> dlcCats) {
+	menu.Title(dlc.Name);
+	menu.Subtitle("Sort by DLC");
+
+	for (auto category : dlcCats) {
+		if (menu.MenuOption(category, dlc.Name + " " + category)) {
+			resolveVehicleSpriteInfo();
+		}
+	}
+	if (dlcCats.empty()) {
+		menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
+			            "Game version: " + eGameVersionToString(getGameVersion()) });
+	}
+}
+
 void update_menu() {
 	menu.CheckKeys();
 	std::set<std::string> addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
 
 	if (menu.CurrentMenu("mainmenu")) {
-		menu.Title("Add-on spawner");
-		menu.Subtitle("~b~" + std::string(DISPLAY_VERSION) + "~w~");
-
-		menu.MenuOption("Settings", "settingsmenu");
-
-		if (settings.SpawnByName) {
-			std::vector<std::string> extraSpawnInfo = {
-				"Use Delete for backspace",
-				"Enter car model:",
-				manualVehicleName,
-			};
-
-			if (manualSpawnSelected) {
-				evaluateInput(manualVehicleName);
-			}
-
-			if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
-				spawnVehicle(GAMEPLAY::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
-			}
-		}
-
-		if (settings.ListAllDLCs) {
-			if (settings.MergeDLCs) {
-				if (menu.MenuOption("Spawn official DLCs", "officialdlcmergedmenu")) {
-					resolveVehicleSpriteInfo();
-				}
-			}
-			else {
-				if (menu.MenuOption("Spawn official DLCs", "officialdlcmenu")) {
-					resolveVehicleSpriteInfo();
-				}
-			}
-		}
-
-		if (settings.SearchMenu) {
-			menu.MenuOption("Search vehicles", "searchmenu");
-		}
-
-		for (auto category : addonCats) {
-			menu.MenuOption(category, category);
-		}
+		update_mainmenu(addonCats);
 	}
 
 	if (menu.CurrentMenu("searchmenu")) {
-		menu.Title("Search");
-		menu.Subtitle("");
-
-		std::vector<std::string> extraSpawnInfo = {
-			"Use Delete for backspace",
-			"Enter search criteria:",
-			searchVehicleName,
-			"Press enter to search"
-		};
-
-		if (searchEntrySelected) {
-			evaluateInput(searchVehicleName);
-		}
-
-		menu.StringArray("Search in", { "Game vehicles", "Add-on vehicles" }, settings.SearchCategory);
-
-		if (menu.OptionPlus("Search", extraSpawnInfo, &searchEntrySelected, nullptr, nullptr, "Search")) {
-		}
-
-		for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
-			std::string displayName = UI::_GET_LABEL_TEXT(name);
-			std::string rawName = name; 
-			if (displayName == "NULL") {
-				displayName = name;
-			}
-			std::string modelName = guessModelName(addonVehicle.ModelHash);
-
-			std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
-			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
-
-			if (ci_find_substr(rawName, searchVehicleName) != -1 ||
-				ci_find_substr(displayName, searchVehicleName) != -1 ||
-				ci_find_substr(modelName, searchVehicleName) != -1 ||
-				ci_find_substr(makeName, searchVehicleName) != -1 ||
-				ci_find_substr(makeNameRaw, searchVehicleName) != -1) {
-				std::vector<std::string> extras = {};
-				bool visible = false;
-				if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
-					spawnVehicle(addonVehicle.ModelHash);
-				}
-				if (visible) {
-					extras = resolveVehicleInfo(addonVehicle);
-					menu.OptionPlusPlus(extras, "Vehicle info");
-				}
-			}
-		}
+		update_searchmenu();
 	}
 
 	if (menu.CurrentMenu("settingsmenu")) {
-		menu.Title("Settings");
-		menu.Subtitle("");
-
-		if (menu.BoolOption("Spawn inside vehicle", settings.SpawnInside)) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Spawn inplace", settings.SpawnInplace, 
-		{ "Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.",
-		"Only active if \"Spawn inside vehicle\" is turned on."})) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Spawn manually", settings.SpawnByName)) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
-		{ "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "." })) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("List all DLCs", settings.ListAllDLCs,
-		{ "Show all official DLC vehicles."
-			" These will appear in their own submenu, sorted per class, per DLC." })) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Merge DLCs", settings.MergeDLCs,
-		{ "Don't sort per DLC and just show the vehicles per class." })) {
-			settings.SaveSettings();
-		}
-		if (menu.BoolOption("Enable search menu", settings.SearchMenu)) {
-			settings.SaveSettings();
-		}
-		if (menu.Option("Reload previews", { "Use for when you changed an image "
-			"that's already been loaded."})) {
-			resolveVehicleSpriteInfo();
-
-			g_addonImageNames.clear();
-			g_missingImages.clear();
-			g_addonImages.clear();
-			g_addonImageMetadata.clear();
-			storeImageNames();
-		}
-		if (menu.Option("Clean up image preview folder", { "Remove images from the preview folder "
-			"that aren't detected as add-ons." })) {
-			g_addonImageNames.clear();
-			g_missingImages.clear();
-			g_addonImages.clear();
-			g_addonImageMetadata.clear();
-
-			cleanImageDirectory(true);
-
-			storeImageNames();
-		}
-
-		if (settings.Persistent) {
-			if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 
-				"Persistent vehicles: " + std::to_string(g_persistentVehicles.size())})) {
-				clearPersistentVehicles();
-			}
-		}
+		update_settingsmenu();
 	}
 
 	for (auto category : addonCats) {
 		if (menu.CurrentMenu(category)) {
-			spawnMenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
+			update_spawnmenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
 		}
 	}	
 
-	if (!settings.MergeDLCs) {
-		if (menu.CurrentMenu("officialdlcmenu")) {
-			menu.Title("Official DLC");
-			menu.Subtitle("");
+	if (settings.MergeDLCs) {
+		std::set<std::string> categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
 
-			for (auto dlc : g_dlcs) {
-				if (menu.MenuOption(dlc.Name, dlc.Name)) {
-					resolveVehicleSpriteInfo();
-				}
+		if (menu.CurrentMenu("officialdlcmergedmenu")) {
+			update_officialdlcmergedmenu(categories);
+		}
+		for (auto category : categories) {
+			if (menu.CurrentMenu("dlc_" + category)) {
+				update_spawnmenu(category, g_dlcVehicles, "Original + All DLCs", settings.CategorizeMake);
 			}
+		}
+	}
+	else {
+		if (menu.CurrentMenu("officialdlcmenu")) {
+			update_officialdlcmenu();
 		}
 
 		for (auto dlc : g_dlcs) {
 			std::set<std::string> dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
 			if (menu.CurrentMenu(dlc.Name)) {
-				menu.Title(dlc.Name);
-				menu.Subtitle("Sort by DLC");
-
-
-				for (auto category : dlcCats) {
-					if (menu.MenuOption(category, dlc.Name + " " + category)) {
-						resolveVehicleSpriteInfo();
-					}
-				}
-				if (dlcCats.empty()) {
-					menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
-						"Game version: " + eGameVersionToString(getGameVersion()) });
-				}
+				update_perdlcmenu(dlc, dlcCats);
 			}
 			for (auto className : dlcCats) {
 				if (menu.CurrentMenu(dlc.Name + " " + className)) {
-					menu.Title(className);
-					spawnMenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
+					update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
 				}
 			}
 		}
 	}
-	else {
-		std::set<std::string> categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
-
-		if (menu.CurrentMenu("officialdlcmergedmenu")) {
-			menu.Title("Official DLC");
-			menu.Subtitle("Merged");
-			for (auto category : categories) {
-				menu.MenuOption(category, "dlc_" + category);
-			}
-		}
-		for (auto category : categories) {
-			if (menu.CurrentMenu("dlc_" + category)) {
-				spawnMenu(category, g_dlcVehicles, "Original + All DLCs", settings.CategorizeMake);
-			}
-		}
-	}
-
 
 	menu.EndMenu();
 }
