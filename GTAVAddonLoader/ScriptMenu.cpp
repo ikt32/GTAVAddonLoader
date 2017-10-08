@@ -14,6 +14,8 @@ std::string manualVehicleName = "";
 std::string searchVehicleName = "";
 bool manualSpawnSelected = false;
 bool searchEntrySelected = false;
+std::vector<ModelInfo> g_matchedVehicles;
+
 
 extern NativeMenu::Menu menu;
 extern NativeMenu::MenuControls controls;
@@ -37,7 +39,8 @@ extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
 extern std::vector<SpriteInfo> g_dlcSprites;
 
-std::string evaluateInput(std::string &searchFor) {
+// returns true if a character was pressed
+bool evaluateInput(std::string &searchFor) {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
 	UI::SET_PAUSE_MENU_ACTIVE(false);
 	CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(1);
@@ -48,22 +51,27 @@ std::string evaluateInput(std::string &searchFor) {
 		if (key == -1) continue;
 		if (IsKeyJustUp(key)) {
 			searchFor += c;
+			return true;
 		}
 	}
 	if (IsKeyJustUp(str2key("SPACE"))) {
 		searchFor += ' ';
+		return true;
 	}
 	if (IsKeyJustUp(str2key("VK_OEM_MINUS"))) {
 		searchFor += '_';
+		return true;
 	}
 	if (IsKeyJustUp(str2key("DELETE")) && searchFor.size() > 0) {
 		searchFor.pop_back();
+		return true;
 	}
 	if (IsKeyJustUp(str2key("BACKSPACE"))) {
 		searchFor.clear();
+		return true;
 	}
 
-	return searchFor;
+	return false;
 }
 
 void updateSettings() {
@@ -152,29 +160,12 @@ void update_mainmenu(std::set<std::string> addonCats) {
 	}
 }
 
-void update_searchmenu() {
-	menu.Title("Search");
-	menu.Subtitle("");
-
-	std::vector<std::string> extraSpawnInfo = {
-		"Use Delete for backspace",
-		"Searching for:",
-		searchVehicleName,
-	};
-
-	if (searchEntrySelected) {
-		evaluateInput(searchVehicleName);
-	}
-
-	menu.StringArray("Search in", { "Game vehicles", "Add-on vehicles" }, settings.SearchCategory);
-
-	if (menu.OptionPlus("Search", extraSpawnInfo, &searchEntrySelected, nullptr, nullptr, "Search")) {
-	}
-
+void update_searchresults() {
+	g_matchedVehicles.clear();
 	for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
 		char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
 		std::string displayName = UI::_GET_LABEL_TEXT(name);
-		std::string rawName = name; 
+		std::string rawName = name;
 		if (displayName == "NULL") {
 			displayName = name;
 		}
@@ -188,15 +179,50 @@ void update_searchmenu() {
 			findSubstring(modelName, searchVehicleName) != -1 ||
 			findSubstring(makeName, searchVehicleName) != -1 ||
 			findSubstring(makeNameRaw, searchVehicleName) != -1) {
-			std::vector<std::string> extras = {};
-			bool visible = false;
-			if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
-				spawnVehicle(addonVehicle.ModelHash);
-			}
-			if (visible) {
-				extras = resolveVehicleInfo(addonVehicle);
-				menu.OptionPlusPlus(extras, "Vehicle info");
-			}
+			g_matchedVehicles.push_back(addonVehicle);
+		}
+	}
+}
+
+void update_searchmenu() {
+	menu.Title("Search");
+	menu.Subtitle("");
+
+	std::vector<std::string> extraSpawnInfo = {
+		"Use Delete for backspace",
+		"Searching for:",
+		searchVehicleName,
+	};
+
+	if (searchEntrySelected) {
+		if (evaluateInput(searchVehicleName)) {
+			update_searchresults();
+		}
+	}
+
+	if (menu.StringArray("Search in", { "Game vehicles", "Add-on vehicles" }, settings.SearchCategory)) {
+		update_searchresults();
+	}
+
+	if (menu.OptionPlus("Search for ...", extraSpawnInfo, &searchEntrySelected, nullptr, nullptr, "Search entry")) {
+		update_searchresults();
+	}
+
+	for (auto matchedVehicle : g_matchedVehicles) {
+		char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(matchedVehicle.ModelHash);
+		std::string displayName = UI::_GET_LABEL_TEXT(name);
+		std::string rawName = name;
+		if (displayName == "NULL") {
+			displayName = name;
+		}
+		std::vector<std::string> extras = {};
+		bool visible = false;
+		if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
+			spawnVehicle(matchedVehicle.ModelHash);
+		}
+		if (visible) {
+			extras = resolveVehicleInfo(matchedVehicle);
+			menu.OptionPlusPlus(extras, "Vehicle info");
 		}
 	}
 }
@@ -302,7 +328,7 @@ void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> d
 
 void update_menu() {
 	menu.CheckKeys();
-	std::set<std::string> addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
+	std::set<std::string> &addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
 
 	if (menu.CurrentMenu("mainmenu")) {
 		update_mainmenu(addonCats);
@@ -323,7 +349,7 @@ void update_menu() {
 	}	
 
 	if (settings.MergeDLCs) {
-		std::set<std::string> categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
+		std::set<std::string> &categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
 
 		if (menu.CurrentMenu("officialdlcmergedmenu")) {
 			update_officialdlcmergedmenu(categories);
@@ -340,7 +366,7 @@ void update_menu() {
 		}
 
 		for (auto dlc : g_dlcs) {
-			std::set<std::string> dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+			std::set<std::string> &dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
 			if (menu.CurrentMenu(dlc.Name)) {
 				update_perdlcmenu(dlc, dlcCats);
