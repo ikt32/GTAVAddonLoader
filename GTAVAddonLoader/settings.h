@@ -24,7 +24,7 @@ public:
 	bool CategorizeMake = false;
 	bool SpawnInplace = false;
 	bool SearchMenu = false;
-	long SearchCategory = 0;
+	int SearchCategory = 0;
 
 private:
 	std::string settingsGeneralFile;

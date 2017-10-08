@@ -586,7 +586,26 @@ void main() {
 	}
 }
 
+void clearGlobals() {
+	g_missingImages.clear();
+	g_persistentVehicles.clear();
+	g_addonClasses.clear();
+	g_addonMakes.clear();
+	g_addonVehicles.clear();
+	g_addonImages.clear();
+	g_addonImageMetadata.clear();
+	g_addonImageNames.clear();
+	GameVehicles.clear();
+	g_dlcs.clear();
+	g_dlcClasses.clear();
+	g_dlcMakes.clear();
+	g_dlcVehicles.clear();
+	g_dlcSprites.clear();
+	g_dlcSpriteOverrides.clear();
+}
+
 void ScriptMain() {
+	clearGlobals();
 	srand(GetTickCount());
 	main();
 }
