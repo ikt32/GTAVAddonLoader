@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <simpleini/SimpleIni.h>
 
 namespace NativeMenu {
 class Menu;
@@ -22,6 +23,8 @@ public:
 	bool Persistent = false;
 	bool CategorizeMake = false;
 	bool SpawnInplace = false;
+	bool SearchMenu = false;
+	long SearchCategory = 0;
 
 private:
 	std::string settingsGeneralFile;

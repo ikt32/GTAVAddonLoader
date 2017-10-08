@@ -29,6 +29,6 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 
 void clearPersistentVehicles();
 void cleanImageDirectory(bool backup);
-
+std::string guessModelName(Hash hash);
 
 extern std::vector<std::string> dlcpackFolders;

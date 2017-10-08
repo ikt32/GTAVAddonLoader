@@ -7,9 +7,13 @@
 #include "keyboard.h"
 #include "settings.h"
 #include "ExtraTypes.h"
+#include "NativeMemory.hpp"
+#include "Util/Util.hpp"
 
 std::string manualVehicleName = "";
+std::string searchVehicleName = "";
 bool manualSpawnSelected = false;
+bool searchEntrySelected = false;
 
 extern NativeMenu::Menu menu;
 extern NativeMenu::MenuControls controls;
@@ -33,7 +37,7 @@ extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
 extern std::vector<SpriteInfo> g_dlcSprites;
 
-std::string evaluateInput() {
+std::string evaluateInput(std::string &searchFor) {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
 	UI::SET_PAUSE_MENU_ACTIVE(false);
 	CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(1);
@@ -43,23 +47,23 @@ std::string evaluateInput() {
 		int key = str2key(std::string(1, c));
 		if (key == -1) continue;
 		if (IsKeyJustUp(key)) {
-			manualVehicleName += c;
+			searchFor += c;
 		}
 	}
 	if (IsKeyJustUp(str2key("SPACE"))) {
-		manualVehicleName += ' ';
+		searchFor += ' ';
 	}
 	if (IsKeyJustUp(str2key("VK_OEM_MINUS"))) {
-		manualVehicleName += '_';
+		searchFor += '_';
 	}
-	if (IsKeyJustUp(str2key("DELETE")) && manualVehicleName.size() > 0) {
-		manualVehicleName.pop_back();
+	if (IsKeyJustUp(str2key("DELETE")) && searchFor.size() > 0) {
+		searchFor.pop_back();
 	}
 	if (IsKeyJustUp(str2key("BACKSPACE"))) {
-		manualVehicleName.clear();
+		searchFor.clear();
 	}
 
-	return manualVehicleName;
+	return searchFor;
 }
 
 void updateSettings() {
@@ -121,7 +125,7 @@ void update_menu() {
 			};
 
 			if (manualSpawnSelected) {
-				evaluateInput();
+				evaluateInput(manualVehicleName);
 			}
 
 			if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
@@ -142,8 +146,62 @@ void update_menu() {
 			}
 		}
 
+		if (settings.SearchMenu) {
+			menu.MenuOption("Search vehicles", "searchmenu");
+		}
+
 		for (auto category : addonCats) {
 			menu.MenuOption(category, category);
+		}
+	}
+
+	if (menu.CurrentMenu("searchmenu")) {
+		menu.Title("Search");
+		menu.Subtitle("");
+
+		std::vector<std::string> extraSpawnInfo = {
+			"Use Delete for backspace",
+			"Enter search criteria:",
+			searchVehicleName,
+			"Press enter to search"
+		};
+
+		if (searchEntrySelected) {
+			evaluateInput(searchVehicleName);
+		}
+
+		menu.StringArray("Search in", { "Game vehicles", "Add-on vehicles" }, settings.SearchCategory);
+
+		if (menu.OptionPlus("Search", extraSpawnInfo, &searchEntrySelected, nullptr, nullptr, "Search")) {
+		}
+
+		for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
+			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
+			std::string displayName = UI::_GET_LABEL_TEXT(name);
+			std::string rawName = name; 
+			if (displayName == "NULL") {
+				displayName = name;
+			}
+			std::string modelName = guessModelName(addonVehicle.ModelHash);
+
+			std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
+			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
+
+			if (ci_find_substr(rawName, searchVehicleName) != -1 ||
+				ci_find_substr(displayName, searchVehicleName) != -1 ||
+				ci_find_substr(modelName, searchVehicleName) != -1 ||
+				ci_find_substr(makeName, searchVehicleName) != -1 ||
+				ci_find_substr(makeNameRaw, searchVehicleName) != -1) {
+				std::vector<std::string> extras = {};
+				bool visible = false;
+				if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
+					spawnVehicle(addonVehicle.ModelHash);
+				}
+				if (visible) {
+					extras = resolveVehicleInfo(addonVehicle);
+					menu.OptionPlusPlus(extras, "Vehicle info");
+				}
+			}
 		}
 	}
 
@@ -155,7 +213,8 @@ void update_menu() {
 			settings.SaveSettings();
 		}
 		if (menu.BoolOption("Spawn inplace", settings.SpawnInplace, 
-		{ "Don't spawn to the right of the previous car, but spawn at the current position." })) {
+		{ "Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.",
+		"Only active if \"Spawn inside vehicle\" is turned on."})) {
 			settings.SaveSettings();
 		}
 		if (menu.BoolOption("Spawned cars are persistent", settings.Persistent)) {
@@ -175,6 +234,9 @@ void update_menu() {
 		}
 		if (menu.BoolOption("Merge DLCs", settings.MergeDLCs,
 		{ "Don't sort per DLC and just show the vehicles per class." })) {
+			settings.SaveSettings();
+		}
+		if (menu.BoolOption("Enable search menu", settings.SearchMenu)) {
 			settings.SaveSettings();
 		}
 		if (menu.Option("Reload previews", { "Use for when you changed an image "
@@ -208,7 +270,9 @@ void update_menu() {
 	}
 
 	for (auto category : addonCats) {
-		if (menu.CurrentMenu(category)) { spawnMenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake); }
+		if (menu.CurrentMenu(category)) {
+			spawnMenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
+		}
 	}	
 
 	if (!settings.MergeDLCs) {
