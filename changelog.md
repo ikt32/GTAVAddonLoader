@@ -1,4 +1,11 @@
 # Changelog
+## v1.3.0
+Config changes: Added things, but you can keep your old one if you want.
+
+* Add option to spawn in-place
+* Add a search function
+* Fix empty lists at game start
+
 ## v1.2.1
 Config changes: No
 
