@@ -749,9 +749,9 @@ inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
 		(SpriteInfo("candc_truck", "cab_0", joaat("phantom3"), 256, 256)),
 		(SpriteInfo("candc_truck", "cab_1", joaat("hauler2"), 256, 256)),
 
-		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy"), 1024, 512)),
-		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy2"), 1024, 512)),
-		(SpriteInfo("dock_default", "seashark", joaat("seashark2"), 1024, 512)), // the inaccurate but ok
+		//(SpriteInfo("dock_default", "dinghy3", joaat("dinghy"), 1024, 512)),
+		//(SpriteInfo("dock_default", "dinghy3", joaat("dinghy2"), 1024, 512)),
+		//(SpriteInfo("dock_default", "seashark", joaat("seashark2"), 1024, 512)), // the inaccurate but ok
 		(SpriteInfo("dock_default", "tropic", joaat("tropic2"), 1024, 512)),
 		// submersible rip
 		// predator rip
@@ -811,8 +811,8 @@ inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
 		// Executives and Other Criminals / apartments
 		(SpriteInfo("dock_default", "dinghy3", joaat("dinghy4"), 1024, 512)),
 		(SpriteInfo("dock_default", "seashark", joaat("seashark3"), 1024, 512)),
-		(SpriteInfo("dock_default", "speeder", joaat("speeder2"), 1024, 512)),
-		(SpriteInfo("dock_default", "toro", joaat("toro2"), 1024, 512)),
+		//(SpriteInfo("dock_default", "speeder", joaat("speeder2"), 1024, 512)),
+		//(SpriteInfo("dock_default", "toro", joaat("toro2"), 1024, 512)),
 
 
 		(SpriteInfo("elt_dlc_apartments", "svolito", joaat("supervolito"), 1024, 512)),

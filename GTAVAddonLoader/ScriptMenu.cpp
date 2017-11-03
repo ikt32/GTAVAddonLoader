@@ -39,6 +39,8 @@ extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
 extern std::vector<SpriteInfo> g_dlcSprites;
 
+void update_searchresults();
+
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
 	PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -123,7 +125,9 @@ void update_mainmenu(std::set<std::string> addonCats) {
 	menu.MenuOption("Settings", "settingsmenu");
 
 	if (settings.SearchMenu) {
-		menu.MenuOption("Search vehicles", "searchmenu");
+		if (menu.MenuOption("Search vehicles", "searchmenu")) {
+            update_searchresults();
+		}
 	}
 
 	if (settings.SpawnByName) {
@@ -161,7 +165,8 @@ void update_mainmenu(std::set<std::string> addonCats) {
 }
 
 void update_searchresults() {
-	g_matchedVehicles.clear();
+    resolveVehicleSpriteInfo();
+    g_matchedVehicles.clear();
 	for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
 		char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
 		std::string displayName = UI::_GET_LABEL_TEXT(name);

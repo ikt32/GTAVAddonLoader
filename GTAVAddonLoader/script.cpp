@@ -58,12 +58,12 @@ std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 
 
-int getExpectedPreviewSprites(eGameVersion gameVersion) {
-	int sprites = gameVersion >= G_VER_1_0_1103_2_STEAM ? 893 : 893;
-	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM ? 933 : sprites;
-	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM + 2 ? 9999 : sprites;
-	return sprites;
-}
+//int getExpectedPreviewSprites(eGameVersion gameVersion) {
+//	int sprites = gameVersion >= G_VER_1_0_1103_2_STEAM ? 893 : 893;
+//	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM ? 933 : sprites;
+//	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM + 2 ? 9999 : sprites;
+//	return sprites;
+//}
 
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
@@ -85,9 +85,8 @@ void addVehicleSpriteOverrides() {
  * list fully before the user arrived at something with a picture.
  */
 void resolveVehicleSpriteInfo() {
-	if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
-		return;
-
+	//if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
+	//	return;
 	for (auto dict : WebsiteDicts) {
 		GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
 	}
@@ -101,9 +100,9 @@ void resolveVehicleSpriteInfo() {
 			}
 		}
 	}
-	logger.Write("Found " + std::to_string(g_dlcSprites.size()) + " preview sprites (dict)");
-	if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
-		logger.Write("All sprites indexed");
+	//logger.Write("Found " + std::to_string(g_dlcSprites.size()) + " preview sprites (dict)");
+	//if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
+	//	logger.Write("All sprites indexed");
 }
 
 /*
