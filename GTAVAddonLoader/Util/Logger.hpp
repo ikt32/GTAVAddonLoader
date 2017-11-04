@@ -3,15 +3,14 @@
 
 class Logger {
 public:
-	Logger();
-	void Clear() const;
-	void Write(const std::string& text) const;
-//	void Write(const char *args,...);
-	void SetFile(const std::string &fileName);
+    Logger();
+    void SetFile(const std::string &fileName);
+    void Clear() const;
+    void Write(const std::string& text) const;
+    int Writef(char *fmt, ...);
 
 private:
-	std::string file = "";
-	std::string bakFile = "./GearsERR.log";
+    std::string file = "";
 };
 
 extern Logger logger;
