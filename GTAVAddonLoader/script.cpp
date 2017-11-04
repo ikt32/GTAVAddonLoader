@@ -17,11 +17,9 @@
 #include "Util/Paths.h"
 #include "Util/Util.hpp"
 
-#include "keyboard.h"
 #include "settings.h"
 #include "VehicleHashes.h"
 #include "ExtraTypes.h"
-#include "Util/Versions.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -57,14 +55,6 @@ std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 
-
-//int getExpectedPreviewSprites(eGameVersion gameVersion) {
-//	int sprites = gameVersion >= G_VER_1_0_1103_2_STEAM ? 893 : 893;
-//	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM ? 933 : sprites;
-//	sprites = gameVersion >= G_VER_1_0_1180_2_STEAM + 2 ? 9999 : sprites;
-//	return sprites;
-//}
-
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
  * same name as the model. We'll go through this (small) list first.
@@ -74,35 +64,56 @@ void addVehicleSpriteOverrides() {
 	g_dlcSpriteOverrides = getVehicleSpriteOverrides();
 }
 
-/*
- * Keep searching for sprites until we're all done. The current value applies for
- * b1103, but if people care to contribute, the texture count for other versions
- * can be added too.
- * Since this function is pretty fast (thanks to Unknown Modder), running it lots
- * shouldn't be problematic.
- * Strangely, it takes multiple tries to get all dictionaries loaded. Calling
- * this a bunch of times when opening DLC-related menus should populate the
- * list fully before the user arrived at something with a picture.
- */
+// First pass to find txd textures
 void resolveVehicleSpriteInfo() {
-	//if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
-	//	return;
+    for (auto dict : WebsiteDicts) {
+        GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
+        while (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
+            WAIT(100);
+        }
+    }
+
 	for (auto dict : WebsiteDicts) {
-		GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
-	}
-	for (auto dict : WebsiteDicts) {
-		GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
-		auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
+        auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
+        //logger.Writef("Dict \"%s\" sz1 %d", dict.c_str(), textures.size());
+        int attempts = 0;
+        while (textures.size() == 0 && attempts < 10) {
+            GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
+            while (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
+                WAIT(100);
+            }
+            textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
+            attempts++;
+            //if (attempts >= 10) logger.Writef("%d attempts max", attempts);
+        }
+        //logger.Writef("Dict \"%s\" sz2 %d after %d attempts", dict.c_str(), textures.size(), attempts);
+
 		for (auto texture : textures) {
-			SpriteInfo thing;
-			if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &thing)) {
+            //logger.Writef("%s\t%s", dict.c_str(), texture->name);
+			SpriteInfo spriteInfo;
+			if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
 				g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
 			}
 		}
 	}
-	//logger.Write("Found " + std::to_string(g_dlcSprites.size()) + " preview sprites (dict)");
-	//if (g_dlcSprites.size() >= getExpectedPreviewSprites(getGameVersion()))
-	//	logger.Write("All sprites indexed");
+}
+
+
+// Additional passes if needed
+void resolveVehicleSpriteInfo_lite(Hash hash) {
+    for (auto dict : WebsiteDicts) {
+        GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
+        auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
+        for (auto texture : textures) {
+            if (joaat(texture->name) != hash) continue;
+            SpriteInfo spriteInfo;
+            if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
+                g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
+                logger.Writef("TXD post-init: Added %s from %s", texture->name, dict.c_str());
+                return;
+            }
+        }
+    }
 }
 
 /*
@@ -198,7 +209,12 @@ void cleanImageDirectory(bool backup) {
  * 3. add-on image
  */
 std::string guessModelName(Hash hash) {
-	// Try display name otherwise (correct vehicles.meta, other package name)
+    std::string gxtName = getGxtName(hash);
+    if (joaat(gxtName) == hash) return gxtName;
+
+    gxtName = removeSpecialChars(gxtName);
+    if (joaat(gxtName) == hash) return gxtName;
+
 	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 	if (joaat(displayName) == hash) return displayName;
 	for (int i = 0; i <= 9; i++) {
@@ -208,27 +224,21 @@ std::string guessModelName(Hash hash) {
 		if (joaat(displayName + c) == hash) return displayName + c;
 	}
 
+    // Do we have it stashed from the images?
+    for (auto modelName : g_addonImageNames) {
+        if (hash == joaat(modelName)) return modelName;
+    }
+
 	// Try dlcpacks dir name (if said DLC only contains the car + variations)
-	for (auto folderName : dlcpackFolders) {
-		if (joaat(folderName) == hash) return folderName;
-		for (int i = 0; i <= 9; i++) {
-			if (joaat(folderName + std::to_string(i)) == hash) return folderName + std::to_string(i);
-		}
-		for (char c = 'a'; c <= 'z'; c++) {
-			if (joaat(folderName + c) == hash) return folderName + c;
-		}
-	}
-
-	// Do we have it stashed from the images?
-	for (auto modelName : g_addonImageNames) {
-		if (hash == joaat(modelName)) return modelName;
-	}
-
-	std::string gxtName = getGxtName(hash);
-	if (joaat(gxtName) == hash) return gxtName;
-
-	gxtName = removeSpecialChars(gxtName);
-	if (joaat(gxtName) == hash) return gxtName;
+	//for (auto folderName : dlcpackFolders) {
+	//	if (joaat(folderName) == hash) return folderName;
+	//	for (int i = 0; i <= 9; i++) {
+	//		if (joaat(folderName + std::to_string(i)) == hash) return folderName + std::to_string(i);
+	//	}
+	//	for (char c = 'a'; c <= 'z'; c++) {
+	//		if (joaat(folderName + c) == hash) return folderName + c;
+	//	}
+	//}
 
 	return "NOTFOUND";
 }
@@ -477,6 +487,7 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 			"W" + std::to_string(addonImage.ResX) +
 			"H" + std::to_string(addonImage.ResY));
 	}
+    // manual in-game texture
 	else if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSpriteOverrides, &spriteInfo)) {
 		extras.push_back(menu.SpritePrefix +
 			spriteInfo.Dict + " " +
@@ -484,20 +495,36 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 			"W" + std::to_string(spriteInfo.ResX) +
 			"H" + std::to_string(spriteInfo.ResY));
 	}
-	else if (std::find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash) != GameVehicles.end() &&
-			isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
-		extras.push_back(menu.SpritePrefix +
-			spriteInfo.Dict + " " +
-			spriteInfo.Name + " " +
-			"W" + std::to_string(spriteInfo.ResX) +
-			"H" + std::to_string(spriteInfo.ResY));
+    // auto in-game texture (applies to non-addons only)
+	else if (find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash) != GameVehicles.end()) {
+        if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
+            extras.push_back(menu.SpritePrefix +
+                spriteInfo.Dict + " " +
+                spriteInfo.Name + " " +
+                "W" + std::to_string(spriteInfo.ResX) +
+                "H" + std::to_string(spriteInfo.ResY));
+        }
+        else {
+            resolveVehicleSpriteInfo_lite(addonVehicle.ModelHash);
+
+            extras.push_back(menu.ImagePrefix + std::to_string(noImage.TextureID) +
+                "W" + std::to_string(noImage.ResX) +
+                "H" + std::to_string(noImage.ResY));
+
+            // try resolving mainly in img
+            if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
+                resolveImage(addonVehicle.ModelHash);
+            }
+        }
 	}
+    // found nothing yo
 	else {
 		extras.push_back(menu.ImagePrefix + std::to_string(noImage.TextureID) +
 			"W" + std::to_string(noImage.ResX) +
 			"H" + std::to_string(noImage.ResY));
 
-		if (std::find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
+        // try resolving mainly in img
+		if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
 			resolveImage(addonVehicle.ModelHash);
 		}
 	}
@@ -550,6 +577,11 @@ void main() {
 	logger.Write("Settings read");
 
 	MemoryAccess::Init();
+
+    logger.Write("resolveVehicleSpriteInfo ----- start");
+    resolveVehicleSpriteInfo();
+    logger.Write("resolveVehicleSpriteInfo ----- done");
+
 	g_dlcs = buildDLClist();
 	buildBlacklist();
 	storeImageNames();
@@ -605,6 +637,5 @@ void clearGlobals() {
 
 void ScriptMain() {
 	clearGlobals();
-	srand(GetTickCount());
 	main();
 }
