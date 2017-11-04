@@ -27,6 +27,21 @@ namespace rage {
 		grcTexture** textures; // 0x0030
 		uint16_t textureCount; // 0x0038
 	};
+
+    class fwArchetype {
+    public:
+        virtual ~fwArchetype() = default;
+
+        char _0x0008[0x10]; // 0x0000
+        Hash m_hash; // 0x0018
+        char _0x001C[0x10]; // 0x001C
+        float m_radius; // 0x002C
+        float m_aabbMin[4]; // 0x0030
+        float m_aabbMax[4]; // 0x0040
+        uint32_t m_flags; // 0x0050
+        char _0x0054[0x12]; // 0x0054
+        uint16_t m_index; // 0x0066
+    };
 }
 
 
@@ -111,6 +126,7 @@ public:
 	static uintptr_t FindPattern(const char *pattern, const char *mask, const char *startAddress, size_t size);
 	static uintptr_t FindPattern(const char* pattern, const char* mask);
 	static void Init();
+    static void Destr();
 	static char *GetVehicleGameName(int modelHash);
 	static char *GetVehicleMakeName(int modelHash);
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
@@ -121,3 +137,5 @@ private:
 	static void enableCarsGlobal();
 
 };
+
+bool initArchetypeHooks();

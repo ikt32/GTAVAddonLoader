@@ -31,4 +31,4 @@ void clearPersistentVehicles();
 void cleanImageDirectory(bool backup);
 std::string guessModelName(Hash hash);
 
-extern std::vector<std::string> dlcpackFolders;
+//extern std::vector<std::string> dlcpackFolders;

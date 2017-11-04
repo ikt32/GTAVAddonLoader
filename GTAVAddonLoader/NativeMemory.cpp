@@ -13,6 +13,10 @@
 #include <array>
 #include <vector>
 #include "Util/Logger.hpp"
+#include "Util/Util.hpp"
+#include <map>
+
+#include <PolyHook/PolyHook/PolyHook.hpp>
 
 typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
 GetModelInfo_t GetModelInfo;
@@ -24,30 +28,64 @@ GlobalTable globalTable;
 ScriptTable* scriptTable;
 ScriptHeader* shopController;
 
+PLH::Detour* InitVehicleArchetype_thing;
+
+//rage::fwArchetype* (*InitVehicleArchetype_orig)(const char*, bool, unsigned int);
+
+typedef rage::fwArchetype*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
+InitVehicleArchetype_t InitVehicleArchetype_orig;
+
+std::map<Hash, std::string> g_vehicleHashes;
+
+rage::fwArchetype* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
+    g_vehicleHashes.emplace(joaat(name), name); // I used a vector but you can use a map too
+    logger.Writef("%s", name);
+    return InitVehicleArchetype_orig(name, a2, a3);
+}
+
+bool initArchetypeHooks() {
+    auto addr = MemoryAccess::FindPattern("\xE8\x00\x00\x00\x00\x48\x8B\x4D\xE0\x48\x8B\x11", "x????xxxxxxx");
+    logger.Writef("Found addr at 0x%X", addr);
+    logger.Writef("Found InitVehicleArchetype at 0x%X", (addr + *(int*)(addr + 1) + 5));
+
+    InitVehicleArchetype_thing = new PLH::Detour();
+    InitVehicleArchetype_thing->SetupHook((BYTE*)(addr + *(int*)(addr + 1) + 5), (BYTE*)&InitVehicleArchetype_hook);
+    InitVehicleArchetype_thing->Hook();
+    InitVehicleArchetype_orig = InitVehicleArchetype_thing->GetOriginal<InitVehicleArchetype_t>();//(rage::fwArchetype* (*)(const char*, bool, unsigned int))(addr + *(int*)(addr + 1) + 5);
+    return true;
+}
+
+//bool hey = initArchetypeHooks();
+
 void MemoryAccess::Init() {
 	// init txd store
-	uint64_t patternAddr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
+	auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
 		"xxx????x????xxx");
-	g_fwTxdStore = patternAddr + *(int*)(patternAddr + 3) + 7;
+	g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
 
-	patternAddr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
+	addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
 		"xxx????xxxxxxxxx");
-	g_txdCollectionItemSize = *(uint32_t*)((patternAddr + *(int*)(patternAddr + 3) + 7) + 0x14);
+	g_txdCollectionItemSize = *(uint32_t*)((addr + *(int*)(addr + 3) + 7) + 0x14);
 
-	// init GetModelInfo
-	GetModelInfo = (GetModelInfo_t)FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
-		                                       "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
-		                                       "\x0F\x84\x00\x00\x00\x00"
-		                                       "\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48"
-		                                       "\x8B\x05\x00\x00\x00\x00"
-		                                       "\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
-		                                       "xxx????xxxxxxxxxxx????"
-		                                       "xxxxxxxxxxxxxx????xxxxxxxxxxx");
+    addr = FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
+        "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
+        "\x0F\x84\x00\x00\x00\x00"
+        "\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48"
+        "\x8B\x05\x00\x00\x00\x00"
+        "\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
+        "xxx????xxxxxxxxxxx????"
+        "xxxxxxxxxxxxxx????xxxxxxxxxxx");
+	GetModelInfo = (GetModelInfo_t)(addr);
 
 	// find enable MP cars patterns
 	if (findShopController())
 		enableCarsGlobal();
 
+    //logger.Write(initArchetypeHooks() ? "ya" : "na");
+}
+
+void MemoryAccess::Destr() {
+    delete InitVehicleArchetype_thing;
 }
 
 // ScriptHookVDotNet/zorg93
