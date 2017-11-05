@@ -40,20 +40,20 @@ AddonImage noImage;
 std::vector<Hash> g_missingImages;
 std::vector<Vehicle> g_persistentVehicles;
 
-std::set<std::string> g_addonClasses;
-std::set<std::string> g_addonMakes;
+std::set<std::string> g_addonClasses;   // Grouping-related
+std::set<std::string> g_addonMakes;     // Grouping-related
+
 std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
 std::vector<AddonImage> g_addonImages;
-std::vector<AddonImageMeta> g_addonImageMetadata;
-std::vector<std::string> g_addonImageNames; // just all filenames separately for hashing in begin
 
-std::vector<Hash> GameVehicles;             // all base vehicles
+std::vector<Hash> g_gameVehicles;         // all base vehicles
 std::vector<DLC> g_dlcs;
 std::set<std::string> g_dlcClasses;
 std::set<std::string> g_dlcMakes;
 std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
+std::unordered_map<Hash, std::string> g_vehicleHashes;
 
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
@@ -129,10 +129,7 @@ void resolveImage(Hash selected) {
 		std::string fileName = fs::path(file).string();
 		unsigned width;
 		unsigned height;
-		if (GetIMGDimensions(fileName, &width, &height)) {
-			g_addonImageMetadata.push_back(std::make_tuple(fs::path(file).string(), width, height));
-		}
-		else {
+		if (!GetIMGDimensions(fileName, &width, &height)) {
 			width = 480;
 			height = 270;
 		}
@@ -141,17 +138,6 @@ void resolveImage(Hash selected) {
 		return;
 	}
 	g_missingImages.push_back(selected);
-}
-
-/*
- * Just store all names in the directory so guessModelName has something
- * to work with in cacheAddons.
- */
-void storeImageNames() {
-	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
-	for (auto &file : fs::directory_iterator(imgPath)) {
-		g_addonImageNames.push_back(fs::path(file).stem().string());
-	}
 }
 
 /*
@@ -202,45 +188,10 @@ void cleanImageDirectory(bool backup) {
 	}
 }
 
-/*
- * Guess model names based on 
- * 1. model name
- * 2. dlcpacks folder name
- * 3. add-on image
- */
-std::string guessModelName(Hash hash) {
-    std::string gxtName = getGxtName(hash);
-    if (joaat(gxtName) == hash) return gxtName;
-
-    gxtName = removeSpecialChars(gxtName);
-    if (joaat(gxtName) == hash) return gxtName;
-
-	std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-	if (joaat(displayName) == hash) return displayName;
-	for (int i = 0; i <= 9; i++) {
-		if (joaat(displayName + std::to_string(i)) == hash) return displayName + std::to_string(i);
-	}
-	for (char c = 'a'; c <= 'z'; c++) {
-		if (joaat(displayName + c) == hash) return displayName + c;
-	}
-
-    // Do we have it stashed from the images?
-    for (auto modelName : g_addonImageNames) {
-        if (hash == joaat(modelName)) return modelName;
-    }
-
-	// Try dlcpacks dir name (if said DLC only contains the car + variations)
-	//for (auto folderName : dlcpackFolders) {
-	//	if (joaat(folderName) == hash) return folderName;
-	//	for (int i = 0; i <= 9; i++) {
-	//		if (joaat(folderName + std::to_string(i)) == hash) return folderName + std::to_string(i);
-	//	}
-	//	for (char c = 'a'; c <= 'z'; c++) {
-	//		if (joaat(folderName + c) == hash) return folderName + c;
-	//	}
-	//}
-
-	return "NOTFOUND";
+std::string getModelName(Hash hash) {
+    auto modelIt = g_vehicleHashes.find(hash);
+    if (modelIt != g_vehicleHashes.end()) return modelIt->second;
+    return "NOTFOUND";
 }
 
 // sorting thing
@@ -255,7 +206,7 @@ bool predicateAddonVehicleHashByName(ModelInfo a1, ModelInfo a2) {
 	std::string name1 = getGxtName(a1.ModelHash);
 	std::string name2 = getGxtName(a2.ModelHash);
 	if (name1 == name2) {
-		return guessModelName(a1.ModelHash) < guessModelName(a2.ModelHash);
+		return getModelName(a1.ModelHash) < getModelName(a2.ModelHash);
 	}
 	return name1 < name2;
 }
@@ -335,7 +286,7 @@ void cacheAddons() {
 	logger.Write(thingy.str());
 
 	for (auto hash : allVehicles) {
-		if (std::find(GameVehicles.begin(), GameVehicles.end(), hash) == GameVehicles.end()) {
+		if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end()) {
 			char buffer[128];
 			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
 			std::string className = UI::_GET_LABEL_TEXT(buffer);
@@ -347,7 +298,7 @@ void cacheAddons() {
 			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << guessModelName(hash);
+			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
 
 			logger.Write(logStream.str());
@@ -365,10 +316,10 @@ void cacheAddons() {
  * Filter the official DLCs from the list of all vehicles.
  */
 void buildBlacklist() {
-	GameVehicles.clear();
+	g_gameVehicles.clear();
 	for (auto dlc : g_dlcs) {
 		for (auto hash : dlc.Hashes) {
-			GameVehicles.push_back(hash);
+			g_gameVehicles.push_back(hash);
 		}
 	}
 }
@@ -453,7 +404,7 @@ void spawnVehicle(Hash hash) {
 			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
 		}
 
-		showSubtitle("Spawned " + getGxtName(hash) + " (" + guessModelName(hash) + ")");
+		showSubtitle("Spawned " + getGxtName(hash) + " (" + getModelName(hash) + ")");
 	}
 	else {
 		showSubtitle("Vehicle doesn't exist");
@@ -496,7 +447,7 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 			"H" + std::to_string(spriteInfo.ResY));
 	}
     // auto in-game texture (applies to non-addons only)
-	else if (find(GameVehicles.begin(), GameVehicles.end(), addonVehicle.ModelHash) != GameVehicles.end()) {
+	else if (find(g_gameVehicles.begin(), g_gameVehicles.end(), addonVehicle.ModelHash) != g_gameVehicles.end()) {
         if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
             extras.push_back(menu.SpritePrefix +
                 spriteInfo.Dict + " " +
@@ -537,9 +488,9 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 	else {
 		makeFinal = std::string(UI::_GET_LABEL_TEXT(makeName));
 	}
-	extras.push_back("Make name: \t" + makeFinal);
-	extras.push_back("Game name: \t" + getGxtName(addonVehicle.ModelHash));
-	extras.push_back("Model name: \t" + to_lower(guessModelName(addonVehicle.ModelHash)));
+	extras.push_back("Make: \t" + makeFinal);
+	extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
+	extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
 	if (modkitsInfo.size() > 0) {
 		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
 	}
@@ -584,7 +535,6 @@ void main() {
 
 	g_dlcs = buildDLClist();
 	buildBlacklist();
-	storeImageNames();
 	cacheAddons();
 	cacheDLCs();
 	addVehicleSpriteOverrides();
@@ -624,9 +574,7 @@ void clearGlobals() {
 	g_addonMakes.clear();
 	g_addonVehicles.clear();
 	g_addonImages.clear();
-	g_addonImageMetadata.clear();
-	g_addonImageNames.clear();
-	GameVehicles.clear();
+	g_gameVehicles.clear();
 	g_dlcs.clear();
 	g_dlcClasses.clear();
 	g_dlcMakes.clear();

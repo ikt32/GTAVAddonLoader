@@ -17,6 +17,7 @@
 #include <map>
 
 #include <PolyHook/PolyHook/PolyHook.hpp>
+#include <unordered_map>
 
 typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
 GetModelInfo_t GetModelInfo;
@@ -35,10 +36,10 @@ PLH::Detour* InitVehicleArchetype_thing;
 typedef rage::fwArchetype*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
 InitVehicleArchetype_t InitVehicleArchetype_orig;
 
-std::map<Hash, std::string> g_vehicleHashes;
+extern std::unordered_map<Hash, std::string> g_vehicleHashes;
 
 rage::fwArchetype* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
-    g_vehicleHashes.emplace(joaat(name), name); // I used a vector but you can use a map too
+    g_vehicleHashes.insert({ joaat(name), name }); // I used a vector but you can use a map too
     logger.Writef("%s", name);
     return InitVehicleArchetype_orig(name, a2, a3);
 }

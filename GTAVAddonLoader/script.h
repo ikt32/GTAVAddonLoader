@@ -23,12 +23,9 @@ void resolveVehicleSpriteInfo();
 void update_menu();
 void onMenuOpen();
 void onMenuExit();
-void storeImageNames();
 void spawnVehicle(Hash hash);
 std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle);
 
 void clearPersistentVehicles();
 void cleanImageDirectory(bool backup);
-std::string guessModelName(Hash hash);
-
-//extern std::vector<std::string> dlcpackFolders;
+std::string getModelName(Hash hash);

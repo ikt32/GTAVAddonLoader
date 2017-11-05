@@ -29,10 +29,8 @@ extern std::set<std::string> g_addonClasses;
 extern std::set<std::string> g_addonMakes;
 extern std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
 extern std::vector<AddonImage> g_addonImages;
-extern std::vector<AddonImageMeta> g_addonImageMetadata;
-extern std::vector<std::string> g_addonImageNames; // just all filenames separately for hashing in begin
 
-extern std::vector<Hash> GameVehicles;             // all base vehicles
+extern std::vector<Hash> g_gameVehicles;             // all base vehicles
 extern std::vector<DLC> g_dlcs;
 extern std::set<std::string> g_dlcClasses;
 extern std::set<std::string> g_dlcMakes;
@@ -88,7 +86,7 @@ void update_searchresults() {
         if (displayName == "NULL") {
             displayName = name;
         }
-        std::string modelName = guessModelName(addonVehicle.ModelHash);
+        std::string modelName = getModelName(addonVehicle.ModelHash);
 
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
         std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
@@ -260,23 +258,16 @@ void update_settingsmenu() {
 					{ "Use for when you changed an image that's already been loaded."})) {
 		resolveVehicleSpriteInfo();
 
-		g_addonImageNames.clear();
 		g_missingImages.clear();
 		g_addonImages.clear();
-		g_addonImageMetadata.clear();
-		storeImageNames();
 	}
 	if (menu.Option("Clean up image preview folder", 
 					{ "Remove images from the preview folder that aren't detected as add-ons.",
 						"Removed files are put in a \"bak.timestamp\" folder." })) {
-		g_addonImageNames.clear();
 		g_missingImages.clear();
 		g_addonImages.clear();
-		g_addonImageMetadata.clear();
 
 		cleanImageDirectory(true);
-
-		storeImageNames();
 	}
 
 	if (settings.Persistent) {
