@@ -20,6 +20,7 @@
 #include "settings.h"
 #include "VehicleHashes.h"
 #include "ExtraTypes.h"
+#include <fstream>
 
 namespace fs = std::experimental::filesystem;
 
@@ -54,6 +55,11 @@ std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 std::unordered_map<Hash, std::string> g_vehicleHashes;
+
+unsigned long g_StartTime = 0;
+unsigned long g_ScriptTime = 0;
+
+const int cacheTimeout = 20000;
 
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
@@ -514,6 +520,7 @@ void update_game() {
 
 void main() {
 	logger.Write("Script started");
+    g_ScriptTime = GetTickCount();
 
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
 	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
@@ -526,6 +533,26 @@ void main() {
 	menu.ReadSettings();
 
 	logger.Write("Settings read");
+
+    std::string cacheFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\hashes.cache";
+    if (g_ScriptTime - g_StartTime < cacheTimeout && g_vehicleHashes.size() == 0) {
+        std::ifstream infile(cacheFile);
+        if (infile.is_open()) {
+            Hash hash;
+            std::string name;
+            while (infile >> hash >> name) {
+                g_vehicleHashes.insert({ hash, name });
+            }
+        }
+    }
+    if (g_vehicleHashes.size() != 0) {
+        std::ofstream outfile;
+        outfile.open(cacheFile, std::ofstream::out | std::ofstream::trunc);
+        for (auto hash : g_vehicleHashes) {
+            std::string line = std::to_string(hash.first) + " " + hash.second + "\n";
+            outfile << line;
+        }
+    }
 
 	MemoryAccess::Init();
 
