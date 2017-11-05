@@ -12,8 +12,6 @@ http://dev-c.com
 #include "Util/Versions.h"
 #include "NativeMemory.hpp"
 
-extern unsigned long g_StartTime;
-
 BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved) {
 	std::string logFile = Paths::GetModuleFolder(hInstance) + modDir +
 		"\\" + Paths::GetModuleNameWithoutExtension(hInstance) + ".log";
@@ -29,7 +27,6 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved) {
 		logger.Write("GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
 		logger.Write("Game version " + eGameVersionToString(getGameVersion()));
 		logger.Write("Script registered");
-        g_StartTime = GetTickCount();
 		break;
 	case DLL_PROCESS_DETACH:
 		scriptUnregister(hInstance);

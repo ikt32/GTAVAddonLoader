@@ -1,4 +1,11 @@
 # Changelog
+## v1.3.1
+Config changes: No
+
+* Improve model name getting (Credits: Unknown Modder)
+* Improve searching performance
+* Improve in-game texture previews
+
 ## v1.3.0
 Config changes: Added things, but you can keep your old one if you want.
 
