@@ -4,6 +4,3 @@
 [submodule "thirdparty/simpleini"]
 	path = thirdparty/simpleini
 	url = https://github.com/brofield/simpleini
-[submodule "thirdparty/PolyHook"]
-	path = thirdparty/PolyHook
-	url = https://github.com/stevemk14ebr/PolyHook
