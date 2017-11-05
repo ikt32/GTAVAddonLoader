@@ -1,7 +1,9 @@
 /*
+ * Credits & Acknowledgements:
  * Generating vehicle model list: ScriptHookVDotNet source (drp4lyf/zorg93)
  * Getting vehicle modkit IDs:    Unknown Modder
  * Getting textures from dicts:   Unknown Modder
+ * Hooking InitVehicleArchetype:  Unknown Modder
  * Find enable mp vehicles:       drp4lyf/zorg93
  */
 
@@ -12,12 +14,13 @@
 
 #include <array>
 #include <vector>
-#include "Util/Logger.hpp"
-#include "Util/Util.hpp"
-#include <map>
+#include <unordered_map>
 
 #include <PolyHook/PolyHook/PolyHook.hpp>
-#include <unordered_map>
+
+#include "Util/Logger.hpp"
+#include "Util/Util.hpp"
+
 
 typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
 GetModelInfo_t GetModelInfo;
@@ -31,32 +34,34 @@ ScriptHeader* shopController;
 
 PLH::Detour* InitVehicleArchetype_thing;
 
-//rage::fwArchetype* (*InitVehicleArchetype_orig)(const char*, bool, unsigned int);
-
 typedef rage::fwArchetype*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
 InitVehicleArchetype_t InitVehicleArchetype_orig;
 
 extern std::unordered_map<Hash, std::string> g_vehicleHashes;
 
 rage::fwArchetype* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
-    g_vehicleHashes.insert({ joaat(name), name }); // I used a vector but you can use a map too
-    logger.Writef("%s", name);
+    g_vehicleHashes.insert({ joaat(name), name });
     return InitVehicleArchetype_orig(name, a2, a3);
 }
 
-bool initArchetypeHooks() {
+void initInitVehicleArchetypeHooks() {
     auto addr = MemoryAccess::FindPattern("\xE8\x00\x00\x00\x00\x48\x8B\x4D\xE0\x48\x8B\x11", "x????xxxxxxx");
-    logger.Writef("Found addr at 0x%X", addr);
-    logger.Writef("Found InitVehicleArchetype at 0x%X", (addr + *(int*)(addr + 1) + 5));
+    if (addr == 0) {
+        logger.Write("Couldn't find InitVehicleArchetype");
+        return;
+    }
+    addr = (addr + *(int*)(addr + 1) + 5);
+    logger.Writef("Found InitVehicleArchetype at 0x%X", addr);
 
     InitVehicleArchetype_thing = new PLH::Detour();
-    InitVehicleArchetype_thing->SetupHook((BYTE*)(addr + *(int*)(addr + 1) + 5), (BYTE*)&InitVehicleArchetype_hook);
+    InitVehicleArchetype_thing->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
     InitVehicleArchetype_thing->Hook();
-    InitVehicleArchetype_orig = InitVehicleArchetype_thing->GetOriginal<InitVehicleArchetype_t>();//(rage::fwArchetype* (*)(const char*, bool, unsigned int))(addr + *(int*)(addr + 1) + 5);
-    return true;
+    InitVehicleArchetype_orig = InitVehicleArchetype_thing->GetOriginal<InitVehicleArchetype_t>();
 }
 
-//bool hey = initArchetypeHooks();
+void deinitInitVehicleArchetypeHooks() {
+    delete InitVehicleArchetype_thing;
+}
 
 void MemoryAccess::Init() {
 	// init txd store
@@ -82,11 +87,6 @@ void MemoryAccess::Init() {
 	if (findShopController())
 		enableCarsGlobal();
 
-    //logger.Write(initArchetypeHooks() ? "ya" : "na");
-}
-
-void MemoryAccess::Destr() {
-    delete InitVehicleArchetype_thing;
 }
 
 // ScriptHookVDotNet/zorg93

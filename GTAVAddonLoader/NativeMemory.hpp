@@ -126,7 +126,6 @@ public:
 	static uintptr_t FindPattern(const char *pattern, const char *mask, const char *startAddress, size_t size);
 	static uintptr_t FindPattern(const char* pattern, const char* mask);
 	static void Init();
-    static void Destr();
 	static char *GetVehicleGameName(int modelHash);
 	static char *GetVehicleMakeName(int modelHash);
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
@@ -138,4 +137,5 @@ private:
 
 };
 
-bool initArchetypeHooks();
+void initInitVehicleArchetypeHooks();
+void deinitInitVehicleArchetypeHooks();
