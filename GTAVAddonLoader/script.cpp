@@ -535,7 +535,15 @@ void main() {
 	logger.Write("Settings read");
 
     std::string cacheFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\hashes.cache";
-    if (g_ScriptTime - g_StartTime < cacheTimeout && g_vehicleHashes.size() == 0) {
+    if (g_vehicleHashes.size() != 0) {
+        std::ofstream outfile;
+        outfile.open(cacheFile, std::ofstream::out | std::ofstream::trunc);
+        for (auto hash : g_vehicleHashes) {
+            std::string line = std::to_string(hash.first) + " " + hash.second + "\n";
+            outfile << line;
+        }
+    }
+    else if (g_ScriptTime - g_StartTime < cacheTimeout) {
         std::ifstream infile(cacheFile);
         if (infile.is_open()) {
             Hash hash;
@@ -545,14 +553,7 @@ void main() {
             }
         }
     }
-    if (g_vehicleHashes.size() != 0) {
-        std::ofstream outfile;
-        outfile.open(cacheFile, std::ofstream::out | std::ofstream::trunc);
-        for (auto hash : g_vehicleHashes) {
-            std::string line = std::to_string(hash.first) + " " + hash.second + "\n";
-            outfile << line;
-        }
-    }
+
 
 	MemoryAccess::Init();
 
