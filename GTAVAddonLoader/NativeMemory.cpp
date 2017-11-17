@@ -22,7 +22,7 @@
 #include "Util/Util.hpp"
 
 
-typedef __int64(*GetModelInfo_t)(unsigned int modelHash, int* index);
+typedef CVehicleModelInfo*(*GetModelInfo_t)(unsigned int modelHash, int* index);
 GetModelInfo_t GetModelInfo;
 
 uint64_t g_fwTxdStore;
@@ -32,14 +32,14 @@ GlobalTable globalTable;
 ScriptTable* scriptTable;
 ScriptHeader* shopController;
 
-PLH::Detour* InitVehicleArchetype_thing;
+PLH::Detour* InitVehicleArchetype_detour;
 
-typedef rage::fwArchetype*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
+typedef CVehicleModelInfo*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
 InitVehicleArchetype_t InitVehicleArchetype_orig;
 
 extern std::unordered_map<Hash, std::string> g_vehicleHashes;
 
-rage::fwArchetype* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
+CVehicleModelInfo* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
     g_vehicleHashes.insert({ joaat(name), name });
     return InitVehicleArchetype_orig(name, a2, a3);
 }
@@ -51,16 +51,16 @@ void initInitVehicleArchetypeHooks() {
         return;
     }
     addr = (addr + *(int*)(addr + 1) + 5);
-    logger.Writef("Found InitVehicleArchetype at 0x%X", addr);
+    logger.Writef("Found InitVehicleArchetype at 0x%llX", addr);
 
-    InitVehicleArchetype_thing = new PLH::Detour();
-    InitVehicleArchetype_thing->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
-    InitVehicleArchetype_thing->Hook();
-    InitVehicleArchetype_orig = InitVehicleArchetype_thing->GetOriginal<InitVehicleArchetype_t>();
+    InitVehicleArchetype_detour = new PLH::Detour();
+    InitVehicleArchetype_detour->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
+    InitVehicleArchetype_detour->Hook();
+    InitVehicleArchetype_orig = InitVehicleArchetype_detour->GetOriginal<InitVehicleArchetype_t>();
 }
 
 void deinitInitVehicleArchetypeHooks() {
-    delete InitVehicleArchetype_thing;
+    delete InitVehicleArchetype_detour;
 }
 
 void MemoryAccess::Init() {
@@ -134,12 +134,12 @@ std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 	std::vector<uint8_t> modKits;
 
 	int index = 0xFFFF;
-	uint64_t modelInfo = GetModelInfo(modelHash, &index);
+	auto modelInfo = GetModelInfo(modelHash, &index);
 
-	if (modelInfo && (*(uint8_t*)(modelInfo + 0x9D) & 0x1F) == 5) {
-		uint16_t count = *(uint16_t*)(modelInfo + 0x290);
+	if (modelInfo && (modelInfo->GetModelType() & 0x1F) == 5) {
+		uint16_t count = modelInfo->m_modKitsCount;
 		for (uint16_t i = 0; i < count; i++) {
-			uint8_t modKit = *(uint8_t*)(*(uint64_t*)(modelInfo + 0x288) + i);
+			uint8_t modKit = modelInfo->m_modKits[i];
 			modKits.push_back(modKit);
 		}
 	}
@@ -149,14 +149,16 @@ std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 
 char *MemoryAccess::GetVehicleGameName(int modelHash) {
 	int index = 0xFFFF;
-	uint64_t modelInfo = GetModelInfo(modelHash, &index);
-	return (char*)(modelInfo + 0x270);
+	auto modelInfo = GetModelInfo(modelHash, &index);
+    return modelInfo->m_displayName;
+	//return (char*)(modelInfo + 0x270);
 
 }
 char *MemoryAccess::GetVehicleMakeName(int modelHash) {
 	int index = 0xFFFF;
-	uint64_t modelInfo = GetModelInfo(modelHash, &index);
-	return (char*)(modelInfo + 0x27C);
+	auto modelInfo = GetModelInfo(modelHash, &index);
+    return modelInfo->m_manufacturerName;
+	//return (char*)(modelInfo + 0x27C);
 }
 
 uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const char* startAddress, size_t size) {

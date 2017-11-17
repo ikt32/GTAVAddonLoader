@@ -14,7 +14,6 @@
     <ClCompile Include="Util\Paths.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="NativeMemory.cpp" />
     <ClCompile Include="..\..\GTAVMenuBase\menu.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
@@ -36,6 +35,9 @@
     </ClCompile>
     <ClCompile Include="..\thirdparty\jpegsize.cpp">
       <Filter>thirdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeMemory.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +68,6 @@
     <ClInclude Include="Util\Paths.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="NativeMemory.hpp" />
     <ClInclude Include="VehicleHashes.h" />
     <ClInclude Include="..\..\GTAVMenuBase\menu.h">
       <Filter>Menu</Filter>
@@ -90,6 +91,9 @@
     <ClInclude Include="..\thirdparty\jpegsize.h">
       <Filter>thirdparty</Filter>
     </ClInclude>
+    <ClInclude Include="NativeMemory.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">
@@ -103,6 +107,9 @@
     </Filter>
     <Filter Include="thirdparty">
       <UniqueIdentifier>{371be4fb-f341-4041-adea-08b5ef342bb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{99f880a3-306a-43ff-b7b2-432e57255433}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
