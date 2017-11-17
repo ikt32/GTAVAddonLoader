@@ -136,7 +136,7 @@ std::vector<uint8_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 	int index = 0xFFFF;
 	auto modelInfo = GetModelInfo(modelHash, &index);
 
-	if (modelInfo && (modelInfo->GetModelType() & 0x1F) == 5) {
+	if (modelInfo && modelInfo->GetModelType() == 5) {
 		uint16_t count = modelInfo->m_modKitsCount;
 		for (uint16_t i = 0; i < count; i++) {
 			uint8_t modKit = modelInfo->m_modKits[i];
