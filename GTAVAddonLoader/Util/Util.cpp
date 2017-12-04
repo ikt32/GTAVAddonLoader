@@ -93,7 +93,7 @@ bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height) {
 	std::vector<unsigned char> image;
 	unsigned error = lodepng::decode(image, *width, *height, file);
 	if (error) {
-		logger.Write("ERROR: decoder error " + std::to_string(error) + ": " + lodepng_error_text(error));
+		logger.Write(ERROR, "PNG error: %s: %s", std::to_string(error).c_str(), lodepng_error_text(error));
 		return false;
 	}
 	return true;
@@ -104,7 +104,7 @@ bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
 
 	errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file
 	if (!image || err) {
-		logger.Write("JPEG: " + fs::path(file).filename().string() + ": Failed to open file");
+		logger.Write(ERROR, "JPEG error: %s: Failed to open file", fs::path(file).filename().string().c_str());
 		return false;
 	}
 	int w, h;
@@ -114,7 +114,7 @@ bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
 		*height = h;
 		return true;
 	}
-	logger.Write("JPEG: " + fs::path(file).filename().string() + ": getting size failed, using defaults (480 x 270)");
+	logger.Write(ERROR, "JPEG error: %s: getting size failed, using defaults (480 x 270)", fs::path(file).filename().string());
 	*width = 480;
 	*height = 270;
 	return false;

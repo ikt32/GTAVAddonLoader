@@ -110,7 +110,7 @@ void resolveVehicleSpriteInfo_lite(Hash hash) {
             SpriteInfo spriteInfo;
             if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
                 g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
-                logger.Writef("TXD post-init: Added %s from %s", texture->name, dict.c_str());
+                logger.Write(INFO, "TXD post-init: Added %s from %s", texture->name, dict.c_str());
                 return;
             }
         }
@@ -145,7 +145,7 @@ void resolveImage(Hash selected) {
  * Remove files from the img directory if they aren't present as add-on.
  */
 void cleanImageDirectory(bool backup) {
-	logger.Write("Cleaning img dir");
+	logger.Write(INFO, "Cleaning img dir");
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	std::vector<fs::directory_entry> filesToDiscard;
 	for (auto &file : fs::directory_iterator(imgPath)) {
@@ -154,23 +154,23 @@ void cleanImageDirectory(bool backup) {
 		Hash hash = joaat(fs::path(file).stem().string());
 		if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash)) {
 			filesToDiscard.push_back(file);
-			//logger.Write("Marked " + fs::path(file).stem().string());
+			//logger.Write(INFO, "Marked " + fs::path(file).stem().string());
 		}
 	}
 	std::string bakPath = "";
 	if (filesToDiscard.size() == 0) {
-		logger.Write("No files to discard");
+		logger.Write(INFO, "No files to discard");
 		return;
 	}
-	logger.Write("About to discard " + std::to_string(filesToDiscard.size()) + " files");
+	logger.Write(INFO, "About to discard " + std::to_string(filesToDiscard.size()) + " files");
 
 	if (backup) {
-		logger.Write("Creating bak dir");
+		logger.Write(INFO, "Creating bak dir");
 		auto ms = std::chrono::duration_cast<std::chrono::milliseconds >(
 			std::chrono::system_clock::now().time_since_epoch()
 			).count();
 		bakPath = imgPath + "\\bak." + std::to_string(ms);
-		logger.Write("Bak dir: " + bakPath);
+		logger.Write(INFO, "Bak dir: " + bakPath);
 		fs::create_directory(bakPath);
 	}
 
@@ -179,7 +179,7 @@ void cleanImageDirectory(bool backup) {
 		std::wstring srcWide = std::wstring(src.begin(), src.end());
 		if (backup) {
 			std::string dst = bakPath + "\\" + file.path().filename().string();
-			//logger.Write("Moving file " + src + " to " + dst);
+			//logger.Write(INFO, "Moving file " + src + " to " + dst);
 			std::wstring dstWide = std::wstring(dst.begin(), dst.end());
 			MoveFileW(srcWide.c_str(), dstWide.c_str());
 		}
@@ -284,7 +284,7 @@ void cacheAddons() {
 	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
 	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Model name";
 	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "GXT name";
-	logger.Write(thingy.str());
+	logger.Write(INFO, thingy.str());
 
 	for (auto hash : allVehicles) {
 		if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end()) {
@@ -302,7 +302,7 @@ void cacheAddons() {
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
 			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
 
-			logger.Write(logStream.str());
+			logger.Write(INFO, logStream.str());
 
 			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
 
@@ -539,7 +539,7 @@ void checkCache(std::string cacheFile) {
 }
 
 void main() {
-	logger.Write("Script started");
+	logger.Write(INFO, "Script started");
 
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
 	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
@@ -551,16 +551,16 @@ void main() {
 	menu.SetFiles(settingsMenuFile);
 	menu.ReadSettings();
 
-	logger.Write("Settings read");
+	logger.Write(INFO, "Settings read");
 
     std::string cacheFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\hashes.cache";
     checkCache(cacheFile);
 
 	MemoryAccess::Init();
 
-    logger.Write("resolveVehicleSpriteInfo ----- start");
+    logger.Write(INFO, "resolveVehicleSpriteInfo ----- start");
     resolveVehicleSpriteInfo();
-    logger.Write("resolveVehicleSpriteInfo ----- done");
+    logger.Write(INFO, "resolveVehicleSpriteInfo ----- done");
 
 	g_dlcs = buildDLClist();
 	buildBlacklist();
@@ -576,7 +576,7 @@ void main() {
 		if (!GetIMGDimensions(fileName, &width, &height)) {
 			width = 800;
 			height = 450;
-			logger.Write("Failed to get image proportions for noimage.png, using default values");
+			logger.Write(WARN, "Failed to get image proportions for noimage.png, using default values");
 		}
 		int handle = createTexture(fileName.c_str());
 		noImage = AddonImage(handle, hash, width, height);
@@ -585,10 +585,10 @@ void main() {
 		unsigned width = 480;
 		unsigned height = 270;
 		noImage = AddonImage(-1, hash, width, height);
-		logger.Write("Missing img/noimage.png!");
+		logger.Write(ERROR, "Missing img/noimage.png!");
 	}
 	
-	logger.Write("Initialization finished");
+	logger.Write(INFO, "Initialization finished");
 
 	while (true) {
 		update_game();

@@ -47,11 +47,11 @@ CVehicleModelInfo* InitVehicleArchetype_hook(const char* name, bool a2, unsigned
 void initInitVehicleArchetypeHooks() {
     auto addr = MemoryAccess::FindPattern("\xE8\x00\x00\x00\x00\x48\x8B\x4D\xE0\x48\x8B\x11", "x????xxxxxxx");
     if (addr == 0) {
-        logger.Write("Couldn't find InitVehicleArchetype");
+        logger.Write(ERROR, "Couldn't find InitVehicleArchetype");
         return;
     }
     addr = (addr + *(int*)(addr + 1) + 5);
-    logger.Writef("Found InitVehicleArchetype at 0x%llX", addr);
+    logger.Write(INFO, "Found InitVehicleArchetype at 0x%llX", addr);
 
     InitVehicleArchetype_detour = new PLH::Detour();
     InitVehicleArchetype_detour->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
@@ -226,8 +226,8 @@ bool MemoryAccess::findShopController() {
 	// FindPatterns
 	__int64 patternAddr = FindPattern("\x4C\x8D\x05\x00\x00\x00\x00\x4D\x8B\x08\x4D\x85\xC9\x74\x11", "xxx????xxxxxxxx");
 	if (!patternAddr) {
-		logger.Write("ERROR: finding address 0");
-		logger.Write("Aborting...");
+		logger.Write(ERROR, "ERROR: finding address 0");
+		logger.Write(ERROR, "Aborting...");
 		return false;
 	}
 	globalTable.GlobalBasePtr = (__int64**)(patternAddr + *(int*)(patternAddr + 3) + 7);
@@ -235,8 +235,8 @@ bool MemoryAccess::findShopController() {
 
 	patternAddr = FindPattern("\x48\x03\x15\x00\x00\x00\x00\x4C\x23\xC2\x49\x8B\x08", "xxx????xxxxxx");
 	if (!patternAddr) {
-		logger.Write("ERROR: finding address 1");
-		logger.Write("Aborting...");
+		logger.Write(ERROR, "ERROR: finding address 1");
+		logger.Write(ERROR, "Aborting...");
 		return false;
 	}
 	scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
@@ -248,25 +248,25 @@ bool MemoryAccess::findShopController() {
 	while (!globalTable.IsInitialised()) {
 		scriptWait(100); //Wait for GlobalInitialisation before continuing
 		if (GetTickCount() > startTime + timeout) {
-			logger.Write("ERROR: couldn't init global table");
-			logger.Write("Aborting...");
+			logger.Write(ERROR, "ERROR: couldn't init global table");
+			logger.Write(ERROR, "Aborting...");
 			return false;
 		}
 	}
 	
-	//logger.Write("Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
+	//logger.Write(INFO, "Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
 
 	ScriptTableItem* Item = scriptTable->FindScript(0x39DA738B);
 	if (Item == NULL) {
-		logger.Write("ERROR: finding address 2");
-		logger.Write("Aborting...");
+		logger.Write(ERROR, "ERROR: finding address 2");
+		logger.Write(ERROR, "Aborting...");
 		return false;
 	}
 	while (!Item->IsLoaded())
 		Sleep(100);
 	
 	shopController = Item->Header;
-	//logger.Write("Found shopcontroller");
+	//logger.Write(INFO, "Found shopcontroller");
 	return true;
 }
 
@@ -276,7 +276,7 @@ void MemoryAccess::enableCarsGlobal() {
 		if (!sigAddress) {
 			continue;
 		}
-		//logger.Write("Pattern found in codepage " + std::to_string(i) + " at memory address " + std::to_string(sigAddress));
+		//logger.Write(INFO, "Pattern found in codepage " + std::to_string(i) + " at memory address " + std::to_string(sigAddress));
 		int RealCodeOff = (int)(sigAddress - (__int64)shopController->GetCodePageAddress(i) + (i << 14));
 		for (int j = 0; j < 2000; j++) {
 			if (*(int*)shopController->GetCodePositionAddress(RealCodeOff - j) == 0x0008012D) {
@@ -288,9 +288,9 @@ void MemoryAccess::enableCarsGlobal() {
 							if (*(unsigned char*)shopController->GetCodePositionAddress(funcOff + k) == 0x5F) {
 								int globalindex = *(int*)shopController->GetCodePositionAddress(funcOff + k + 1) & 0xFFFFFF;
 								//DEBUGMSG("Found Global Variable %d, address = %llX", globalindex, (__int64)globalTable.AddressOf(globalindex));
-								logger.Write("Setting Global Variable " + std::to_string(globalindex) + " to true");
+								logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
 								*globalTable.AddressOf(globalindex) = 1;
-								logger.Write("MP Cars enabled");
+								logger.Write(INFO, "MP Cars enabled");
 								return;
 							}
 						}
@@ -302,5 +302,5 @@ void MemoryAccess::enableCarsGlobal() {
 		}
 		break;
 	}
-	logger.Write("Global Variable not found, check game version >= 1.0.678.1");
+	logger.Write(ERROR, "Global Variable not found, check game version >= 1.0.678.1");
 }
