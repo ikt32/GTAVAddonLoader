@@ -94,6 +94,9 @@
     <ClInclude Include="NativeMemory.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GTAVMenuBase\Scaleform.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">
