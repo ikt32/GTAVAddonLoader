@@ -13,6 +13,7 @@ typedef uint32_t eVehicleFlag2;
 typedef uint32_t eVehicleFlag3;
 typedef uint32_t eVehicleFlag4;
 typedef uint32_t eVehicleFlag5;
+typedef uint32_t eVehicleFlag6;
 
 
 // Various snippets from FiveM source and Unknown Modder
@@ -203,6 +204,69 @@ public:
 
 STATIC_ASSERT_SIZE(CVehicleModelInfo, 0x560);
 
+class CVehicleModelInfo1290 : public CBaseModelInfo
+{
+public:
+    virtual ~CVehicleModelInfo1290() {}
+    virtual void Initialize() {}
+    virtual void InitializeFromArchetypeDef(uint32_t, rage::fwArchetypeDef*, bool) {}
+    virtual rage::fwEntity* CreateEntity() { return nullptr; }
+    // and lots of other functions...
+
+public:
+    void* m_0x00B0; // 0x00B0
+    char _0x00B8[0x40]; // 0x00B8
+    uint8_t m_primaryColorCombinations[25]; // 0x00F8
+    uint8_t m_secondaryColorCombinations[25]; // 0x0111
+    uint8_t m_unkColor1Combinations[25]; // 0x012A
+    uint8_t m_unkColor2Combinations[25]; // 0x0143
+    uint8_t m_interiorColorCombinations[25]; // 0x015C
+    uint8_t m_dashboardColorCombinations[25]; // 0x0175
+    char _0x018E[0x10A]; // 0x018E
+    char m_displayName[12]; // 0x0298 (aka gameName)
+    char m_manufacturerName[12]; // 0x02A4 (aka makeName)
+    uint16_t* m_modKits; // 0x02B0
+    uint16_t m_modKitsCount; // 0x02B8
+    char _0x02BA[0x46]; // 0x02BA
+    void* m_driverInfo; // 0x0300
+    uint8_t m_numDrivers; // 0x0308
+    char _0x0309[0x37]; // 0x02E3
+    eVehicleType m_vehicleType; // 0x0340
+    uint32_t m_unkVehicleType; // 0x0344
+    uint32_t m_diffuseTint; // 0x0348
+    char _0x034C[0x90]; // 0x034C
+    uint8_t m_unkModKitVal; // 0x03DC (also uint16_t now?)
+    char _0x03DD[0xA7]; // 0x03DD
+    float m_wheelScale; // 0x0484
+    float m_wheelScaleRear; // 0x0488
+    float m_defaultBodyHealth; // 0x048C
+    char _0x0490[0x20]; // 0x0490
+    uint32_t m_handlingIndex; // 0x04B8
+    uint32_t m_identicalModelSpawnDistance; // 0x04BC
+    char _0x04C0[0x4]; // 0x04C0
+    uint32_t m_numColorCombinations; // 0x04C4
+    uint32_t m_fragmentIndex; // 0x04C8
+    char _0x04CC[0x2C]; // 0x04CC
+    void* m_0x04F8; // 0x04F8 (wheel data? 0xAC -> burnout mult?)
+    char _0x0500[0x3B]; // 0x0500
+    uint8_t m_sirenInfoId; // 0x053B
+    char _0x053C[0x7]; // 0x053C
+    uint8_t m_0x0543; // 0x0543
+    char _0x0544_[0x4]; // 0x0544
+    uint8_t m_vehicleClass; // 0x0548 (& 0x1F; (>> 5) & 3 -> plate type)
+    char _0x0549[0x2F]; // 0x0549
+    int m_seatCount; // 0x0578 (use only if unk_0x00B0->seatCount can't be used)
+    eVehicleFlag1 m_flags1; // 0x057C
+    eVehicleFlag2 m_flags2; // 0x0580
+    eVehicleFlag3 m_flags3; // 0x0584
+    eVehicleFlag4 m_flags4; // 0x0588
+    eVehicleFlag5 m_flags5; // 0x058C
+    eVehicleFlag6 m_flags6; // 0x0590
+    char _0x0594[0xC]; // 0x0594
+};
+
+// ?
+STATIC_ASSERT_SIZE(CVehicleModelInfo1290, 0x598);
 
 struct ScriptHeader {
 	char padding1[16];					//0x0
@@ -291,7 +355,7 @@ public:
 	static char *GetVehicleMakeName(int modelHash);
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
 	static std::array<std::vector<int>, 0x20> GenerateVehicleModelList();
-	static std::vector<uint8_t> GetVehicleModKits(int modelHash);
+	static std::vector<uint16_t> GetVehicleModKits(int modelHash);
 private:
 	static bool findShopController();
 	static void enableCarsGlobal();

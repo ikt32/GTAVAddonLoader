@@ -649,7 +649,38 @@ static const std::vector<Hash> SmugglersRunVehicles = {
 	0x7A2EF5E4, //  RAPIDGT3
 };
 
-
+static const std::vector<Hash> DoomsdayHeistVehicles = {
+    0x3201DD49, //  Sports Classics     Z190                z190                190z
+    0x46699F47, //  Helicopters         AKULA               akula               Akula
+    0xED552C74, //  Super               AUTARCH             autarch             Autarch
+    0x81BD2ED0, //  Planes              AVENGER             avenger             Avenger
+    0x18606535, //  Planes              AVENGER             avenger2            Avenger
+    0xF34DFB25, //  Military            BARRAGE             barrage             Barrage
+    0xD6BC7523, //  Military            CHERNOBOG           chernobog           Chernobog
+    0x276D98A3, //  Sports              COMET5              comet5              Comet SR
+    0x5D1903F9, //  Sports              COMET4              comet4              Comet Safari
+    0x586765FB, //  Sports Classics     DELUXO              deluxo              Deluxo
+    0x8408F33A, //  Sports Classics     GT500               gt500               GT500
+    0x00E83C17, //  Muscle              HERMES              hermes              Hermes
+    0x23CA25F2, //  Muscle              HUSTLER             hustler             Hustler
+    0xF8C2E0E7, //  Off - Road            KAMACHO             kamacho             Kamacho
+    0x91CA96EE, //  Sports              NEON                neon                Neon
+    0x33B98FE2, //  Sports              PARIAH              pariah              Pariah
+    0x9B16A3B4, //  Emergency           RIOT2               riot2               RCV
+    0xA4D99B7D, //  Sports              RAIDEN              raiden              Raiden
+    0xE78CC3D9, //  Sports              REVOLTER            revolter            Revolter
+    0xA4A4E453, //  Off - Road            RIATA               riata               Riata
+    0x5097F589, //  Super               SC1                 sc1                 SC1
+    0x35DED0DD, //  Sports Classics     SAVESTRA            savestra            Savestra
+    0x41D149AA, //  Sports              sentinel3           sentinel3           Sentinel Classic
+    0x67D2B389, //  Sports              STREITER            streiter            Streiter
+    0x34DBA661, //  Sports Classics     STROMBERG           stromberg           Stromberg
+    0xAA6F980A, //  Military            KHANJALI            khanjali            TM - 02 Khanjali
+    0x58CDAF30, //  Military            THRUSTER            thruster            Thruster
+    0xE8A8BA94, //  Sports Classics     VISERIS             viseris             Viseris
+    0x1AAD0DED, //  Planes              VOLATOL             volatol             Volatol
+    0x6F946279, //  Muscle              YOSEMITE            yosemite            Yosemite
+};
 
 inline std::vector<DLC> buildDLClist() {
 	return {
@@ -678,8 +709,9 @@ inline std::vector<DLC> buildDLClist() {
 		{ DLC("Import/Export", ImportExportVehicles) },
 		{ DLC("Cunning Stunts: Special Vehicle Circuit", CunningStunts2Vehicles) },
 		{ DLC("Gunrunning", GunrunningVehicles) },
-		{ DLC("Smuggler's Run", SmugglersRunVehicles) },
-	};
+        { DLC("Smuggler's Run", SmugglersRunVehicles) },
+        { DLC("Doomsday Heist", DoomsdayHeistVehicles) },
+    };
 }
 
 static const std::vector<std::string> WebsiteDicts = {
@@ -738,6 +770,9 @@ static const std::vector<std::string> WebsiteDicts = {
 	"elt_dlc_smuggler",
 	"lgm_dlc_smuggler",
 	"sssa_dlc_smuggler",
+    "candc_xmas2017",
+    "lgm_dlc_xmas2017",
+    "sssa_dlc_xmas2017",
 };
 
 inline std::vector<SpriteInfo> getVehicleSpriteOverrides() {
