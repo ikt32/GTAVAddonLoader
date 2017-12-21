@@ -39,6 +39,8 @@ InitVehicleArchetype_t InitVehicleArchetype_orig;
 
 extern std::unordered_map<Hash, std::string> g_vehicleHashes;
 
+int gameVersion = getGameVersion();
+
 CVehicleModelInfo* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
     g_vehicleHashes.insert({ joaat(name), name });
     return InitVehicleArchetype_orig(name, a2, a3);
@@ -135,7 +137,7 @@ std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 
 	int index = 0xFFFF;
     void* modelInfo = GetModelInfo(modelHash, &index);
-    if (getGameVersion() < 38) {
+    if (gameVersion < 38) {
         if (modelInfo && ((CVehicleModelInfo*)modelInfo)->GetModelType() == 5) {
             uint16_t count = ((CVehicleModelInfo*)modelInfo)->m_modKitsCount;
             for (uint16_t i = 0; i < count; i++) {
@@ -158,16 +160,23 @@ std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 
 char *MemoryAccess::GetVehicleGameName(int modelHash) {
 	int index = 0xFFFF;
-	auto modelInfo = GetModelInfo(modelHash, &index);
-    return modelInfo->m_displayName;
-	//return (char*)(modelInfo + 0x270);
-
+	void* modelInfo = GetModelInfo(modelHash, &index);
+    if (gameVersion < 38) {
+        return ((CVehicleModelInfo*)modelInfo)->m_displayName;
+    }
+    else {
+        return ((CVehicleModelInfo1290*)modelInfo)->m_displayName;
+    }
 }
 char *MemoryAccess::GetVehicleMakeName(int modelHash) {
 	int index = 0xFFFF;
-	auto modelInfo = GetModelInfo(modelHash, &index);
-    return modelInfo->m_manufacturerName;
-	//return (char*)(modelInfo + 0x27C);
+	void* modelInfo = GetModelInfo(modelHash, &index);
+    if (gameVersion < 38) {
+        return ((CVehicleModelInfo*)modelInfo)->m_manufacturerName;
+    }
+    else {
+        return ((CVehicleModelInfo1290*)modelInfo)->m_manufacturerName;
+    }
 }
 
 uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const char* startAddress, size_t size) {
