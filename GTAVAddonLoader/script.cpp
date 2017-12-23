@@ -46,6 +46,7 @@ std::set<std::string> g_addonMakes;     // Grouping-related
 
 std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
 std::vector<AddonImage> g_addonImages;
+std::vector<Hash> g_addonImageHashes; // name hash
 
 std::vector<Hash> g_gameVehicles;         // all base vehicles
 std::vector<DLC> g_dlcs;
@@ -76,7 +77,7 @@ void resolveVehicleSpriteInfo() {
 
 	for (auto dict : WebsiteDicts) {
         auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
-        //logger.Writef("Dict \"%s\" sz1 %d", dict.c_str(), textures.size());
+        logger.Write(DEBUG, "Dict \"%s\" sz1 %d", dict.c_str(), textures.size());
         int attempts = 0;
         while (textures.size() == 0 && attempts < 10) {
             GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
@@ -85,12 +86,11 @@ void resolveVehicleSpriteInfo() {
             }
             textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
             attempts++;
-            //if (attempts >= 10) logger.Writef("%d attempts max", attempts);
+            if (attempts >= 10) logger.Write(DEBUG, "%d attempts max", attempts);
         }
-        //logger.Writef("Dict \"%s\" sz2 %d after %d attempts", dict.c_str(), textures.size(), attempts);
+        logger.Write(DEBUG, "Dict \"%s\" sz2 %d after %d attempts", dict.c_str(), textures.size(), attempts);
 
 		for (auto texture : textures) {
-            //logger.Writef("%s\t%s", dict.c_str(), texture->name);
 			SpriteInfo spriteInfo;
 			if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
 				g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
@@ -115,6 +115,17 @@ void resolveVehicleSpriteInfo_lite(Hash hash) {
             }
         }
     }
+}
+
+/*
+ * Save the names so we know to prefer loading an image instead of texture.
+ */
+void cacheImageHashes() {
+	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+	for (auto &file : fs::directory_iterator(imgPath)) {
+        if (fs::path(file).stem().string() == "noimage") continue;
+        g_addonImageHashes.push_back(joaat(fs::path(file).stem().string()));
+	}
 }
 
 /*
@@ -412,6 +423,55 @@ void spawnVehicle(Hash hash) {
 	}
 }
 
+std::string getImageExtra(Hash addonVehicle) {
+    std::string extra;
+    AddonImage addonImage;
+    SpriteInfo spriteInfo;
+    if (isHashInImgVector(addonVehicle, g_addonImages, &addonImage)) {
+        extra = menu.ImagePrefix + std::to_string(addonImage.TextureID) +
+            "W" + std::to_string(addonImage.ResX) +
+            "H" + std::to_string(addonImage.ResY);
+    }
+    else if (find(g_addonImageHashes.begin(), g_addonImageHashes.end(), addonVehicle) != g_addonImageHashes.end()) {
+        resolveImage(addonVehicle);
+    }
+    // manual in-game texture
+    else if (isHashInImgVector(addonVehicle, g_dlcSpriteOverrides, &spriteInfo)) {
+        extra = menu.SpritePrefix +
+            spriteInfo.Dict + " " +
+            spriteInfo.Name + " " +
+            "W" + std::to_string(spriteInfo.ResX) +
+            "H" + std::to_string(spriteInfo.ResY);
+    }
+    // auto in-game texture
+    else if (find(g_gameVehicles.begin(), g_gameVehicles.end(), addonVehicle) != g_gameVehicles.end()) {
+        if (isHashInImgVector(addonVehicle, g_dlcSprites, &spriteInfo)) {
+            extra = menu.SpritePrefix +
+                spriteInfo.Dict + " " +
+                spriteInfo.Name + " " +
+                "W" + std::to_string(spriteInfo.ResX) +
+                "H" + std::to_string(spriteInfo.ResY);
+        }
+        else {
+            resolveVehicleSpriteInfo_lite(addonVehicle);
+            if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle) == g_missingImages.end()) {
+                resolveImage(addonVehicle);
+            }
+        }
+    }
+    else {
+        if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle) == g_missingImages.end()) {
+            resolveImage(addonVehicle);
+        }
+    }
+    if (extra.empty()) {
+        extra = menu.ImagePrefix + std::to_string(noImage.TextureID) +
+            "W" + std::to_string(noImage.ResX) +
+            "H" + std::to_string(noImage.ResY);
+    }
+    return extra;
+}
+
 /*
  * Used by the menu so it gets only the info of the current addon vehicle option,
  * instead of everything. 
@@ -430,54 +490,7 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
 		}
 	}
 
-	AddonImage addonImage;
-	SpriteInfo spriteInfo;
-	if (isHashInImgVector(addonVehicle.ModelHash, g_addonImages, &addonImage)) {
-		extras.push_back(menu.ImagePrefix + std::to_string(addonImage.TextureID) +
-			"W" + std::to_string(addonImage.ResX) +
-			"H" + std::to_string(addonImage.ResY));
-	}
-    // manual in-game texture
-	else if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSpriteOverrides, &spriteInfo)) {
-		extras.push_back(menu.SpritePrefix +
-			spriteInfo.Dict + " " +
-			spriteInfo.Name + " " +
-			"W" + std::to_string(spriteInfo.ResX) +
-			"H" + std::to_string(spriteInfo.ResY));
-	}
-    // auto in-game texture (applies to non-addons only)
-	else if (find(g_gameVehicles.begin(), g_gameVehicles.end(), addonVehicle.ModelHash) != g_gameVehicles.end()) {
-        if (isHashInImgVector(addonVehicle.ModelHash, g_dlcSprites, &spriteInfo)) {
-            extras.push_back(menu.SpritePrefix +
-                spriteInfo.Dict + " " +
-                spriteInfo.Name + " " +
-                "W" + std::to_string(spriteInfo.ResX) +
-                "H" + std::to_string(spriteInfo.ResY));
-        }
-        else {
-            resolveVehicleSpriteInfo_lite(addonVehicle.ModelHash);
-
-            extras.push_back(menu.ImagePrefix + std::to_string(noImage.TextureID) +
-                "W" + std::to_string(noImage.ResX) +
-                "H" + std::to_string(noImage.ResY));
-
-            // try resolving mainly in img
-            if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
-                resolveImage(addonVehicle.ModelHash);
-            }
-        }
-	}
-    // found nothing yo
-	else {
-		extras.push_back(menu.ImagePrefix + std::to_string(noImage.TextureID) +
-			"W" + std::to_string(noImage.ResX) +
-			"H" + std::to_string(noImage.ResY));
-
-        // try resolving mainly in img
-		if (find(g_missingImages.begin(), g_missingImages.end(), addonVehicle.ModelHash) == g_missingImages.end()) {
-			resolveImage(addonVehicle.ModelHash);
-		}
-	}
+	extras.push_back(getImageExtra(addonVehicle.ModelHash));
 
 	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
 	std::string makeFinal;
@@ -539,6 +552,7 @@ void checkCache(std::string cacheFile) {
 }
 
 void main() {
+    // logger.SetMinLevel(DEBUG);
 	logger.Write(INFO, "Script started");
 
 	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
@@ -560,11 +574,12 @@ void main() {
 
     logger.Write(INFO, "resolveVehicleSpriteInfo ----- start");
     resolveVehicleSpriteInfo();
-    logger.Write(INFO, "resolveVehicleSpriteInfo ----- done");
+    logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
 
 	g_dlcs = buildDLClist();
 	buildBlacklist();
 	cacheAddons();
+    cacheImageHashes();
 	cacheDLCs();
 	addVehicleSpriteOverrides();
 
@@ -603,6 +618,7 @@ void clearGlobals() {
 	g_addonMakes.clear();
 	g_addonVehicles.clear();
 	g_addonImages.clear();
+    g_addonImageHashes.clear();
 	g_gameVehicles.clear();
 	g_dlcs.clear();
 	g_dlcClasses.clear();
