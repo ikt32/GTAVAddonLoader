@@ -83,11 +83,7 @@ void update_searchresults() {
         char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
         std::string displayName = UI::_GET_LABEL_TEXT(name);
         std::string rawName = name;
-        if (displayName == "NULL") {
-            displayName = name;
-        }
         std::string modelName = getModelName(addonVehicle.ModelHash);
-
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
         std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
 

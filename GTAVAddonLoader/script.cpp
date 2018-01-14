@@ -344,6 +344,23 @@ void clearPersistentVehicles() {
 	g_persistentVehicles.clear();
 }
 
+bool findStringInNames(std::string search, Hash hash) {
+    char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    std::string displayName = UI::_GET_LABEL_TEXT(name);
+    std::string rawName = name;
+    std::string modelName = getModelName(hash);
+    std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(hash);
+    std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
+
+    if (findSubstring(rawName, search) != -1 ||
+        findSubstring(displayName, search) != -1 ||
+        findSubstring(modelName, search) != -1 ||
+        findSubstring(makeName, search) != -1 ||
+        findSubstring(makeNameRaw, search) != -1) {
+        return true;
+    }
+    return false;
+}
 
 /*
  * Spawns a vehicle with the chosen model hash. Put it on the player when not
@@ -368,8 +385,13 @@ void spawnVehicle(Hash hash) {
 			}
 		}
 
+        bool spawnInside = settings.SpawnInside;
+        if (findStringInNames("trailer", hash) || findStringInNames("train", hash)) {
+            spawnInside = false;
+        }
+
 		float offsetX = 0.0f;
-		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !settings.SpawnInside) {
+		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !spawnInside) {
 			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
 			Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
 			Vector3 newMin, newMax;
@@ -386,7 +408,7 @@ void spawnVehicle(Hash hash) {
 		
 		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, offsetX, 0.0, 0);
 
-		if (settings.SpawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
+		if (spawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
 			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
 			Vector3 oldVehiclePos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
 			oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
@@ -399,7 +421,7 @@ void spawnVehicle(Hash hash) {
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
 		
-		if (settings.SpawnInside) {
+		if (spawnInside) {
 			ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
 			PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);
 		}
