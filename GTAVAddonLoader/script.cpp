@@ -68,27 +68,14 @@ void addVehicleSpriteOverrides() {
 
 // First pass to find txd textures
 void resolveVehicleSpriteInfo() {
-    for (auto dict : WebsiteDicts) {
+	for (auto dict : WebsiteDicts) {
+        auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
         GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
         while (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
             WAIT(100);
         }
-    }
-
-	for (auto dict : WebsiteDicts) {
-        auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
-        logger.Write(DEBUG, "Dict \"%s\" sz1 %d", dict.c_str(), textures.size());
-        int attempts = 0;
-        while (textures.size() == 0 && attempts < 10) {
-            GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
-            while (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
-                WAIT(100);
-            }
-            textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
-            attempts++;
-            if (attempts >= 10) logger.Write(DEBUG, "%d attempts max", attempts);
-        }
-        logger.Write(DEBUG, "Dict \"%s\" sz2 %d after %d attempts", dict.c_str(), textures.size(), attempts);
+        textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
+        logger.Write(DEBUG, "Dict \"%s\" sz2 %d", dict.c_str(), textures.size());
 
 		for (auto texture : textures) {
 			SpriteInfo spriteInfo;
@@ -594,9 +581,10 @@ void main() {
 
 	MemoryAccess::Init();
 
-    logger.Write(INFO, "resolveVehicleSpriteInfo ----- start");
-    resolveVehicleSpriteInfo();
-    logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
+    //logger.Write(INFO, "resolveVehicleSpriteInfo ----- start");
+    //resolveVehicleSpriteInfo();
+    //showNotification("AddonSpawner done initializing stuff");
+    //logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
 
 	g_dlcs = buildDLClist();
 	buildBlacklist();
