@@ -354,7 +354,6 @@ public:
 	static char *GetVehicleGameName(int modelHash);
 	static char *GetVehicleMakeName(int modelHash);
 	static std::vector<rage::grcTexture *> GetTexturesFromTxd(Hash txdHash);
-	static std::array<std::vector<int>, 0x20> GenerateVehicleModelList();
 	static std::vector<uint16_t> GetVehicleModKits(int modelHash);
 private:
 	static bool findShopController();

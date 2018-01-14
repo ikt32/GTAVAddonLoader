@@ -259,18 +259,11 @@ void cacheDLCs() {
 void cacheAddons() {
 	if (!g_addonVehicles.empty())
 		return;
-	std::vector<Hash> allVehicles;
 
-	auto vehicleModelList = MemoryAccess::GenerateVehicleModelList();
-	for (auto vehicleModelVector : vehicleModelList) {
-		for (auto hash : vehicleModelVector) {
-			char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-			
-			if (name) {
-				allVehicles.push_back(hash);
-			}
-		}
-	}
+	std::vector<Hash> allVehicles;
+    for (auto hash : g_vehicleHashes) {
+        allVehicles.push_back(hash.first);
+    }
 
 	std::sort(allVehicles.begin(), allVehicles.end(), predicateHashByName);
 
