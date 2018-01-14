@@ -193,23 +193,6 @@ std::string getModelName(Hash hash) {
     return "NOTFOUND";
 }
 
-// sorting thing
-bool predicateHashByName(Hash h1, Hash h2) {
-	std::string name1 = getGxtName(h1);
-	std::string name2 = getGxtName(h2);
-	return name1 < name2;
-}
-
-// sorting thing 2
-bool predicateAddonVehicleHashByName(ModelInfo a1, ModelInfo a2) {
-	std::string name1 = getGxtName(a1.ModelHash);
-	std::string name2 = getGxtName(a2.ModelHash);
-	if (name1 == name2) {
-		return getModelName(a1.ModelHash) < getModelName(a2.ModelHash);
-	}
-	return name1 < name2;
-}
-
 void cacheDLCVehicles() {
 	for (auto &dlc : g_dlcs) {
 		dlc.Vehicles.clear();
@@ -238,7 +221,14 @@ void cacheDLCVehicles() {
 			g_dlcMakes.emplace(dlcMake);
 		}
 	}
-	std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), predicateAddonVehicleHashByName);
+	std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](ModelInfo a1, ModelInfo a2) {
+        std::string name1 = getGxtName(a1.ModelHash);
+        std::string name2 = getGxtName(a2.ModelHash);
+        if (name1 == name2) {
+            return getModelName(a1.ModelHash) < getModelName(a2.ModelHash);
+        }
+        return name1 < name2;
+    });
 }
 
 /*
@@ -265,7 +255,11 @@ void cacheAddons() {
         allVehicles.push_back(hash.first);
     }
 
-	std::sort(allVehicles.begin(), allVehicles.end(), predicateHashByName);
+	std::sort(allVehicles.begin(), allVehicles.end(), [](Hash h1, Hash h2) {
+        std::string name1 = getGxtName(h1);
+        std::string name2 = getGxtName(h2);
+        return name1 < name2;
+    });
 
 	int hashLength = 12;
 	int nameLength = 20;
