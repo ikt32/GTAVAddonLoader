@@ -362,4 +362,3 @@ private:
 };
 
 void initInitVehicleArchetypeHooks();
-void deinitInitVehicleArchetypeHooks();

@@ -394,7 +394,8 @@ void spawnVehicle(Hash hash) {
 
 		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
 		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
-		
+        VEHICLE::SET_VEHICLE_DIRT_LEVEL(veh, 0.0f);
+
 		if (spawnInside) {
 			ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
 			PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);

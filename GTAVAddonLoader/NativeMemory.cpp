@@ -32,7 +32,7 @@ GlobalTable globalTable;
 ScriptTable* scriptTable;
 ScriptHeader* shopController;
 
-PLH::Detour* InitVehicleArchetype_detour;
+std::unique_ptr<PLH::Detour> InitVehicleArchetype_detour;
 
 typedef CVehicleModelInfo*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
 InitVehicleArchetype_t InitVehicleArchetype_orig;
@@ -55,14 +55,10 @@ void initInitVehicleArchetypeHooks() {
     addr = (addr + *(int*)(addr + 1) + 5);
     logger.Write(INFO, "Found InitVehicleArchetype at 0x%llX", addr);
 
-    InitVehicleArchetype_detour = new PLH::Detour();
+    InitVehicleArchetype_detour = std::make_unique<PLH::Detour>();
     InitVehicleArchetype_detour->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
     InitVehicleArchetype_detour->Hook();
     InitVehicleArchetype_orig = InitVehicleArchetype_detour->GetOriginal<InitVehicleArchetype_t>();
-}
-
-void deinitInitVehicleArchetypeHooks() {
-    delete InitVehicleArchetype_detour;
 }
 
 void MemoryAccess::Init() {
@@ -70,10 +66,12 @@ void MemoryAccess::Init() {
 	auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
 		"xxx????x????xxx");
 	g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
+    logger.Write(INFO, "Found g_fwTxdStore at 0x%llX", g_fwTxdStore);
 
 	addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
 		"xxx????xxxxxxxxx");
 	g_txdCollectionItemSize = *(uint32_t*)((addr + *(int*)(addr + 3) + 7) + 0x14);
+    logger.Write(INFO, "g_txdCollectionItemSize is 0x%llX", g_txdCollectionItemSize);
 
     addr = FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
         "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
