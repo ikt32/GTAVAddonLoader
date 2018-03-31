@@ -682,6 +682,25 @@ static const std::vector<Hash> DoomsdayHeistVehicles = {
     0x6F946279, //  Muscle              YOSEMITE            yosemite            Yosemite
 };
 
+static const std::vector<Hash> SSASSSVehicles = {
+    0x4ABEBF23, //  Off-Road            CARACARA            caracara            Caracara            
+    0xC514AAE0, //  Sports Classics     CHEBUREK            cheburek            Cheburek            
+    0xC52C6B93, //  Muscle              DOMINATOR3          dominator3          Dominator GTX       
+    0xB472D2B5, //  Muscle              ELLIE               ellie               Ellie               
+    0x8198AEDC, //  Super               ENTITY2             entity2             Entity XXR          
+    0x6068AD86, //  Sports Classics     FAGALOA             fagaloa             Fagaloa             
+    0xB4F32118, //  Sports              FLASHGT             flashgt             Flash GT            
+    0x71CBEA98, //  Sports              GB200               gb200               GB200               
+    0x42836BE5, //  Sports              HOTRING             hotring             Hotring Sabre       
+    0x378236E1, //  Compacts            ISSI3               issi3               Issi Classic        
+    0xF330CB6A, //  Sports Classics     JESTER3             jester3             Jester Classic      
+    0x3E5BD8D9, //  Sports Classics     MICHELLI            michelli            Michelli GT         
+    0xD4AE63D9, //  Helicopters         SPARROW             seasparrow          Sea Sparrow         
+    0xBC5DC07E, //  Super               TAIPAN              taipan              Taipan              
+    0x3D7C6410, //  Super               TEZERACT            tezeract            Tezeract            
+    0xE99011C2, //  Super               TYRANT              tyrant              Tyrant              
+};
+
 inline std::vector<DLC> buildDLClist() {
 	return {
 		{ DLC("Original game", OriginalVehicles) },
@@ -711,6 +730,7 @@ inline std::vector<DLC> buildDLClist() {
 		{ DLC("Gunrunning", GunrunningVehicles) },
         { DLC("Smuggler's Run", SmugglersRunVehicles) },
         { DLC("Doomsday Heist", DoomsdayHeistVehicles) },
+        { DLC("Southern San Andreas Super Sport Series", SSASSSVehicles) },
     };
 }
 
