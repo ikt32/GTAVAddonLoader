@@ -39,6 +39,9 @@
     <ClCompile Include="NativeMemory.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
+    <ClCompile Include="Hooking.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -96,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="..\..\GTAVMenuBase\Scaleform.h">
       <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooking.h">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

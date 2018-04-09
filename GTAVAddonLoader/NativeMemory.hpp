@@ -361,4 +361,5 @@ private:
 
 };
 
-void initInitVehicleArchetypeHooks();
+void setupHooks();
+void removeHooks();

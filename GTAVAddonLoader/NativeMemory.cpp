@@ -16,13 +16,14 @@
 #include <vector>
 #include <unordered_map>
 
-#include <PolyHook/PolyHook/PolyHook.hpp>
+#include "Hooking.h"
 
 #include "Util/Logger.hpp"
 #include "Util/Util.hpp"
 
-
 typedef CVehicleModelInfo*(*GetModelInfo_t)(unsigned int modelHash, int* index);
+typedef CVehicleModelInfo*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
+
 GetModelInfo_t GetModelInfo;
 
 uint64_t g_fwTxdStore;
@@ -32,45 +33,50 @@ GlobalTable globalTable;
 ScriptTable* scriptTable;
 ScriptHeader* shopController;
 
-std::unique_ptr<PLH::Detour> InitVehicleArchetype_detour;
-
-typedef CVehicleModelInfo*(*InitVehicleArchetype_t)(const char*, bool, unsigned int);
-InitVehicleArchetype_t InitVehicleArchetype_orig;
+CallHook<InitVehicleArchetype_t> * g_InitVehicleArchetype = nullptr;
 
 extern std::unordered_map<Hash, std::string> g_vehicleHashes;
 
 int gameVersion = getGameVersion();
 
-CVehicleModelInfo* InitVehicleArchetype_hook(const char* name, bool a2, unsigned int a3) {
+CVehicleModelInfo* initVehicleArchetype_stub(const char* name, bool a2, unsigned int a3) {
     g_vehicleHashes.insert({ joaat(name), name });
-    return InitVehicleArchetype_orig(name, a2, a3);
+    return g_InitVehicleArchetype->fn(name, a2, a3);
 }
 
-void initInitVehicleArchetypeHooks() {
+void setupHooks() {
     auto addr = MemoryAccess::FindPattern("\xE8\x00\x00\x00\x00\x48\x8B\x4D\xE0\x48\x8B\x11", "x????xxxxxxx");
-    if (addr == 0) {
+    if (!addr) {
         logger.Write(ERROR, "Couldn't find InitVehicleArchetype");
         return;
     }
-    addr = (addr + *(int*)(addr + 1) + 5);
-    logger.Write(INFO, "Found InitVehicleArchetype at 0x%llX", addr);
+    logger.Write(INFO, "Found InitVehicleArchetype at 0x%p", addr);
+    g_InitVehicleArchetype = HookManager::SetCall(addr, initVehicleArchetype_stub);
+}
 
-    InitVehicleArchetype_detour = std::make_unique<PLH::Detour>();
-    InitVehicleArchetype_detour->SetupHook((BYTE*)(addr), (BYTE*)&InitVehicleArchetype_hook);
-    InitVehicleArchetype_detour->Hook();
-    InitVehicleArchetype_orig = InitVehicleArchetype_detour->GetOriginal<InitVehicleArchetype_t>();
+void removeHooks() {
+    if (g_InitVehicleArchetype) {
+        delete g_InitVehicleArchetype;
+        g_InitVehicleArchetype = nullptr;
+    }
 }
 
 void MemoryAccess::Init() {
 	// init txd store
 	auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
 		"xxx????x????xxx");
+    if (!addr) {
+        logger.Write(ERROR, "Couldn't find g_fwTxdStore");
+    }
 	g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
     logger.Write(INFO, "Found g_fwTxdStore at 0x%llX", g_fwTxdStore);
 
 	addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
 		"xxx????xxxxxxxxx");
-	g_txdCollectionItemSize = *(uint32_t*)((addr + *(int*)(addr + 3) + 7) + 0x14);
+    if (!addr) {
+        logger.Write(ERROR, "Couldn't find g_txdCollectionItemSize");
+    }
+    g_txdCollectionItemSize = *(uint32_t*)((addr + *(int*)(addr + 3) + 7) + 0x14);
     logger.Write(INFO, "g_txdCollectionItemSize is 0x%llX", g_txdCollectionItemSize);
 
     addr = FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
@@ -81,6 +87,9 @@ void MemoryAccess::Init() {
         "\x4C\x8B\x14\xD0\xEB\x09\x41\x3B\x0A\x74\x54",
         "xxx????xxxxxxxxxxx????"
         "xxxxxxxxxxxxxx????xxxxxxxxxxx");
+    if (!addr) {
+        logger.Write(ERROR, "Couldn't find GetModelInfo");
+    }
 	GetModelInfo = (GetModelInfo_t)(addr);
 
 	// find enable MP cars patterns
@@ -263,7 +272,6 @@ void MemoryAccess::enableCarsGlobal() {
 						for (k = k + 1; k < 30; k++) {
 							if (*(unsigned char*)shopController->GetCodePositionAddress(funcOff + k) == 0x5F) {
 								int globalindex = *(int*)shopController->GetCodePositionAddress(funcOff + k + 1) & 0xFFFFFF;
-								//DEBUGMSG("Found Global Variable %d, address = %llX", globalindex, (__int64)globalTable.AddressOf(globalindex));
 								logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
 								*globalTable.AddressOf(globalindex) = 1;
 								logger.Write(INFO, "MP Cars enabled");

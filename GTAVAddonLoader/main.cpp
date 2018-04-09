@@ -20,14 +20,13 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved) {
 
 	switch (reason) {
 	case DLL_PROCESS_ATTACH:
-		scriptRegister(hInstance, ScriptMain);
-        DisableThreadLibraryCalls(hInstance);
-	    CreateThread(0, 0, (LPTHREAD_START_ROUTINE)initInitVehicleArchetypeHooks, 0, 0, 0);
-		logger.Clear();
-		logger.Write(INFO, "GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
-		logger.Write(INFO, "Game version " + eGameVersionToString(getGameVersion()));
-		logger.Write(INFO, "Script registered");
-		break;
+        logger.Clear();
+        logger.Write(INFO, "GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
+        logger.Write(INFO, "Game version " + eGameVersionToString(getGameVersion()));
+	    scriptRegister(hInstance, ScriptMain);
+        setupHooks();
+        logger.Write(INFO, "Script registered");
+        break;
 	case DLL_PROCESS_DETACH:
 		scriptUnregister(hInstance);
 		break;
