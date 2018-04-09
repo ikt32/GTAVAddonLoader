@@ -1,4 +1,20 @@
 # Changelog
+
+## v1.3.4
+Config changes: No
+
+* Cars now spawn clean and shiny
+* Prioritize img/* over txd files
+* Stop spawning inside trailers
+* Add b1365 hashes and strings
+* Bug fixes and code improvements
+
+## v1.3.3
+* Fix vehicle manufacturer name for 1290 
+
+## v1.3.2
+* Update for v1.0.1290.1 
+
 ## v1.3.1
 Config changes: No
 
