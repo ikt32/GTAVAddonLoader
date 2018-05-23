@@ -334,10 +334,7 @@ static const std::vector<Hash> BikersVehicles = {
 	3676349299, //  Wolfsbane
 	3285698347, //  Zombiea
 	3724934023, //  Zombieb
-	3724934023, //  Zombieb
-	3724934023, //  Zombieb
 	3620039993, //  Raptor
-	2736567667, //  Tornado6
 	2736567667, //  Tornado6
 	1026149675, //  Youga2
 };
@@ -349,7 +346,6 @@ static const std::vector<Hash> CunningStuntsVehicles = {
 	390201602, //  Cliffhanger
 	741090084, //  Gargoyle
 	101905590, //  TrophyTruck
-	3631668194, //  TrophyTruck2
 	3631668194, //  TrophyTruck2
 	683047626, //  Contender
 	2191146052, //  Rallytruck
