@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.5
+Config changes: No
+
+* Fix a few duplicate vehicles
+* Update hashes for b1493
+
 ## v1.3.4
 Config changes: No
 
