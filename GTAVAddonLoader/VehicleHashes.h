@@ -659,13 +659,13 @@ static const std::vector<Hash> DoomsdayHeistVehicles = {
     0x8408F33A, //  Sports Classics     GT500               gt500               GT500
     0x00E83C17, //  Muscle              HERMES              hermes              Hermes
     0x23CA25F2, //  Muscle              HUSTLER             hustler             Hustler
-    0xF8C2E0E7, //  Off - Road            KAMACHO             kamacho             Kamacho
+    0xF8C2E0E7, //  Off-Road            KAMACHO             kamacho             Kamacho
     0x91CA96EE, //  Sports              NEON                neon                Neon
     0x33B98FE2, //  Sports              PARIAH              pariah              Pariah
     0x9B16A3B4, //  Emergency           RIOT2               riot2               RCV
     0xA4D99B7D, //  Sports              RAIDEN              raiden              Raiden
     0xE78CC3D9, //  Sports              REVOLTER            revolter            Revolter
-    0xA4A4E453, //  Off - Road            RIATA               riata               Riata
+    0xA4A4E453, //  Off-Road            RIATA               riata               Riata
     0x5097F589, //  Super               SC1                 sc1                 SC1
     0x35DED0DD, //  Sports Classics     SAVESTRA            savestra            Savestra
     0x41D149AA, //  Sports              sentinel3           sentinel3           Sentinel Classic
@@ -695,6 +695,23 @@ static const std::vector<Hash> SSASSSVehicles = {
     0xBC5DC07E, //  Super               TAIPAN              taipan              Taipan              
     0x3D7C6410, //  Super               TEZERACT            tezeract            Tezeract            
     0xE99011C2, //  Super               TYRANT              tyrant              Tyrant              
+};
+
+static const std::vector<Hash> AfterHoursVehicles = {
+    0x64DE07A1, //  Planes              STRIKEFORCE         strikeforce         B - 11 Strikeforce
+    0xEDA4ED97, //  Planes              BLIMP3              blimp3              Blimp
+    0x149BD32A, //  Service             PBUS2               pbus2               Festival Bus
+    0xFCC2F483, //  Off-Road            FREECRAWLER         freecrawler         Freecrawler
+    0x79DD18AE, //  Off-Road            MENACER             menacer             Menacer
+    0x73F4110E, //  Commercial          MULE4               mule4               Mule Custom
+    0x7B54A9D3, //  Motorcycles         OPPRESSOR2          oppressor2          Oppressor Mk II
+    0xE6E967F8, //  SUVs                PATRIOT2            patriot2            Patriot Stretch
+    0x6290F15B, //  Commercial          pounder2            pounder2            Pounder Custom
+    0xD9F0503D, //  Super               SCRAMJET            scramjet            Scramjet
+    0x0D17099D, //  Vans                SPEEDO4             speedo4             Speedo Custom
+    0x1324E960, //  Sedans              STAFFORD            stafford            Stafford
+    0x1DD4C0FF, //  Sports Classics     Swinger             swinger             Swinger
+    0x897AFC65, //  Commercial          terbyte             terbyte             Terrorbyte
 };
 
 inline std::vector<DLC> buildDLClist() {
