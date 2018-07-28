@@ -744,6 +744,7 @@ inline std::vector<DLC> buildDLClist() {
         { DLC("Smuggler's Run", SmugglersRunVehicles) },
         { DLC("Doomsday Heist", DoomsdayHeistVehicles) },
         { DLC("Southern San Andreas Super Sport Series", SSASSSVehicles) },
+        { DLC("After Hours", AfterHoursVehicles) },
     };
 }
 
