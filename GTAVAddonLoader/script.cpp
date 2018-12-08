@@ -108,6 +108,7 @@ void resolveVehicleSpriteInfo_lite(Hash hash) {
  * Save the names so we know to prefer loading an image instead of texture.
  */
 void cacheImageHashes() {
+    g_addonImageHashes.clear();
 	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
 	for (auto &file : fs::directory_iterator(imgPath)) {
         if (fs::path(file).stem().string() == "noimage") continue;
@@ -336,6 +337,35 @@ bool findStringInNames(std::string search, Hash hash) {
     return false;
 }
 
+Vehicle spawnVehicle(Hash hash, Vector3 coords, float heading, DWORD timeout) {
+    if (!(STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash))) {
+        // Vehicle doesn't exist
+        return 0;
+    }
+    STREAMING::REQUEST_MODEL(hash);
+    DWORD startTime = GetTickCount();
+
+    while (!STREAMING::HAS_MODEL_LOADED(hash)) {
+        WAIT(0);
+        if (GetTickCount() > startTime + timeout) {
+            // Couldn't load model
+            WAIT(0);
+            STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+            return 0;
+        }
+    }
+
+    Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, coords.x, coords.y, coords.z, heading, 0, 1);
+    VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
+    WAIT(0);
+    STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+
+    ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
+    ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+
+    return veh;
+}
+
 /*
  * Spawns a vehicle with the chosen model hash. Put it on the player when not
  * already in a vehicle, and puts it to the right when a vehicle is already 
@@ -548,6 +578,23 @@ void checkCache(std::string cacheFile) {
     }
 }
 
+std::vector<DLC> buildUserDLClist() {
+    std::vector<DLC> userDLCs;
+    std::string dlcPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\userDLC";
+    for (auto &file : fs::directory_iterator(dlcPath)) {
+        std::string dlcName = fs::path(file).stem().string();
+        std::vector<Hash> dlcHashes;
+        std::ifstream dlcFile(file);
+        if (dlcFile.is_open()) {
+            std::string modelName;
+            while (dlcFile >> modelName)
+            dlcHashes.push_back(joaat(modelName));
+        }
+        userDLCs.emplace_back(dlcName, dlcHashes);
+    }
+    return userDLCs;
+}
+
 void main() {
     // logger.SetMinLevel(DEBUG);
 	logger.Write(INFO, "Script started");
@@ -575,6 +622,12 @@ void main() {
     //logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
 
 	g_dlcs = buildDLClist();
+    auto userDlcs = buildUserDLClist();
+
+    for (auto dlc : userDlcs) {
+        g_dlcs.push_back(dlc);
+    }
+
 	buildBlacklist();
 	cacheAddons();
     cacheImageHashes();
@@ -627,6 +680,7 @@ void clearGlobals() {
 }
 
 void ScriptMain() {
-	clearGlobals();
+    srand(GetTickCount());
+    clearGlobals();
 	main();
 }

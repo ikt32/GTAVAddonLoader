@@ -9,6 +9,7 @@
 #include "ExtraTypes.h"
 #include "NativeMemory.hpp"
 #include "Util/Util.hpp"
+#include "VehicleHashes.h"
 
 std::string manualVehicleName = "";
 std::string searchVehicleName = "";
@@ -36,6 +37,10 @@ extern std::set<std::string> g_dlcClasses;
 extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
 extern std::vector<SpriteInfo> g_dlcSprites;
+
+std::vector<DLC> buildUserDLClist();
+void buildBlacklist();
+void cacheImageHashes();
 
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
@@ -265,7 +270,19 @@ void update_settingsmenu() {
 
 		cleanImageDirectory(true);
 	}
+    if (menu.Option("Reload DLCs", { "Re-scan user DLC folder." })) {
+        g_dlcs = buildDLClist();
+        auto userDlcs = buildUserDLClist();
 
+        for (auto dlc : userDlcs) {
+            g_dlcs.push_back(dlc);
+        }
+
+        buildBlacklist();
+        cacheAddons();
+        cacheImageHashes();
+        cacheDLCs();
+    }
 	if (settings.Persistent) {
 		if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 
 			                "Persistent vehicles: " + std::to_string(g_persistentVehicles.size())})) {
