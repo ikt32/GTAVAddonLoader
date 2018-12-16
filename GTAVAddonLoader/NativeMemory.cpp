@@ -99,30 +99,28 @@ void MemoryAccess::Init() {
 }
 
 // Thank you, Unknown Modder!
-std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
-	std::vector<uint16_t> modKits;
-
-	int index = 0xFFFF;
-    void* modelInfo = GetModelInfo(modelHash, &index);
-    if (gameVersion < 38) {
-        if (modelInfo && ((CVehicleModelInfo*)modelInfo)->GetModelType() == 5) {
-            uint16_t count = ((CVehicleModelInfo*)modelInfo)->m_modKitsCount;
-            for (uint16_t i = 0; i < count; i++) {
-                uint16_t modKit = ((CVehicleModelInfo*)modelInfo)->m_modKits[i];
-                modKits.push_back(modKit);
-            }
+template < typename ModelInfo >
+std::vector<uint16_t> GetVehicleModKits_t(int modelHash) {
+    std::vector<uint16_t> modKits;
+    int index = 0xFFFF;
+    auto* modelInfo = reinterpret_cast<ModelInfo*>(GetModelInfo(modelHash, &index));
+    if (modelInfo && modelInfo->GetModelType() == 5) {
+        uint16_t count = modelInfo->m_modKitsCount;
+        for (uint16_t i = 0; i < count; i++) {
+            uint16_t modKit = modelInfo->m_modKits[i];
+            modKits.push_back(modKit);
         }
+    }
+    return modKits;
+}
+
+std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
+    if (gameVersion < 38) {
+        return GetVehicleModKits_t<CVehicleModelInfo>(modelHash);
     }
     else {
-        if (modelInfo && ((CVehicleModelInfo1290*)modelInfo)->GetModelType() == 5) {
-            uint16_t count = ((CVehicleModelInfo1290*)modelInfo)->m_modKitsCount;
-            for (uint16_t i = 0; i < count; i++) {
-                uint16_t modKit = ((CVehicleModelInfo1290*)modelInfo)->m_modKits[i];
-                modKits.push_back(modKit);
-            }
-        }
+        return GetVehicleModKits_t<CVehicleModelInfo1290>(modelHash);
     }
-	return modKits;
 }
 
 char *MemoryAccess::GetVehicleGameName(int modelHash) {
