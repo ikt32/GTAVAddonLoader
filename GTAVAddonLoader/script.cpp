@@ -578,23 +578,6 @@ void checkCache(std::string cacheFile) {
     }
 }
 
-std::vector<DLC> buildUserDLClist() {
-    std::vector<DLC> userDLCs;
-    std::string dlcPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\userDLC";
-    for (auto &file : fs::directory_iterator(dlcPath)) {
-        std::string dlcName = fs::path(file).stem().string();
-        std::vector<Hash> dlcHashes;
-        std::ifstream dlcFile(file);
-        if (dlcFile.is_open()) {
-            std::string modelName;
-            while (dlcFile >> modelName)
-            dlcHashes.push_back(joaat(modelName));
-        }
-        userDLCs.emplace_back(dlcName, dlcHashes);
-    }
-    return userDLCs;
-}
-
 void main() {
     // logger.SetMinLevel(DEBUG);
 	logger.Write(INFO, "Script started");
@@ -622,12 +605,6 @@ void main() {
     //logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
 
 	g_dlcs = buildDLClist();
-    auto userDlcs = buildUserDLClist();
-
-    for (auto dlc : userDlcs) {
-        g_dlcs.push_back(dlc);
-    }
-
 	buildBlacklist();
 	cacheAddons();
     cacheImageHashes();
