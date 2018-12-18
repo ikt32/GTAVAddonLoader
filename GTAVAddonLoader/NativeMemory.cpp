@@ -93,8 +93,8 @@ void MemoryAccess::Init() {
 	GetModelInfo = (GetModelInfo_t)(addr);
 
 	// find enable MP cars patterns
-	if (findShopController())
-		enableCarsGlobal();
+	//if (findShopController())
+	//	enableCarsGlobal();
 
 }
 
