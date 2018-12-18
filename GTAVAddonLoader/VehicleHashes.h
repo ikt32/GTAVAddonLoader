@@ -714,6 +714,55 @@ static const std::vector<Hash> AfterHoursVehicles = {
     0x897AFC65, //  Commercial          terbyte             terbyte             Terrorbyte
 };
 
+static const std::vector<Hash> ArenaWarVehicles = {
+    0x27D79225, //  Off - Road          BRUISER             bruiser             Apocalypse Bruiser
+    0x7F81A829, //  Off - Road          BRUTUS              brutus              Apocalypse Brutus
+    0xD039510B, //  Commercial          cerberus            cerberus            Apocalypse Cerberus
+    0xFE5F0722, //  Motorcycles         DEATHBIKE           deathbike           Apocalypse Deathbike
+    0xD6FB0F30, //  Muscle              DOMINATOR4          dominator4          Apocalypse Dominator
+    0x3C26BD0C, //  Muscle              IMPALER2            impaler2            Apocalypse Impaler
+    0x1A861243, //  Muscle              IMPERATOR           imperator           Apocalypse Imperator
+    0x256E92BA, //  Compacts            ISSI4               issi4               Apocalypse Issi
+    0x669EB40A, //  Off - Road          MONSTER3            monster3            Apocalypse Sasquatch
+    0xBBA2A2F7, //  Military            SCARAB              scarab              Apocalypse Scarab
+    0x8526E2F5, //  Muscle              SLAMVAN4            slamvan4            Apocalypse Slamvan
+    0x20314B42, //  Sports              ZR380               zr380               Apocalypse ZR380
+    0xA29F78B0, //  Muscle              CLIQUE              clique              Clique
+    0x5EE005DA, //  Super               DEVESTE             deveste             Deveste Eight
+    0x4C3FFF49, //  Muscle              DEVIANT             deviant             Deviant
+    0x9B065C9E, //  Off - Road          BRUISER2            bruiser2            Future Shock Bruiser
+    0x8F49AE28, //  Off - Road          BRUTUS2             brutus2             Future Shock Brutus
+    0x287FA449, //  Commercial          cerberus2           cerberus2           Future Shock Cerberus
+    0x93F09558, //  Motorcycles         DEATHBIKE2          deathbike2          Future Shock Deathbike
+    0xAE0A3D4F, //  Muscle              DOMINATOR5          dominator5          Future Shock Dominator
+    0x8D45DF49, //  Muscle              IMPALER3            impaler3            Future Shock Impaler
+    0x619C1B82, //  Muscle              IMPERATOR2          imperator2          Future Shock Imperator
+    0x5BA0FF1E, //  Compacts            ISSI5               issi5               Future Shock Issi
+    0x32174AFC, //  Off - Road          MONSTER4            monster4            Future Shock Sasquatch
+    0x5BEB3CE0, //  Military            SCARAB2             scarab2             Future Shock Scarab
+    0x163F8520, //  Muscle              SLAMVAN5            slamvan5            Future Shock Slamvan
+    0xBE11EFC6, //  Sports              ZR3802              zr3802              Future Shock ZR380
+    0x83070B62, //  Muscle              IMPALER             impaler             Impaler
+    0xEC3E3404, //  Sports              ITALIGTO            italigto            Itali GTO
+    0x8644331A, //  Off - Road          BRUISER3            bruiser3            Nightmare Bruiser
+    0x798682A2, //  Off - Road          BRUTUS3             brutus3             Nightmare Brutus
+    0x71D3B6F0, //  Commercial          cerberus3           cerberus3           Nightmare Cerberus
+    0xAE12C99C, //  Motorcycles         DEATHBIKE3          deathbike3          Nightmare Deathbike
+    0xB2E046FB, //  Muscle              DOMINATOR6          dominator6          Nightmare Dominator
+    0x9804F4C7, //  Muscle              IMPALER4            impaler4            Nightmare Impaler
+    0xD2F77E37, //  Muscle              IMPERATOR3          imperator3          Nightmare Imperator
+    0x49E25BA1, //  Compacts            ISSI6               issi6               Nightmare Issi
+    0xD556917C, //  Off - Road          MONSTER5            monster5            Nightmare Sasquatch
+    0xDD71BFEB, //  Military            SCARAB3             scarab3             Nightmare Scarab
+    0x67D52852, //  Muscle              SLAMVAN6            slamvan6            Nightmare Slamvan
+    0xA7DCC35C, //  Sports              ZR3803              zr3803              Nightmare ZR380
+    0xEEF345EC, //  Off - Road          RCBANDITO           rcbandito           RC Bandito
+    0xE1C03AB0, //  Sports              SCHLAGEN            schlagen            Schlagen GT
+    0xBA5334AC, //  SUVs                TOROS               toros               Toros
+    0x56D42971, //  Muscle              TULIP               tulip               Tulip
+    0xFD128DFD, //  Muscle              VAMOS               vamos               Vamos
+};
+
 inline std::vector<DLC> buildDLClist() {
 	return {
 		{ DLC("Original game", OriginalVehicles) },
@@ -745,6 +794,7 @@ inline std::vector<DLC> buildDLClist() {
         { DLC("Doomsday Heist", DoomsdayHeistVehicles) },
         { DLC("Southern San Andreas Super Sport Series", SSASSSVehicles) },
         { DLC("After Hours", AfterHoursVehicles) },
+        { DLC("Arena War", ArenaWarVehicles) },
     };
 }
 
