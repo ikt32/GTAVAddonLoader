@@ -93,8 +93,8 @@ void MemoryAccess::Init() {
 	GetModelInfo = (GetModelInfo_t)(addr);
 
 	// find enable MP cars patterns
-	//if (findShopController())
-	//	enableCarsGlobal();
+	if (findShopController())
+		enableCarsGlobal();
 
 }
 
@@ -254,7 +254,7 @@ bool MemoryAccess::findShopController() {
 }
 
 void MemoryAccess::enableCarsGlobal() {
-	for (int i = 0; i < shopController->CodePageCount(); i++) {
+	/*for (int i = 0; i < shopController->CodePageCount(); i++) {
 		__int64 sigAddress = FindPattern("\x28\x26\xCE\x6B\x86\x39\x03", "xxxxxxx", (const char*)shopController->GetCodePageAddress(i), shopController->GetCodePageSize(i));
 		if (!sigAddress) {
 			continue;
@@ -283,6 +283,42 @@ void MemoryAccess::enableCarsGlobal() {
 			}
 		}
 		break;
+	}*/
+	
+	for (int i = 0; i < shopController->CodePageCount(); i++)
+	{
+		int size = shopController->GetCodePageSize(i);
+
+		if (size)
+		{
+			if (getGameVersion() >= 46) // 1.0.1604.0
+			{
+				uintptr_t address = FindPattern("\x2D\x00\x00\x00\x00\x2C\x01\x00\x00\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01", "xx??xxxx??xxxxx?xx????xxxx?x", (const char*)shopController->GetCodePageAddress(i), size);
+
+				if (address)
+				{
+					int globalindex = *(int*)(address + 17) & 0xFFFFFF;
+					logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
+					*globalTable.AddressOf(globalindex) = 1;
+					logger.Write(INFO, "MP Cars enabled");
+					return;
+				}
+			}
+			else
+			{
+				uintptr_t address = FindPattern("\x2C\x01\x00\x00\x20\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01", "xx??xxxxxx?xx????xxxx?x", (const char*)shopController->GetCodePageAddress(i), size);
+
+				if (address)
+				{
+					int globalindex = *(int*)(address + 13) & 0xFFFFFF;
+					logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
+					*globalTable.AddressOf(globalindex) = 1;
+					logger.Write(INFO, "MP Cars enabled");
+					return;
+				}
+			}
+		}
 	}
+	
 	logger.Write(ERROR, "Global Variable not found, check game version >= 1.0.678.1");
 }
