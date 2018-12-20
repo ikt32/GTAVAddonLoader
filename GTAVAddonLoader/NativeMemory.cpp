@@ -254,71 +254,40 @@ bool MemoryAccess::findShopController() {
 }
 
 void MemoryAccess::enableCarsGlobal() {
-	/*for (int i = 0; i < shopController->CodePageCount(); i++) {
-		__int64 sigAddress = FindPattern("\x28\x26\xCE\x6B\x86\x39\x03", "xxxxxxx", (const char*)shopController->GetCodePageAddress(i), shopController->GetCodePageSize(i));
-		if (!sigAddress) {
-			continue;
-		}
-		//logger.Write(INFO, "Pattern found in codepage " + std::to_string(i) + " at memory address " + std::to_string(sigAddress));
-		int RealCodeOff = (int)(sigAddress - (__int64)shopController->GetCodePageAddress(i) + (i << 14));
-		for (int j = 0; j < 2000; j++) {
-			if (*(int*)shopController->GetCodePositionAddress(RealCodeOff - j) == 0x0008012D) {
-				int funcOff = *(int*)shopController->GetCodePositionAddress(RealCodeOff - j + 6) & 0xFFFFFF;
-				//DEBUGMSG("found Function codepage address at %x", funcOff);
-				for (int k = 0x5; k < 0x40; k++) {
-					if ((*(int*)shopController->GetCodePositionAddress(funcOff + k) & 0xFFFFFF) == 0x01002E) {
-						for (k = k + 1; k < 30; k++) {
-							if (*(unsigned char*)shopController->GetCodePositionAddress(funcOff + k) == 0x5F) {
-								int globalindex = *(int*)shopController->GetCodePositionAddress(funcOff + k + 1) & 0xFFFFFF;
-								logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
-								*globalTable.AddressOf(globalindex) = 1;
-								logger.Write(INFO, "MP Cars enabled");
-								return;
-							}
-						}
-						break;
-					}
-				}
-				break;
-			}
-		}
-		break;
-	}*/
-	
-	for (int i = 0; i < shopController->CodePageCount(); i++)
-	{
-		int size = shopController->GetCodePageSize(i);
+    const char* patt617_1 = "\x2C\x01\x00\x00\x20\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01";
+    const char* mask617_1 = "xx??xxxxxx?xx????xxxx?x";
+    const unsigned int offset617_1 = 13;
 
-		if (size)
-		{
-			if (getGameVersion() >= 46) // 1.0.1604.0
-			{
-				uintptr_t address = FindPattern("\x2D\x00\x00\x00\x00\x2C\x01\x00\x00\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01", "xx??xxxx??xxxxx?xx????xxxx?x", (const char*)shopController->GetCodePageAddress(i), size);
+    const char* patt1604_0 = "\x2D\x00\x00\x00\x00\x2C\x01\x00\x00\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01";
+    const char* mask1604_0 = "x??xxxx??xxxxx?xx????xxxx?x";
+    const unsigned int offset1064_0 = 17;
 
-				if (address)
-				{
-					int globalindex = *(int*)(address + 17) & 0xFFFFFF;
-					logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
-					*globalTable.AddressOf(globalindex) = 1;
-					logger.Write(INFO, "MP Cars enabled");
-					return;
-				}
-			}
-			else
-			{
-				uintptr_t address = FindPattern("\x2C\x01\x00\x00\x20\x56\x04\x00\x6E\x2E\x00\x01\x5F\x00\x00\x00\x00\x04\x00\x6E\x2E\x00\x01", "xx??xxxxxx?xx????xxxx?x", (const char*)shopController->GetCodePageAddress(i), size);
+    const char* pattern = patt617_1;
+    const char* mask = mask617_1;
+    int offset = offset617_1;
 
-				if (address)
-				{
-					int globalindex = *(int*)(address + 13) & 0xFFFFFF;
-					logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
-					*globalTable.AddressOf(globalindex) = 1;
-					logger.Write(INFO, "MP Cars enabled");
-					return;
-				}
-			}
-		}
-	}
-	
-	logger.Write(ERROR, "Global Variable not found, check game version >= 1.0.678.1");
+    if (getGameVersion() >= 46) {
+        pattern = patt1604_0;
+        mask = mask1604_0;
+        offset = offset1064_0;
+    }
+
+    for (int i = 0; i < shopController->CodePageCount(); i++)
+    {
+        int size = shopController->GetCodePageSize(i);
+        if (size)
+        {
+            uintptr_t address = FindPattern(pattern, mask, (const char*)shopController->GetCodePageAddress(i), size);
+            if (address)
+            {
+                int globalindex = *(int*)(address + offset) & 0xFFFFFF;
+                logger.Write(INFO, "Setting Global Variable " + std::to_string(globalindex) + " to true");
+                *globalTable.AddressOf(globalindex) = 1;
+                logger.Write(INFO, "MP Cars enabled");
+                return;
+            }
+        }
+    }
+
+    logger.Write(ERROR, "Global Variable not found, check game version >= 1.0.678.1");
 }
