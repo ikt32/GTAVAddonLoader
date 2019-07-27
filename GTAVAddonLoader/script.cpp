@@ -44,7 +44,7 @@ std::vector<Vehicle> g_persistentVehicles;
 std::set<std::string> g_addonClasses;   // Grouping-related
 std::set<std::string> g_addonMakes;     // Grouping-related
 
-std::vector<ModelInfo> g_addonVehicles;	// all add-on vehicles
+std::vector<ModelInfo> g_addonVehicles;    // all add-on vehicles
 std::vector<AddonImage> g_addonImages;
 std::vector<Hash> g_addonImageHashes; // name hash
 
@@ -63,12 +63,12 @@ std::unordered_map<Hash, std::string> g_vehicleHashes;
  * R* pls more consistent pls
  */
 void addVehicleSpriteOverrides() {
-	g_dlcSpriteOverrides = getVehicleSpriteOverrides();
+    g_dlcSpriteOverrides = getVehicleSpriteOverrides();
 }
 
 // First pass to find txd textures
 void resolveVehicleSpriteInfo() {
-	for (auto dict : WebsiteDicts) {
+    for (auto dict : WebsiteDicts) {
         auto textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
         GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT((char*)dict.c_str(), false);
         while (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED((char*)dict.c_str())) {
@@ -77,13 +77,13 @@ void resolveVehicleSpriteInfo() {
         textures = MemoryAccess::GetTexturesFromTxd(joaat(dict));
         logger.Write(DEBUG, "Dict \"%s\" sz2 %d", dict.c_str(), textures.size());
 
-		for (auto texture : textures) {
-			SpriteInfo spriteInfo;
-			if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
-				g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
-			}
-		}
-	}
+        for (auto texture : textures) {
+            SpriteInfo spriteInfo;
+            if (!isHashInImgVector(joaat(texture->name), g_dlcSprites, &spriteInfo)) {
+                g_dlcSprites.push_back(SpriteInfo(dict, texture->name, joaat(texture->name), texture->resolutionX, texture->resolutionY));
+            }
+        }
+    }
 }
 
 
@@ -109,11 +109,11 @@ void resolveVehicleSpriteInfo_lite(Hash hash) {
  */
 void cacheImageHashes() {
     g_addonImageHashes.clear();
-	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
-	for (auto &file : fs::directory_iterator(imgPath)) {
+    std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+    for (auto &file : fs::directory_iterator(imgPath)) {
         if (fs::path(file).stem().string() == "noimage") continue;
         g_addonImageHashes.push_back(joaat(fs::path(file).stem().string()));
-	}
+    }
 }
 
 /*
@@ -121,71 +121,79 @@ void cacheImageHashes() {
  * Only runs once per image.
  */
 void resolveImage(Hash selected) {
-	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
-	for (auto &file : fs::directory_iterator(imgPath)) {
-		Hash hash = joaat(fs::path(file).stem().string());
-		if (hash != selected) continue;
+    std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+    for (auto &file : fs::directory_iterator(imgPath)) {
+        Hash hash = joaat(fs::path(file).stem().string());
+        if (hash != selected) continue;
 
-		std::string fileName = fs::path(file).string();
-		unsigned width;
-		unsigned height;
-		if (!GetIMGDimensions(fileName, &width, &height)) {
-			width = 480;
-			height = 270;
-		}
-		int handle = createTexture(fileName.c_str());
-		g_addonImages.push_back(AddonImage(handle, hash, width, height));
-		return;
-	}
-	g_missingImages.push_back(selected);
+        std::string fileName = fs::path(file).string();
+        unsigned width;
+        unsigned height;
+        if (!GetIMGDimensions(fileName, &width, &height)) {
+            width = 480;
+            height = 270;
+        }
+        int handle = createTexture(fileName.c_str());
+        g_addonImages.push_back(AddonImage(handle, hash, width, height));
+        return;
+    }
+    g_missingImages.push_back(selected);
 }
 
 /*
  * Remove files from the img directory if they aren't present as add-on.
  */
 void cleanImageDirectory(bool backup) {
-	logger.Write(INFO, "Cleaning img dir");
-	std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
-	std::vector<fs::directory_entry> filesToDiscard;
-	for (auto &file : fs::directory_iterator(imgPath)) {
-		if (is_directory(fs::path(file))) continue;
-		if (fs::path(file).stem().string() == "noimage") continue;
-		Hash hash = joaat(fs::path(file).stem().string());
-		if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash)) {
-			filesToDiscard.push_back(file);
-			//logger.Write(INFO, "Marked " + fs::path(file).stem().string());
-		}
-	}
-	std::string bakPath = "";
-	if (filesToDiscard.size() == 0) {
-		logger.Write(INFO, "No files to discard");
-		return;
-	}
-	logger.Write(INFO, "About to discard " + std::to_string(filesToDiscard.size()) + " files");
+    logger.Write(INFO, "Cleaning img dir");
+    std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
+    std::vector<fs::directory_entry> filesToDiscard;
+    for (auto &file : fs::directory_iterator(imgPath)) {
+        if (is_directory(fs::path(file))) continue;
+        if (fs::path(file).stem().string() == "noimage") continue;
+        Hash hash = joaat(fs::path(file).stem().string());
+        if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash)) {
+            filesToDiscard.push_back(file);
+            //logger.Write(INFO, "Marked " + fs::path(file).stem().string());
+        }
+    }
+    std::string bakPath = "";
+    if (filesToDiscard.size() == 0) {
+        logger.Write(INFO, "No files to discard");
+        return;
+    }
+    logger.Write(INFO, "About to discard " + std::to_string(filesToDiscard.size()) + " files");
 
-	if (backup) {
-		logger.Write(INFO, "Creating bak dir");
-		auto ms = std::chrono::duration_cast<std::chrono::milliseconds >(
-			std::chrono::system_clock::now().time_since_epoch()
-			).count();
-		bakPath = imgPath + "\\bak." + std::to_string(ms);
-		logger.Write(INFO, "Bak dir: " + bakPath);
-		fs::create_directory(bakPath);
-	}
+    if (backup) {
+        logger.Write(INFO, "Creating bak dir");
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds >(
+            std::chrono::system_clock::now().time_since_epoch()
+            ).count();
+        bakPath = imgPath + "\\bak." + std::to_string(ms);
+        logger.Write(INFO, "Bak dir: " + bakPath);
+        fs::create_directory(bakPath);
+    }
 
-	for (auto &file : filesToDiscard) {
-		std::string src = file.path().string();
-		std::wstring srcWide = std::wstring(src.begin(), src.end());
-		if (backup) {
-			std::string dst = bakPath + "\\" + file.path().filename().string();
-			//logger.Write(INFO, "Moving file " + src + " to " + dst);
-			std::wstring dstWide = std::wstring(dst.begin(), dst.end());
-			MoveFileW(srcWide.c_str(), dstWide.c_str());
-		}
-		else {
-			DeleteFileW(srcWide.c_str());
-		}
-	}
+    for (auto &file : filesToDiscard) {
+        std::string src = file.path().string();
+        std::wstring srcWide = std::wstring(src.begin(), src.end());
+        if (backup) {
+            std::string dst = bakPath + "\\" + file.path().filename().string();
+            //logger.Write(INFO, "Moving file " + src + " to " + dst);
+            std::wstring dstWide = std::wstring(dst.begin(), dst.end());
+            MoveFileW(srcWide.c_str(), dstWide.c_str());
+        }
+        else {
+            DeleteFileW(srcWide.c_str());
+        }
+    }
+}
+
+std::string getMakeName(Hash hash) {
+    char* makeName = MemoryAccess::GetVehicleMakeName(hash);
+    if (strcmp(UI::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
+        return "No make";
+    }
+    return std::string(UI::_GET_LABEL_TEXT(makeName));
 }
 
 std::string getModelName(Hash hash) {
@@ -195,34 +203,34 @@ std::string getModelName(Hash hash) {
 }
 
 void cacheDLCVehicles() {
-	for (auto &dlc : g_dlcs) {
-		dlc.Vehicles.clear();
-		for (auto hash : dlc.Hashes) {
-			if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
-				continue;
-			char buffer[128];
-			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-			std::string className = UI::_GET_LABEL_TEXT(buffer);
-			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
-			dlc.Vehicles.push_back(ModelInfo(className, makeName, hash));
-			dlc.Classes.emplace(className);
-			dlc.Makes.emplace(makeName);
-		}
-	}
-	g_dlcVehicles.clear();
-	g_dlcClasses.clear();
-	for (auto dlc : g_dlcs) {
-		for (ModelInfo vehicle : dlc.Vehicles) {
-			g_dlcVehicles.push_back(vehicle);
-		}
-		for (auto dlcClass : dlc.Classes) {
-			g_dlcClasses.emplace(dlcClass);
-		}
-		for (auto dlcMake : dlc.Makes) {
-			g_dlcMakes.emplace(dlcMake);
-		}
-	}
-	std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](ModelInfo a1, ModelInfo a2) {
+    for (auto &dlc : g_dlcs) {
+        dlc.Vehicles.clear();
+        for (auto hash : dlc.Hashes) {
+            if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
+                continue;
+            char buffer[128];
+            sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+            std::string className = UI::_GET_LABEL_TEXT(buffer);
+            std::string makeName = getMakeName(hash);
+            dlc.Vehicles.emplace_back(className, makeName, hash);
+            dlc.Classes.emplace(className);
+            dlc.Makes.emplace(makeName);
+        }
+    }
+    g_dlcVehicles.clear();
+    g_dlcClasses.clear();
+    for (auto dlc : g_dlcs) {
+        for (ModelInfo vehicle : dlc.Vehicles) {
+            g_dlcVehicles.push_back(vehicle);
+        }
+        for (auto dlcClass : dlc.Classes) {
+            g_dlcClasses.emplace(dlcClass);
+        }
+        for (auto dlcMake : dlc.Makes) {
+            g_dlcMakes.emplace(dlcMake);
+        }
+    }
+    std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](ModelInfo a1, ModelInfo a2) {
         std::string name1 = getGxtName(a1.ModelHash);
         std::string name2 = getGxtName(a2.ModelHash);
         if (name1 == name2) {
@@ -238,9 +246,9 @@ void cacheDLCVehicles() {
  * is easy though, so no harm done.
  */
 void cacheDLCs() {
-	if (!g_dlcVehicles.empty())
-		return;
-	cacheDLCVehicles();
+    if (!g_dlcVehicles.empty())
+        return;
+    cacheDLCVehicles();
 }
 
 /*
@@ -248,75 +256,75 @@ void cacheDLCs() {
  * the log outputs a thing.
  */
 void cacheAddons() {
-	if (!g_addonVehicles.empty())
-		return;
+    if (!g_addonVehicles.empty())
+        return;
 
-	std::vector<Hash> allVehicles;
+    std::vector<Hash> allVehicles;
     for (auto hash : g_vehicleHashes) {
         allVehicles.push_back(hash.first);
     }
 
-	std::sort(allVehicles.begin(), allVehicles.end(), [](Hash h1, Hash h2) {
+    std::sort(allVehicles.begin(), allVehicles.end(), [](Hash h1, Hash h2) {
         std::string name1 = getGxtName(h1);
         std::string name2 = getGxtName(h2);
         return name1 < name2;
     });
 
-	int hashLength = 12;
-	int nameLength = 20;
-	std::stringstream thingy;
-	thingy << std::left << std::setw(hashLength) << std::setfill(' ') << "Hash";
-	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Class";
-	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
-	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Model name";
-	thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "GXT name";
-	logger.Write(INFO, thingy.str());
+    int hashLength = 12;
+    int nameLength = 20;
+    std::stringstream thingy;
+    thingy << std::left << std::setw(hashLength) << std::setfill(' ') << "Hash";
+    thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Class";
+    thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Display name";
+    thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "Model name";
+    thingy << std::left << std::setw(nameLength) << std::setfill(' ') << "GXT name";
+    logger.Write(INFO, thingy.str());
 
-	for (auto hash : allVehicles) {
-		if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end()) {
-			char buffer[128];
-			sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-			std::string className = UI::_GET_LABEL_TEXT(buffer);
-			std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    for (auto hash : allVehicles) {
+        if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end()) {
+            char buffer[128];
+            sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+            std::string className = UI::_GET_LABEL_TEXT(buffer);
+            std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
 
-			std::stringstream hashAsHex;
-			std::stringstream logStream;
-			hashAsHex << "0x" << std::setfill('0') << std::setw(8) << std::uppercase << std::hex << hash;
-			logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
-			logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
+            std::stringstream hashAsHex;
+            std::stringstream logStream;
+            hashAsHex << "0x" << std::setfill('0') << std::setw(8) << std::uppercase << std::hex << hash;
+            logStream << std::left << std::setw(hashLength) << std::setfill(' ') << hashAsHex.str();
+            logStream << std::left << std::setw(nameLength) << std::setfill(' ') << className;
+            logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
+            logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
+            logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
 
-			logger.Write(INFO, logStream.str());
+            logger.Write(INFO, logStream.str());
 
-			std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
+            std::string makeName = getMakeName(hash);
 
-			g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
-			g_addonClasses.emplace(className);
-			g_addonMakes.emplace(makeName);
-		}
-	}
+            g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
+            g_addonClasses.emplace(className);
+            g_addonMakes.emplace(makeName);
+        }
+    }
 }
 
 /*
  * Filter the official DLCs from the list of all vehicles.
  */
 void buildBlacklist() {
-	g_gameVehicles.clear();
-	for (auto dlc : g_dlcs) {
-		for (auto hash : dlc.Hashes) {
-			g_gameVehicles.push_back(hash);
-		}
-	}
+    g_gameVehicles.clear();
+    for (auto dlc : g_dlcs) {
+        for (auto hash : dlc.Hashes) {
+            g_gameVehicles.push_back(hash);
+        }
+    }
 }
 
 void clearPersistentVehicles() {
-	for (Vehicle veh : g_persistentVehicles) {
-		ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
-		ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
-	}
-	g_persistentVehicles.clear();
+    for (Vehicle veh : g_persistentVehicles) {
+        ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
+        ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+    }
+    g_persistentVehicles.clear();
 }
 
 bool findStringInNames(std::string search, Hash hash) {
@@ -325,7 +333,7 @@ bool findStringInNames(std::string search, Hash hash) {
     std::string rawName = name;
     std::string modelName = getModelName(hash);
     std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(hash);
-    std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(hash));
+    std::string makeName = getMakeName(hash);
 
     if (findSubstring(rawName, search) != -1 ||
         findSubstring(displayName, search) != -1 ||
@@ -374,80 +382,80 @@ Vehicle spawnVehicle(Hash hash, Vector3 coords, float heading, DWORD timeout) {
  * distance between 'em.
  */
 void spawnVehicle(Hash hash) {
-	if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash)) {
-		STREAMING::REQUEST_MODEL(hash);
-		DWORD startTime = GetTickCount();
-		DWORD timeout = 3000; // in millis
+    if (STREAMING::IS_MODEL_IN_CDIMAGE(hash) && STREAMING::IS_MODEL_A_VEHICLE(hash)) {
+        STREAMING::REQUEST_MODEL(hash);
+        DWORD startTime = GetTickCount();
+        DWORD timeout = 3000; // in millis
 
-		while (!STREAMING::HAS_MODEL_LOADED(hash)) {
-			WAIT(0);
-			if (GetTickCount() > startTime + timeout) {
-				showSubtitle("Couldn't load model");
-				WAIT(0);
-				STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
-				return;
-			}
-		}
+        while (!STREAMING::HAS_MODEL_LOADED(hash)) {
+            WAIT(0);
+            if (GetTickCount() > startTime + timeout) {
+                showSubtitle("Couldn't load model");
+                WAIT(0);
+                STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+                return;
+            }
+        }
 
         bool spawnInside = settings.SpawnInside;
         if (findStringInNames("trailer", hash) || findStringInNames("train", hash)) {
             spawnInside = false;
         }
 
-		float offsetX = 0.0f;
-		if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !spawnInside) {
-			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
-			Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
-			Vector3 newMin, newMax;
-			Vector3 oldMin, oldMax;
-			GAMEPLAY::GET_MODEL_DIMENSIONS(hash, &newMin, &newMax);
-			GAMEPLAY::GET_MODEL_DIMENSIONS(oldHash, &oldMin, &oldMax);
-			if (!ENTITY::DOES_ENTITY_EXIST(oldVeh)) {
-				oldMax.x = oldMin.x = 0.0f;
-			}
-			// to the right
-			// width + margin + width again 
-			offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
-		}
-		
-		Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, offsetX, 0.0, 0);
+        float offsetX = 0.0f;
+        if (PED::IS_PED_IN_ANY_VEHICLE(playerPed, false) || !spawnInside) {
+            Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+            Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
+            Vector3 newMin, newMax;
+            Vector3 oldMin, oldMax;
+            GAMEPLAY::GET_MODEL_DIMENSIONS(hash, &newMin, &newMax);
+            GAMEPLAY::GET_MODEL_DIMENSIONS(oldHash, &oldMin, &oldMax);
+            if (!ENTITY::DOES_ENTITY_EXIST(oldVeh)) {
+                oldMax.x = oldMin.x = 0.0f;
+            }
+            // to the right
+            // width + margin + width again 
+            offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
+        }
+        
+        Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, offsetX, 0.0, 0);
 
-		if (spawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
-			Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
-			Vector3 oldVehiclePos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
-			oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
-			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(oldVeh, true, true);
-			VEHICLE::DELETE_VEHICLE(&oldVeh);
-			pos = oldVehiclePos;
-		}
-		
+        if (spawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
+            Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+            Vector3 oldVehiclePos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+            oldVehiclePos = ENTITY::GET_ENTITY_COORDS(oldVeh, true);
+            ENTITY::SET_ENTITY_AS_MISSION_ENTITY(oldVeh, true, true);
+            VEHICLE::DELETE_VEHICLE(&oldVeh);
+            pos = oldVehiclePos;
+        }
+        
 
-		Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
-		VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
+        Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
+        VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
         VEHICLE::SET_VEHICLE_DIRT_LEVEL(veh, 0.0f);
 
-		if (spawnInside) {
-			ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
-			PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);
-		}
+        if (spawnInside) {
+            ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));
+            PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), veh, -1);
+        }
 
-		WAIT(0);
-		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+        WAIT(0);
+        STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 
-		if (settings.Persistent) {
-			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, true, false);
-			g_persistentVehicles.push_back(veh);
-		}
-		else {
-			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
-			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
-		}
+        if (settings.Persistent) {
+            ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, true, false);
+            g_persistentVehicles.push_back(veh);
+        }
+        else {
+            ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
+            ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+        }
 
-		showSubtitle("Spawned " + getGxtName(hash) + " (" + getModelName(hash) + ")");
-	}
-	else {
-		showSubtitle("Vehicle doesn't exist");
-	}
+        showSubtitle("Spawned " + getGxtName(hash) + " (" + getModelName(hash) + ")");
+    }
+    else {
+        showSubtitle("Vehicle doesn't exist");
+    }
 }
 
 std::string getImageExtra(Hash addonVehicle) {
@@ -504,51 +512,44 @@ std::string getImageExtra(Hash addonVehicle) {
  * instead of everything. 
  */
 std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle) {
-	std::vector<std::string> extras;
+    std::vector<std::string> extras;
 
-	auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
-	std::string modkitsInfo;
-	for (auto kit : modkits) {
-		if (kit == modkits.back()) {
-			modkitsInfo += std::to_string(kit);
-		}
-		else {
-			modkitsInfo += std::to_string(kit) + ", ";
-		}
-	}
+    auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
+    std::string modkitsInfo;
+    for (auto kit : modkits) {
+        if (kit == modkits.back()) {
+            modkitsInfo += std::to_string(kit);
+        }
+        else {
+            modkitsInfo += std::to_string(kit) + ", ";
+        }
+    }
 
-	extras.push_back(getImageExtra(addonVehicle.ModelHash));
+    extras.push_back(getImageExtra(addonVehicle.ModelHash));
 
-	char* makeName = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
-	std::string makeFinal;
-	if (strcmp(UI::_GET_LABEL_TEXT(makeName) , "NULL") == 0) {
-		makeFinal = "None";
-	}
-	else {
-		makeFinal = std::string(UI::_GET_LABEL_TEXT(makeName));
-	}
-	extras.push_back("Make: \t" + makeFinal);
-	extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
-	extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
-	if (modkitsInfo.size() > 0) {
-		extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
-	}
-	else {
-		extras.push_back("Mod kit ID(s): \tNone");
-	}
-	return extras;
+    std::string makeFinal = getMakeName(addonVehicle.ModelHash);
+    extras.push_back("Make: \t" + makeFinal);
+    extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
+    extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
+    if (modkitsInfo.size() > 0) {
+        extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
+    }
+    else {
+        extras.push_back("Mod kit ID(s): \tNone");
+    }
+    return extras;
 }
 
 void update_game() {
-	player = PLAYER::PLAYER_ID();
-	playerPed = PLAYER::PLAYER_PED_ID();
+    player = PLAYER::PLAYER_ID();
+    playerPed = PLAYER::PLAYER_PED_ID();
 
-	if (!ENTITY::DOES_ENTITY_EXIST(playerPed)) {
-		menu.CloseMenu();
-		return;
-	}
+    if (!ENTITY::DOES_ENTITY_EXIST(playerPed)) {
+        menu.CloseMenu();
+        return;
+    }
 
-	update_menu();
+    update_menu();
 }
 
 /*
@@ -580,84 +581,84 @@ void checkCache(std::string cacheFile) {
 
 void main() {
     // logger.SetMinLevel(DEBUG);
-	logger.Write(INFO, "Script started");
+    logger.Write(INFO, "Script started");
 
-	settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
-	settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
-	settings.SetFiles(settingsGeneralFile);
-	settings.ReadSettings();
+    settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
+    settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
+    settings.SetFiles(settingsGeneralFile);
+    settings.ReadSettings();
 
-	menu.RegisterOnMain(std::bind(onMenuOpen));
-	menu.RegisterOnExit(std::bind(onMenuExit));
-	menu.SetFiles(settingsMenuFile);
-	menu.ReadSettings();
+    menu.RegisterOnMain(std::bind(onMenuOpen));
+    menu.RegisterOnExit(std::bind(onMenuExit));
+    menu.SetFiles(settingsMenuFile);
+    menu.ReadSettings();
 
-	logger.Write(INFO, "Settings read");
+    logger.Write(INFO, "Settings read");
 
     std::string cacheFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\hashes.cache";
     checkCache(cacheFile);
 
-	MemoryAccess::Init();
+    MemoryAccess::Init();
 
     //logger.Write(INFO, "resolveVehicleSpriteInfo ----- start");
     //resolveVehicleSpriteInfo();
     //showNotification("AddonSpawner done initializing stuff");
     //logger.Write(INFO, "resolveVehicleSpriteInfo ----- done, found %d", g_dlcSprites.size());
 
-	g_dlcs = buildDLClist();
-	buildBlacklist();
-	cacheAddons();
+    g_dlcs = buildDLClist();
+    buildBlacklist();
+    cacheAddons();
     cacheImageHashes();
-	cacheDLCs();
-	addVehicleSpriteOverrides();
+    cacheDLCs();
+    addVehicleSpriteOverrides();
 
-	Hash hash = joaat("noimage");
-	std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
-	if (FileExists(fileName)) {
-		unsigned width;
-		unsigned height;
-		if (!GetIMGDimensions(fileName, &width, &height)) {
-			width = 800;
-			height = 450;
-			logger.Write(WARN, "Failed to get image proportions for noimage.png, using default values");
-		}
-		int handle = createTexture(fileName.c_str());
-		noImage = AddonImage(handle, hash, width, height);
-	}
-	else {
-		unsigned width = 480;
-		unsigned height = 270;
-		noImage = AddonImage(-1, hash, width, height);
-		logger.Write(ERROR, "Missing img/noimage.png!");
-	}
-	
-	logger.Write(INFO, "Initialization finished");
+    Hash hash = joaat("noimage");
+    std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
+    if (FileExists(fileName)) {
+        unsigned width;
+        unsigned height;
+        if (!GetIMGDimensions(fileName, &width, &height)) {
+            width = 800;
+            height = 450;
+            logger.Write(WARN, "Failed to get image proportions for noimage.png, using default values");
+        }
+        int handle = createTexture(fileName.c_str());
+        noImage = AddonImage(handle, hash, width, height);
+    }
+    else {
+        unsigned width = 480;
+        unsigned height = 270;
+        noImage = AddonImage(-1, hash, width, height);
+        logger.Write(ERROR, "Missing img/noimage.png!");
+    }
+    
+    logger.Write(INFO, "Initialization finished");
 
-	while (true) {
-		update_game();
-		WAIT(0);
-	}
+    while (true) {
+        update_game();
+        WAIT(0);
+    }
 }
 
 void clearGlobals() {
-	g_missingImages.clear();
-	g_persistentVehicles.clear();
-	g_addonClasses.clear();
-	g_addonMakes.clear();
-	g_addonVehicles.clear();
-	g_addonImages.clear();
+    g_missingImages.clear();
+    g_persistentVehicles.clear();
+    g_addonClasses.clear();
+    g_addonMakes.clear();
+    g_addonVehicles.clear();
+    g_addonImages.clear();
     g_addonImageHashes.clear();
-	g_gameVehicles.clear();
-	g_dlcs.clear();
-	g_dlcClasses.clear();
-	g_dlcMakes.clear();
-	g_dlcVehicles.clear();
-	g_dlcSprites.clear();
-	g_dlcSpriteOverrides.clear();
+    g_gameVehicles.clear();
+    g_dlcs.clear();
+    g_dlcClasses.clear();
+    g_dlcMakes.clear();
+    g_dlcVehicles.clear();
+    g_dlcSprites.clear();
+    g_dlcSpriteOverrides.clear();
 }
 
 void ScriptMain() {
     srand(GetTickCount());
     clearGlobals();
-	main();
+    main();
 }

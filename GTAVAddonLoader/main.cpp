@@ -13,23 +13,23 @@ http://dev-c.com
 #include "NativeMemory.hpp"
 
 BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved) {
-	std::string logFile = Paths::GetModuleFolder(hInstance) + modDir +
-		"\\" + Paths::GetModuleNameWithoutExtension(hInstance) + ".log";
-	logger.SetFile(logFile);
-	Paths::SetOurModuleHandle(hInstance);
+    std::string logFile = Paths::GetModuleFolder(hInstance) + modDir +
+        "\\" + Paths::GetModuleNameWithoutExtension(hInstance) + ".log";
+    logger.SetFile(logFile);
+    Paths::SetOurModuleHandle(hInstance);
 
-	switch (reason) {
-	case DLL_PROCESS_ATTACH:
+    switch (reason) {
+    case DLL_PROCESS_ATTACH:
         logger.Clear();
         logger.Write(INFO, "GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
         logger.Write(INFO, "Game version " + eGameVersionToString(getGameVersion()));
-	    scriptRegister(hInstance, ScriptMain);
+        scriptRegister(hInstance, ScriptMain);
         setupHooks();
         logger.Write(INFO, "Script registered");
         break;
-	case DLL_PROCESS_DETACH:
-		scriptUnregister(hInstance);
-		break;
-	}
-	return TRUE;
+    case DLL_PROCESS_DETACH:
+        scriptUnregister(hInstance);
+        break;
+    }
+    return TRUE;
 }

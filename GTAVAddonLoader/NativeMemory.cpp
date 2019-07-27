@@ -62,17 +62,17 @@ void removeHooks() {
 }
 
 void MemoryAccess::Init() {
-	// init txd store
-	auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
-		"xxx????x????xxx");
+    // init txd store
+    auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
+        "xxx????x????xxx");
     if (!addr) {
         logger.Write(ERROR, "Couldn't find g_fwTxdStore");
     }
-	g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
+    g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
     logger.Write(INFO, "Found g_fwTxdStore at 0x%llX", g_fwTxdStore);
 
-	addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
-		"xxx????xxxxxxxxx");
+    addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
+        "xxx????xxxxxxxxx");
     if (!addr) {
         logger.Write(ERROR, "Couldn't find g_txdCollectionItemSize");
     }
@@ -90,11 +90,11 @@ void MemoryAccess::Init() {
     if (!addr) {
         logger.Write(ERROR, "Couldn't find GetModelInfo");
     }
-	GetModelInfo = (GetModelInfo_t)(addr);
+    GetModelInfo = (GetModelInfo_t)(addr);
 
-	// find enable MP cars patterns
-	if (findShopController())
-		enableCarsGlobal();
+    // find enable MP cars patterns
+    if (findShopController())
+        enableCarsGlobal();
 
 }
 
@@ -124,8 +124,8 @@ std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
 }
 
 char *MemoryAccess::GetVehicleGameName(int modelHash) {
-	int index = 0xFFFF;
-	void* modelInfo = GetModelInfo(modelHash, &index);
+    int index = 0xFFFF;
+    void* modelInfo = GetModelInfo(modelHash, &index);
     if (gameVersion < 38) {
         return ((CVehicleModelInfo*)modelInfo)->m_displayName;
     }
@@ -134,8 +134,8 @@ char *MemoryAccess::GetVehicleGameName(int modelHash) {
     }
 }
 char *MemoryAccess::GetVehicleMakeName(int modelHash) {
-	int index = 0xFFFF;
-	void* modelInfo = GetModelInfo(modelHash, &index);
+    int index = 0xFFFF;
+    void* modelInfo = GetModelInfo(modelHash, &index);
     if (gameVersion < 38) {
         return ((CVehicleModelInfo*)modelInfo)->m_manufacturerName;
     }
@@ -145,112 +145,112 @@ char *MemoryAccess::GetVehicleMakeName(int modelHash) {
 }
 
 uintptr_t MemoryAccess::FindPattern(const char *pattern, const char *mask, const char* startAddress, size_t size) {
-	const char* address_end = startAddress + size;
-	const auto mask_length = static_cast<size_t>(strlen(mask) - 1);
+    const char* address_end = startAddress + size;
+    const auto mask_length = static_cast<size_t>(strlen(mask) - 1);
 
-	for (size_t i = 0; startAddress < address_end; startAddress++) {
-		if (*startAddress == pattern[i] || mask[i] == '?') {
-			if (mask[i + 1] == '\0') {
-				return reinterpret_cast<uintptr_t>(startAddress) - mask_length;
-			}
-			i++;
-		}
-		else {
-			i = 0;
-		}
-	}
-	return 0;
+    for (size_t i = 0; startAddress < address_end; startAddress++) {
+        if (*startAddress == pattern[i] || mask[i] == '?') {
+            if (mask[i + 1] == '\0') {
+                return reinterpret_cast<uintptr_t>(startAddress) - mask_length;
+            }
+            i++;
+        }
+        else {
+            i = 0;
+        }
+    }
+    return 0;
 }
 
 uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
-	MODULEINFO modInfo = { };
-	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &modInfo, sizeof(MODULEINFO));
+    MODULEINFO modInfo = { };
+    GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &modInfo, sizeof(MODULEINFO));
 
-	return FindPattern(pattern, mask, reinterpret_cast<const char *>(modInfo.lpBaseOfDll), modInfo.SizeOfImage);
+    return FindPattern(pattern, mask, reinterpret_cast<const char *>(modInfo.lpBaseOfDll), modInfo.SizeOfImage);
 }
 
 // Thank you, Unknown Modder!
 std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
-	std::vector<rage::grcTexture *> vecTextures;
+    std::vector<rage::grcTexture *> vecTextures;
 
-	if (g_fwTxdStore && g_fwTxdStore != 7) {
-		uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
-		if (txds) {
-			uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
-			for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
-				Hash hash = *(Hash*)(txds + i * 8);
-				if (hash != txdHash) continue;
+    if (g_fwTxdStore && g_fwTxdStore != 7) {
+        uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
+        if (txds) {
+            uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
+            for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
+                Hash hash = *(Hash*)(txds + i * 8);
+                if (hash != txdHash) continue;
 
-				uint16_t index = *(uint16_t*)(txds + i * 8 + 4);
-				if (index == -1) break;
+                uint16_t index = *(uint16_t*)(txds + i * 8 + 4);
+                if (index == -1) break;
 
-				uint64_t pgDictionaryCollection = *(uint64_t*)(g_fwTxdStore + 0x38);
-				if (pgDictionaryCollection) {
-					rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_txdCollectionItemSize);
-					if (dictionary) {
-						rage::grcTexture** textures = dictionary->textures;
-						if (textures) {
-							uint16_t count = dictionary->textureCount;
-							for (uint16_t j = 0; j < count; j++) {
-								if (textures[j] == nullptr) continue;
-								vecTextures.push_back(textures[j]);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return vecTextures;
+                uint64_t pgDictionaryCollection = *(uint64_t*)(g_fwTxdStore + 0x38);
+                if (pgDictionaryCollection) {
+                    rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_txdCollectionItemSize);
+                    if (dictionary) {
+                        rage::grcTexture** textures = dictionary->textures;
+                        if (textures) {
+                            uint16_t count = dictionary->textureCount;
+                            for (uint16_t j = 0; j < count; j++) {
+                                if (textures[j] == nullptr) continue;
+                                vecTextures.push_back(textures[j]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return vecTextures;
 }
 
 // from EnableMPCars by drp4lyf
 bool MemoryAccess::findShopController() {
-	// FindPatterns
-	__int64 patternAddr = FindPattern("\x4C\x8D\x05\x00\x00\x00\x00\x4D\x8B\x08\x4D\x85\xC9\x74\x11", "xxx????xxxxxxxx");
-	if (!patternAddr) {
-		logger.Write(ERROR, "ERROR: finding address 0");
-		logger.Write(ERROR, "Aborting...");
-		return false;
-	}
-	globalTable.GlobalBasePtr = (__int64**)(patternAddr + *(int*)(patternAddr + 3) + 7);
+    // FindPatterns
+    __int64 patternAddr = FindPattern("\x4C\x8D\x05\x00\x00\x00\x00\x4D\x8B\x08\x4D\x85\xC9\x74\x11", "xxx????xxxxxxxx");
+    if (!patternAddr) {
+        logger.Write(ERROR, "ERROR: finding address 0");
+        logger.Write(ERROR, "Aborting...");
+        return false;
+    }
+    globalTable.GlobalBasePtr = (__int64**)(patternAddr + *(int*)(patternAddr + 3) + 7);
 
 
-	patternAddr = FindPattern("\x48\x03\x15\x00\x00\x00\x00\x4C\x23\xC2\x49\x8B\x08", "xxx????xxxxxx");
-	if (!patternAddr) {
-		logger.Write(ERROR, "ERROR: finding address 1");
-		logger.Write(ERROR, "Aborting...");
-		return false;
-	}
-	scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
+    patternAddr = FindPattern("\x48\x03\x15\x00\x00\x00\x00\x4C\x23\xC2\x49\x8B\x08", "xxx????xxxxxx");
+    if (!patternAddr) {
+        logger.Write(ERROR, "ERROR: finding address 1");
+        logger.Write(ERROR, "Aborting...");
+        return false;
+    }
+    scriptTable = (ScriptTable*)(patternAddr + *(int*)(patternAddr + 3) + 7);
 
-	DWORD startTime = GetTickCount();
-	DWORD timeout = 10000; // in millis
+    DWORD startTime = GetTickCount();
+    DWORD timeout = 10000; // in millis
 
-	// FindScriptAddresses
-	while (!globalTable.IsInitialised()) {
-		scriptWait(100); //Wait for GlobalInitialisation before continuing
-		if (GetTickCount() > startTime + timeout) {
-			logger.Write(ERROR, "ERROR: couldn't init global table");
-			logger.Write(ERROR, "Aborting...");
-			return false;
-		}
-	}
-	
-	//logger.Write(INFO, "Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
+    // FindScriptAddresses
+    while (!globalTable.IsInitialised()) {
+        scriptWait(100); //Wait for GlobalInitialisation before continuing
+        if (GetTickCount() > startTime + timeout) {
+            logger.Write(ERROR, "ERROR: couldn't init global table");
+            logger.Write(ERROR, "Aborting...");
+            return false;
+        }
+    }
+    
+    //logger.Write(INFO, "Found global base pointer " + std::to_string((__int64)globalTable.GlobalBasePtr));
 
-	ScriptTableItem* Item = scriptTable->FindScript(0x39DA738B);
-	if (Item == NULL) {
-		logger.Write(ERROR, "ERROR: finding address 2");
-		logger.Write(ERROR, "Aborting...");
-		return false;
-	}
-	while (!Item->IsLoaded())
-		Sleep(100);
-	
-	shopController = Item->Header;
-	//logger.Write(INFO, "Found shopcontroller");
-	return true;
+    ScriptTableItem* Item = scriptTable->FindScript(0x39DA738B);
+    if (Item == NULL) {
+        logger.Write(ERROR, "ERROR: finding address 2");
+        logger.Write(ERROR, "Aborting...");
+        return false;
+    }
+    while (!Item->IsLoaded())
+        Sleep(100);
+    
+    shopController = Item->Header;
+    //logger.Write(INFO, "Found shopcontroller");
+    return true;
 }
 
 void MemoryAccess::enableCarsGlobal() {

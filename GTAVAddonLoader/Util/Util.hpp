@@ -5,14 +5,14 @@
 #include <locale>
 
 struct Color {
-	int R;
-	int G;
-	int B;
-	int A;
+    int R;
+    int G;
+    int B;
+    int A;
 };
 
 const Color solidWhite = {
-	255, 255, 255, 255
+    255, 255, 255, 255
 };
 
 // Natives called
@@ -23,19 +23,19 @@ void showSubtitle(std::string message, int duration = 2500);
 //https://github.com/CamxxCore/AirSuperiority
 class GameSound {
 public:
-	GameSound(char *sound, char *soundSet);
-	~GameSound();
-	void Load(char *audioBank);
-	void Play(Entity ent);
-	void Stop();
+    GameSound(char *sound, char *soundSet);
+    ~GameSound();
+    void Load(char *audioBank);
+    void Play(Entity ent);
+    void Stop();
 
-	bool Active;
+    bool Active;
 
 private:
-	char *m_soundSet;
-	char *m_sound;
-	int m_soundID;
-	int m_prevNotification;
+    char *m_soundSet;
+    char *m_sound;
+    int m_soundID;
+    int m_prevNotification;
 };
 
 bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height);
@@ -54,15 +54,15 @@ std::string to_lower(std::string data);
 */
 template<typename T>
 bool isHashInImgVector(Hash hash, std::vector<T> things, T *result) {
-	auto addonImage = std::find_if(things.begin(), things.end(), [&hash](const T& element) {
-		return element.ModelHash == hash;
-	});
-	if (things.end() != addonImage) {
-		if (result != nullptr)
-			*result = *addonImage;
-		return true;
-	}
-	return false;
+    auto addonImage = std::find_if(things.begin(), things.end(), [&hash](const T& element) {
+        return element.ModelHash == hash;
+    });
+    if (things.end() != addonImage) {
+        if (result != nullptr)
+            *result = *addonImage;
+        return true;
+    }
+    return false;
 }
 
 bool FileExists(const std::string& name);
@@ -71,20 +71,20 @@ bool FileExists(const std::string& name);
 // templated version of my_equal so it could work with both char and wchar_t
 template<typename charT>
 struct my_equal {
-	my_equal(const std::locale& loc) : loc_(loc) {}
-	bool operator()(charT ch1, charT ch2) {
-		return std::toupper(ch1, loc_) == std::toupper(ch2, loc_);
-	}
+    my_equal(const std::locale& loc) : loc_(loc) {}
+    bool operator()(charT ch1, charT ch2) {
+        return std::toupper(ch1, loc_) == std::toupper(ch2, loc_);
+    }
 private:
-	const std::locale& loc_;
+    const std::locale& loc_;
 };
 
 // find substring (case insensitive)
 template<typename T>
 size_t findSubstring(const T& str1, const T& str2, const std::locale& loc = std::locale())
 {
-	typename T::const_iterator it = std::search(str1.begin(), str1.end(),
-		str2.begin(), str2.end(), my_equal<typename T::value_type>(loc));
-	if (it != str1.end()) return it - str1.begin();
-	else return -1; // not found
+    typename T::const_iterator it = std::search(str1.begin(), str1.end(),
+        str2.begin(), str2.end(), my_equal<typename T::value_type>(loc));
+    if (it != str1.end()) return it - str1.begin();
+    else return -1; // not found
 }
