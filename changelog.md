@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.8
+* Update grouping for b1737
+
+## v1.3.7
+* Re-enable DLC vehicle deletion bypass (By Unknown)
+
+## v1.3.6
+* Disable despawn patch for b1604.0
+* Update hashes for b1604.0 
+
 ## v1.3.5
 Config changes: No
 

@@ -763,6 +763,31 @@ static const std::vector<Hash> ArenaWarVehicles = {
     0xFD128DFD, //  Muscle              VAMOS               vamos               Vamos
 };
 
+static const std::vector<Hash> CasinoVehicles = {
+    0x28EAB80F, //  Sports              DRAFTER             drafter             8F Drafter
+    0xAF966F3C, //  Off - Road            CARACARA2           caracara2           Caracara 4x4
+    0x127E90D5, //  Sports Classics     Dynasty             Dynasty             Dynasty
+    0x4EE74355, //  Super               EMERUS              emerus              Emerus
+    0x2B0C4DCD, //  Muscle              GAUNTLET3           gauntlet3           Gauntlet Classic
+    0x734C5E50, //  Muscle              GAUNTLET4           gauntlet4           Gauntlet Hellfire
+    0xEA6A047F, //  Off - Road            HELLION             hellion             Hellion
+    0x6E8DA4F7, //  Sports              ISSI7               issi7               Issi Sport
+    0xF38C4245, //  Sports              JUGULAR             jugular             Jugular
+    0xD86A0247, //  Super               krieger             krieger             Krieger
+    0xC7E55211, //  Sports              LOCUST              locust              Locust
+    0xCB642637, //  Sports Classics     NEBULA              nebula              Nebula Turbo
+    0x9F6ED5A2, //  Sports              NEO                 neo                 Neo
+    0x92F5024E, //  SUVs                Novak               Novak               Novak
+    0xE550775B, //  Sports              PARAGON             paragon             Paragon R
+    0x546D8EEE, //  Sports              PARAGON2            paragon2            Paragon R(Armored)
+    0x9472CD24, //  Muscle              PEYOTE2             peyote2             Peyote Gasser
+    0x36A167E0, //  Motorcycles         RROCKET             rrocket             Rampant Rocket
+    0xECA6B6A3, //  Super               S80                 s80                 S80RR
+    0x3E3D1F59, //  Super               THRAX               thrax               Thrax
+    0x6F039A67, //  Sports Classics     zion3               zion3               Zion Classic
+    0xD757D97D, //  Super               ZORRUSSO            zorrusso            Zorrusso
+};
+
 inline std::vector<DLC> buildDLClist() {
     return {
         { DLC("Original game", OriginalVehicles) },
@@ -795,6 +820,7 @@ inline std::vector<DLC> buildDLClist() {
         { DLC("Southern San Andreas Super Sport Series", SSASSSVehicles) },
         { DLC("After Hours", AfterHoursVehicles) },
         { DLC("Arena War", ArenaWarVehicles) },
+        { DLC("The Diamond Casino & Resort", CasinoVehicles) },
     };
 }
 
