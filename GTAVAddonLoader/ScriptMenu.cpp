@@ -38,6 +38,8 @@ extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
 extern std::vector<SpriteInfo> g_dlcSprites;
 
+extern std::vector<DLC> g_userDlcs;
+
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
     PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -179,6 +181,10 @@ void update_mainmenu(std::set<std::string> addonCats) {
         }
     }
 
+    if (!g_userDlcs.empty()) {
+        menu.MenuOption("Spawn user DLCs", "userdlcmenu");
+    }
+
     for (auto category : addonCats) {
         menu.MenuOption(category, category);
     }
@@ -292,6 +298,15 @@ void update_officialdlcmenu() {
     }
 }
 
+void update_userdlcmenu() {
+    menu.Title("User DLC");
+    menu.Subtitle("User add-on groupings");
+
+    for (auto dlc : g_userDlcs) {
+        menu.MenuOption(dlc.Name, dlc.Name);
+    }
+}
+
 void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> dlcCats) {
     menu.Title(dlc.Name);
     menu.Subtitle("Sort by DLC");
@@ -354,6 +369,23 @@ void update_menu() {
                 if (menu.CurrentMenu(dlc.Name + " " + className)) {
                     update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
                 }
+            }
+        }
+    }
+
+    if (menu.CurrentMenu("userdlcmenu")) {
+        update_userdlcmenu();
+    }
+
+    for (auto dlc : g_userDlcs) {
+        std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+
+        if (menu.CurrentMenu(dlc.Name)) {
+            update_perdlcmenu(dlc, dlcCats);
+        }
+        for (auto className : dlcCats) {
+            if (menu.CurrentMenu(dlc.Name + " " + className)) {
+                update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
             }
         }
     }

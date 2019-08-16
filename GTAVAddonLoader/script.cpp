@@ -21,6 +21,7 @@
 #include "VehicleHashes.h"
 #include "ExtraTypes.h"
 #include <fstream>
+#include "UserDLC.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -56,6 +57,8 @@ std::vector<ModelInfo> g_dlcVehicles;
 std::vector<SpriteInfo> g_dlcSprites;
 std::vector<SpriteInfo> g_dlcSpriteOverrides;
 std::unordered_map<Hash, std::string> g_vehicleHashes;
+
+std::vector<DLC> g_userDlcs;
 
 /*
  * Some sprites don't match up with the actual vehicle or don't have the
@@ -240,6 +243,23 @@ void cacheDLCVehicles() {
     });
 }
 
+void cacheDLCVehicles(std::vector<DLC>& dlcs) {
+    for (auto& dlc : dlcs) {
+        dlc.Vehicles.clear();
+        for (auto hash : dlc.Hashes) {
+            if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
+                continue;
+            char buffer[128];
+            sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+            std::string className = UI::_GET_LABEL_TEXT(buffer);
+            std::string makeName = getMakeName(hash);
+            dlc.Vehicles.emplace_back(className, makeName, hash);
+            dlc.Classes.emplace(className);
+            dlc.Makes.emplace(makeName);
+        }
+    }
+}
+
 /*
  * Initialize DLCs and used classes. Categorizes things, though it
  * does feel bad that the specific DLCs aren't retrievable. Adding
@@ -281,8 +301,15 @@ void cacheAddons() {
     logger.Write(INFO, thingy.str());
 
     for (auto hash : allVehicles) {
-        if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end()) {
-            char buffer[128];
+        if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end() &&
+            std::find_if(g_userDlcs.begin(), g_userDlcs.end(), [hash](const DLC & d) {
+                return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash & h) {
+                    return hash == h;
+                }) == d.Hashes.end();
+        }) == g_userDlcs.end()) {
+            
+                
+                char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
             std::string className = UI::_GET_LABEL_TEXT(buffer);
             std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
@@ -592,6 +619,7 @@ void main() {
     menu.RegisterOnExit(std::bind(onMenuExit));
     menu.SetFiles(settingsMenuFile);
     menu.ReadSettings();
+    menu.Initialize();
 
     logger.Write(INFO, "Settings read");
 
@@ -607,10 +635,26 @@ void main() {
 
     g_dlcs = buildDLClist();
     buildBlacklist();
-    cacheAddons();
+    //cacheAddons();
     cacheImageHashes();
     cacheDLCs();
     addVehicleSpriteOverrides();
+    
+    // This is... less than optimal. - ikt, 2019
+    g_userDlcs = BuildUserDLCList();
+    cacheDLCVehicles(g_userDlcs);
+
+    // Remove user DLC from "normal" add-on pool.
+    for (const auto& dlc : g_userDlcs) {
+        logger.Write(INFO, "[User] DLC Name: %s", dlc.Name.c_str());
+        for (const auto& entry : dlc.Hashes) {
+            logger.Write(INFO, "[User]         : 0x%X", entry);
+            
+        }
+    }
+
+    // moved after fetching user dlc so it can be excluded in the step
+    cacheAddons();
 
     Hash hash = joaat("noimage");
     std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
@@ -655,6 +699,7 @@ void clearGlobals() {
     g_dlcVehicles.clear();
     g_dlcSprites.clear();
     g_dlcSpriteOverrides.clear();
+    g_userDlcs.clear();
 }
 
 void ScriptMain() {

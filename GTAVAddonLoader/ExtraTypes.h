@@ -1,10 +1,10 @@
 #pragma once
+#include <inc/types.h>
+
 #include <set>
 #include <tuple>
 #include <string>
-
-#include <inc/types.h>
-
+#include <vector>
 // filePath, width, height
 using AddonImageMeta = std::tuple<std::string, int, int>;
 
