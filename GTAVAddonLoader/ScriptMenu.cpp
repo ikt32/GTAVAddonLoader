@@ -36,7 +36,6 @@ extern std::vector<DLC> g_dlcs;
 extern std::set<std::string> g_dlcClasses;
 extern std::set<std::string> g_dlcMakes;
 extern std::vector<ModelInfo> g_dlcVehicles;
-extern std::vector<SpriteInfo> g_dlcSprites;
 
 extern std::vector<DLC> g_userDlcs;
 
@@ -259,11 +258,10 @@ void update_settingsmenu() {
     }
     if (menu.Option("Reload previews", 
                     { "Use for when you changed an image that's already been loaded."})) {
-        resolveVehicleSpriteInfo();
-
         g_missingImages.clear();
         g_addonImages.clear();
     }
+    // TODO: Reload user DLC
     if (menu.Option("Clean up image preview folder", 
                     { "Remove images from the preview folder that aren't detected as add-ons.",
                         "Removed files are put in a \"bak.timestamp\" folder." })) {

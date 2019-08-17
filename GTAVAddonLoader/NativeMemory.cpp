@@ -26,9 +26,6 @@ typedef CVehicleModelInfo*(*InitVehicleArchetype_t)(const char*, bool, unsigned 
 
 GetModelInfo_t GetModelInfo;
 
-uint64_t g_fwTxdStore;
-uint32_t g_txdCollectionItemSize;
-
 GlobalTable globalTable;
 ScriptTable* scriptTable;
 ScriptHeader* shopController;
@@ -62,24 +59,7 @@ void removeHooks() {
 }
 
 void MemoryAccess::Init() {
-    // init txd store
-    auto addr = FindPattern("\x48\x8D\x0D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x45\xEC",
-        "xxx????x????xxx");
-    if (!addr) {
-        logger.Write(ERROR, "Couldn't find g_fwTxdStore");
-    }
-    g_fwTxdStore = addr + *(int*)(addr + 3) + 7;
-    logger.Write(INFO, "Found g_fwTxdStore at 0x%llX", g_fwTxdStore);
-
-    addr = FindPattern("\x48\x03\x0D\x00\x00\x00\x00\x48\x85\xD1\x75\x04\x44\x89\x4D\xF0",
-        "xxx????xxxxxxxxx");
-    if (!addr) {
-        logger.Write(ERROR, "Couldn't find g_txdCollectionItemSize");
-    }
-    g_txdCollectionItemSize = *(uint32_t*)((addr + *(int*)(addr + 3) + 7) + 0x14);
-    logger.Write(INFO, "g_txdCollectionItemSize is 0x%llX", g_txdCollectionItemSize);
-
-    addr = FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
+    auto addr = FindPattern("\x0F\xB7\x05\x00\x00\x00\x00"
         "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
         "\x0F\x84\x00\x00\x00\x00"
         "\x44\x0F\xB7\xC0\x33\xD2\x8B\xC1\x41\xF7\xF0\x48"
@@ -167,41 +147,6 @@ uintptr_t MemoryAccess::FindPattern(const char* pattern, const char* mask) {
     GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &modInfo, sizeof(MODULEINFO));
 
     return FindPattern(pattern, mask, reinterpret_cast<const char *>(modInfo.lpBaseOfDll), modInfo.SizeOfImage);
-}
-
-// Thank you, Unknown Modder!
-std::vector<rage::grcTexture *> MemoryAccess::GetTexturesFromTxd(Hash txdHash) {
-    std::vector<rage::grcTexture *> vecTextures;
-
-    if (g_fwTxdStore && g_fwTxdStore != 7) {
-        uint64_t txds = *(uint64_t*)(g_fwTxdStore + 0x70);
-        if (txds) {
-            uint16_t size = *(uint16_t*)(g_fwTxdStore + 0x82);
-            for (uint16_t i = txdHash % (size - 1); i < size - 1; i++) {
-                Hash hash = *(Hash*)(txds + i * 8);
-                if (hash != txdHash) continue;
-
-                uint16_t index = *(uint16_t*)(txds + i * 8 + 4);
-                if (index == -1) break;
-
-                uint64_t pgDictionaryCollection = *(uint64_t*)(g_fwTxdStore + 0x38);
-                if (pgDictionaryCollection) {
-                    rage::pgDictionary* dictionary = *(rage::pgDictionary**)(pgDictionaryCollection + index * g_txdCollectionItemSize);
-                    if (dictionary) {
-                        rage::grcTexture** textures = dictionary->textures;
-                        if (textures) {
-                            uint16_t count = dictionary->textureCount;
-                            for (uint16_t j = 0; j < count; j++) {
-                                if (textures[j] == nullptr) continue;
-                                vecTextures.push_back(textures[j]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return vecTextures;
 }
 
 // from EnableMPCars by drp4lyf
