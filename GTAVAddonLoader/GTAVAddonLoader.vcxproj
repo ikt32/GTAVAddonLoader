@@ -149,6 +149,9 @@
     <BuildLog>
       <Path>$(IntDir)$(MSBuildProjectName).log</Path>
     </BuildLog>
+    <PreBuildEvent>
+      <Command>copy /b $(ProjectDir)main.cpp +,,</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GTAVMenuBase\menu.cpp" />
