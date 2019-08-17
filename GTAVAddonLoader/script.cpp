@@ -40,25 +40,32 @@ int prevNotification;
 
 AddonImage noImage;
 
-std::vector<Hash> g_missingImages;
-std::vector<Vehicle> g_persistentVehicles;
+// Stock vehicles DLC. Needs to be updated every DLC release. 
+std::vector<DLC> g_dlcs;
 
+// User vehicles DLCs. User-updateable.
+std::vector<DLC> g_userDlcs;
+
+// All vehicles discovered during load. Unfiltered - contains everything.
+std::unordered_map<Hash, std::string> g_vehicleHashes;
+
+// 
 std::set<std::string> g_addonClasses;   // Grouping-related
 std::set<std::string> g_addonMakes;     // Grouping-related
 
+std::vector<Hash> g_missingImages;
+std::vector<Vehicle> g_persistentVehicles;
+
+
+
 std::vector<ModelInfo> g_addonVehicles;    // all add-on vehicles
 std::vector<AddonImage> g_addonImages;
-//std::vector<Hash> g_addonImageHashes; // name hash
 
-std::vector<Hash> g_gameVehicles;         // all base vehicles
-std::vector<DLC> g_dlcs;
+
 std::set<std::string> g_dlcClasses;
 std::set<std::string> g_dlcMakes;
 std::vector<ModelInfo> g_dlcVehicles;
 
-std::unordered_map<Hash, std::string> g_vehicleHashes;
-
-std::vector<DLC> g_userDlcs;
 
 /**
  * Resolving images only when we need it. Should take just 1 tick after an option is selected.
@@ -213,7 +220,16 @@ void cacheDLCs() {
     cacheDLCVehicles();
 }
 
-/*
+bool isHashInDLCList(const std::vector<DLC>& dlc, Hash hash) {
+    return std::find_if(dlc.begin(), dlc.end(), [hash](const DLC & d) {
+        return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash & h) {
+            return hash == h;
+            }) != d.Hashes.end();
+        }) != dlc.end();
+}
+
+/**
+ * TODO: Rename to "filter" or something
  * Initialize add-ons and used classes. This is ran first so
  * the log outputs a thing.
  */
@@ -243,15 +259,8 @@ void cacheAddons() {
     logger.Write(INFO, thingy.str());
 
     for (auto hash : allVehicles) {
-        if (std::find(g_gameVehicles.begin(), g_gameVehicles.end(), hash) == g_gameVehicles.end() &&
-            std::find_if(g_userDlcs.begin(), g_userDlcs.end(), [hash](const DLC & d) {
-                return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash & h) {
-                    return hash == h;
-                }) == d.Hashes.end();
-        }) == g_userDlcs.end()) {
-            
-                
-                char buffer[128];
+        if (!isHashInDLCList(g_dlcs, hash) && !isHashInDLCList(g_userDlcs, hash)) {
+            char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
             std::string className = UI::_GET_LABEL_TEXT(buffer);
             std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
@@ -272,18 +281,6 @@ void cacheAddons() {
             g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
             g_addonClasses.emplace(className);
             g_addonMakes.emplace(makeName);
-        }
-    }
-}
-
-/*
- * Filter the official DLCs from the list of all vehicles.
- */
-void buildBlacklist() {
-    g_gameVehicles.clear();
-    for (auto dlc : g_dlcs) {
-        for (auto hash : dlc.Hashes) {
-            g_gameVehicles.push_back(hash);
         }
     }
 }
@@ -542,7 +539,6 @@ void main() {
     MemoryAccess::Init();
 
     g_dlcs = buildDLClist();
-    buildBlacklist();
     cacheDLCs();
     
     // This is... less than optimal. - ikt, 2019
@@ -596,7 +592,6 @@ void clearGlobals() {
     g_addonMakes.clear();
     g_addonVehicles.clear();
     g_addonImages.clear();
-    g_gameVehicles.clear();
     g_dlcs.clear();
     g_dlcClasses.clear();
     g_dlcMakes.clear();
