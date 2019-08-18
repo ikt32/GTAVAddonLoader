@@ -39,6 +39,9 @@ extern std::vector<ModelInfo> g_dlcVehicles;
 
 extern std::vector<DLC> g_userDlcs;
 
+// These contain everything
+extern std::vector<ModelInfo> g_addonVehiclesAll;     // all add-on vehicles - used for sorting
+extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - used for sorting
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
     PLAYER::IS_PLAYER_CONTROL_ON(false);
@@ -81,7 +84,7 @@ bool evaluateInput(std::string &searchFor) {
 
 void update_searchresults() {
     g_matchedVehicles.clear();
-    for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
+    for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
         char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
         std::string displayName = UI::_GET_LABEL_TEXT(name);
         std::string rawName = name;

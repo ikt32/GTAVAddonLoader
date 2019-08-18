@@ -66,6 +66,9 @@ std::set<std::string> g_dlcClasses;
 std::set<std::string> g_dlcMakes;
 std::vector<ModelInfo> g_dlcVehicles;
 
+// These contain everything
+std::vector<ModelInfo> g_addonVehiclesAll;     // all add-on vehicles - used for search
+std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - used for search
 
 /**
  * Resolving images only when we need it. Should take just 1 tick after an option is selected.
@@ -234,7 +237,7 @@ bool isHashInDLCList(const std::vector<DLC>& dlc, Hash hash) {
  * the log outputs a thing.
  */
 void cacheAddons() {
-    if (!g_addonVehicles.empty())
+    if (!g_addonVehiclesAll.empty())
         return;
 
     std::vector<Hash> allVehicles;
@@ -259,12 +262,16 @@ void cacheAddons() {
     logger.Write(INFO, thingy.str());
 
     for (auto hash : allVehicles) {
-        if (!isHashInDLCList(g_dlcs, hash) && !isHashInDLCList(g_userDlcs, hash)) {
-            char buffer[128];
-            sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-            std::string className = UI::_GET_LABEL_TEXT(buffer);
-            std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+        char buffer[128];
+        sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
+        std::string className = UI::_GET_LABEL_TEXT(buffer);
+        std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+        std::string makeName = getMakeName(hash);
 
+        if (isHashInDLCList(g_dlcs, hash)){
+            g_dlcVehiclesAll.push_back(ModelInfo(className, makeName, hash));
+        }
+        else {
             std::stringstream hashAsHex;
             std::stringstream logStream;
             hashAsHex << "0x" << std::setfill('0') << std::setw(8) << std::uppercase << std::hex << hash;
@@ -273,11 +280,10 @@ void cacheAddons() {
             logStream << std::left << std::setw(nameLength) << std::setfill(' ') << displayName;
             logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
             logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
-
             logger.Write(INFO, logStream.str());
-
-            std::string makeName = getMakeName(hash);
-
+            g_addonVehiclesAll.push_back(ModelInfo(className, makeName, hash));
+        }
+        if (!isHashInDLCList(g_dlcs, hash) && !isHashInDLCList(g_userDlcs, hash)) {
             g_addonVehicles.push_back(ModelInfo(className, makeName, hash));
             g_addonClasses.emplace(className);
             g_addonMakes.emplace(makeName);
@@ -597,6 +603,8 @@ void clearGlobals() {
     g_dlcMakes.clear();
     g_dlcVehicles.clear();
     g_userDlcs.clear();
+    g_dlcVehiclesAll.clear();
+    g_addonVehiclesAll.clear();
 }
 
 void ScriptMain() {
