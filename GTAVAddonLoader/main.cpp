@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved) {
     switch (reason) {
     case DLL_PROCESS_ATTACH:
         logger.Clear();
-        logger.Write(INFO, "GTAVAddonSpawner " + std::string(DISPLAY_VERSION));
+        logger.Write(INFO, "Addon Spawner %s (built %s %s)", DISPLAY_VERSION, __DATE__, __TIME__);
         logger.Write(INFO, "Game version " + eGameVersionToString(getGameVersion()));
         scriptRegister(hInstance, ScriptMain);
         setupHooks();

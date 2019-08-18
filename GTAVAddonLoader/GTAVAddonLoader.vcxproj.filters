@@ -42,6 +42,10 @@
     <ClCompile Include="Hooking.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\GTAVMenuBase\menumemutils.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="UserDLC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -103,6 +107,10 @@
     <ClInclude Include="Hooking.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GTAVMenuBase\menumemutils.hpp">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDLC.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">

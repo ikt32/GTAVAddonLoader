@@ -9,41 +9,43 @@
 #include "ExtraTypes.h"
 #include "NativeMemory.hpp"
 #include "Util/Util.hpp"
-#include "VehicleHashes.h"
 
-std::string manualVehicleName = "";
-std::string searchVehicleName = "";
+std::string manualVehicleName;
+std::string searchVehicleName;
 bool manualSpawnSelected = false;
 bool searchEntrySelected = false;
 std::vector<ModelInfo> g_matchedVehicles;
 
-
 extern NativeMenu::Menu menu;
-extern NativeMenu::MenuControls controls;
 extern Settings settings;
-extern Ped playerPed;
 
-extern std::vector<Hash> g_missingImages;
+// Keep a list of vehicles we marked as mission entity
 extern std::vector<Vehicle> g_persistentVehicles;
 
-extern std::set<std::string> g_addonClasses;
-extern std::set<std::string> g_addonMakes;
-extern std::vector<ModelInfo> g_addonVehicles;    // all add-on vehicles
-extern std::vector<AddonImage> g_addonImages;
-
-extern std::vector<Hash> g_gameVehicles;             // all base vehicles
+// Stock vehicles DLC. Needs to be updated every DLC release. 
 extern std::vector<DLC> g_dlcs;
-extern std::set<std::string> g_dlcClasses;
-extern std::set<std::string> g_dlcMakes;
-extern std::vector<ModelInfo> g_dlcVehicles;
-extern std::vector<SpriteInfo> g_dlcSprites;
+
+// User vehicles DLCs. User-updateable.
+extern std::vector<DLC> g_userDlcs;
+
+// Classes and makes, for grouping in the main menu by either class or make.
+extern std::set<std::string> g_addonClasses;   // Grouping-related
+extern std::set<std::string> g_addonMakes;     // Grouping-related
+extern std::set<std::string> g_dlcClasses;     // Grouping-related
+extern std::set<std::string> g_dlcMakes;       // Grouping-related
+
+// These have been filtered by user DLC
+extern std::vector<ModelInfo> g_addonVehicles;     // add-on vehicles - used for sorting
+extern std::vector<ModelInfo> g_dlcVehicles;       // game vehicles - used for sorting
+
+// These contain everything
+extern std::vector<ModelInfo> g_addonVehiclesAll;     // all add-on vehicles - used for sorting
+extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - used for sorting
 
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
-    PLAYER::IS_PLAYER_CONTROL_ON(false);
     UI::SET_PAUSE_MENU_ACTIVE(false);
     CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(2);
-    CONTROLS::IS_CONTROL_ENABLED(playerPed, false);
 
     for (char c = ' '; c < '~'; c++) {
         int key = str2key(std::string(1, c));
@@ -80,11 +82,11 @@ bool evaluateInput(std::string &searchFor) {
 
 void update_searchresults() {
     g_matchedVehicles.clear();
-    for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehicles : g_addonVehicles) {
+    for (const auto& addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
         char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
         std::string displayName = UI::_GET_LABEL_TEXT(name);
         std::string rawName = name;
-        std::string modelName = getModelName(addonVehicle.ModelHash);
+        std::string modelName = addonVehicle.ModelName;
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
         std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
 
@@ -114,7 +116,7 @@ void onMenuExit() {
     manualVehicleName.clear();
 }
 
-void format_infobox(std::vector<ModelInfo>::value_type vehicle) {
+void format_infobox(const ModelInfo& vehicle) {
     char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash);
     std::string displayName = UI::_GET_LABEL_TEXT(name);
     if (displayName == "NULL") {
@@ -131,18 +133,19 @@ void format_infobox(std::vector<ModelInfo>::value_type vehicle) {
     }
 }
 
-void update_spawnmenu(std::string category, std::vector<ModelInfo> addonVehicles, std::string origin, bool asMake) {
+void update_spawnmenu(const std::string& category, const std::vector<ModelInfo>& addonVehicles, 
+                      const std::string& origin, bool asMake) {
     menu.Title(category);
     menu.Subtitle(origin);
 
-    for (auto vehicle : addonVehicles) {
+    for (const auto& vehicle : addonVehicles) {
         if (category == (asMake ? vehicle.MakeName : vehicle.ClassName)) {
             format_infobox(vehicle);
         }
     }
 }
 
-void update_mainmenu(std::set<std::string> addonCats) {
+void update_mainmenu(const std::set<std::string>& addonCats) {
     menu.Title("Add-on spawner");
     menu.Subtitle("~b~" + std::string(DISPLAY_VERSION) + "~w~");
 
@@ -179,7 +182,11 @@ void update_mainmenu(std::set<std::string> addonCats) {
         }
     }
 
-    for (auto category : addonCats) {
+    if (!g_userDlcs.empty()) {
+        menu.MenuOption("Spawn user DLCs", "userdlcmenu");
+    }
+
+    for (const auto& category : addonCats) {
         menu.MenuOption(category, category);
     }
 }
@@ -208,7 +215,7 @@ void update_searchmenu() {
         update_searchresults();
     }
 
-    for (auto vehicle : g_matchedVehicles) {
+    for (const auto& vehicle : g_matchedVehicles) {
         format_infobox(vehicle);
     }
 }
@@ -253,17 +260,16 @@ void update_settingsmenu() {
     }
     if (menu.Option("Reload previews", 
                     { "Use for when you changed an image that's already been loaded."})) {
-        resolveVehicleSpriteInfo();
-
-        g_missingImages.clear();
-        g_addonImages.clear();
+        clearImages();
+    }
+    if (menu.Option("Reload user DLC", 
+                    { "Reload your custom groupings" })) {
+        reloadUserDlc();
     }
     if (menu.Option("Clean up image preview folder", 
                     { "Remove images from the preview folder that aren't detected as add-ons.",
                         "Removed files are put in a \"bak.timestamp\" folder." })) {
-        g_missingImages.clear();
-        g_addonImages.clear();
-
+        clearImages();
         cleanImageDirectory(true);
     }
     if (settings.Persistent) {
@@ -274,11 +280,11 @@ void update_settingsmenu() {
     }
 }
 
-void update_officialdlcmergedmenu(std::set<std::string> categories) {
+void update_officialdlcmergedmenu(const std::set<std::string>& categories) {
     menu.Title("Official DLC");
     menu.Subtitle("Merged");
 
-    for (auto category : categories) {
+    for (const auto& category : categories) {
         menu.MenuOption(category, "dlc_" + category);
     }
 }
@@ -287,16 +293,25 @@ void update_officialdlcmenu() {
     menu.Title("Official DLC");
     menu.Subtitle("Sort by DLC");
 
-    for (auto dlc : g_dlcs) {
+    for (const auto& dlc : g_dlcs) {
         menu.MenuOption(dlc.Name, dlc.Name);
     }
 }
 
-void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> dlcCats) {
+void update_userdlcmenu() {
+    menu.Title("User DLC");
+    menu.Subtitle("User add-on groupings");
+
+    for (const auto& dlc : g_userDlcs) {
+        menu.MenuOption(dlc.Name, dlc.Name);
+    }
+}
+
+void update_perdlcmenu(const DLC& dlc, const std::set<std::string>& dlcCats) {
     menu.Title(dlc.Name);
     menu.Subtitle("Sort by DLC");
 
-    for (auto category : dlcCats) {
+    for (const auto& category : dlcCats) {
         menu.MenuOption(category, dlc.Name + " " + category);
     }
     if (dlcCats.empty()) {
@@ -307,7 +322,7 @@ void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> d
 
 void update_menu() {
     menu.CheckKeys();
-    std::set<std::string> &addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
+    const std::set<std::string>& addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
 
     if (menu.CurrentMenu("mainmenu")) {
         update_mainmenu(addonCats);
@@ -321,19 +336,19 @@ void update_menu() {
         update_settingsmenu();
     }
 
-    for (auto category : addonCats) {
+    for (const auto& category : addonCats) {
         if (menu.CurrentMenu(category)) {
             update_spawnmenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
         }
     }    
 
     if (settings.MergeDLCs) {
-        std::set<std::string> &categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
+        const std::set<std::string>& categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
 
         if (menu.CurrentMenu("officialdlcmergedmenu")) {
             update_officialdlcmergedmenu(categories);
         }
-        for (auto category : categories) {
+        for (const auto& category : categories) {
             if (menu.CurrentMenu("dlc_" + category)) {
                 update_spawnmenu(category, g_dlcVehicles, "Original + All DLCs", settings.CategorizeMake);
             }
@@ -344,16 +359,33 @@ void update_menu() {
             update_officialdlcmenu();
         }
 
-        for (auto dlc : g_dlcs) {
-            std::set<std::string> &dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+        for (const auto& dlc : g_dlcs) {
+            const std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
             if (menu.CurrentMenu(dlc.Name)) {
                 update_perdlcmenu(dlc, dlcCats);
             }
-            for (auto className : dlcCats) {
+            for (const auto& className : dlcCats) {
                 if (menu.CurrentMenu(dlc.Name + " " + className)) {
                     update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
                 }
+            }
+        }
+    }
+
+    if (menu.CurrentMenu("userdlcmenu")) {
+        update_userdlcmenu();
+    }
+
+    for (const auto& dlc : g_userDlcs) {
+        const std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+
+        if (menu.CurrentMenu(dlc.Name)) {
+            update_perdlcmenu(dlc, dlcCats);
+        }
+        for (const auto& className : dlcCats) {
+            if (menu.CurrentMenu(dlc.Name + " " + className)) {
+                update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
             }
         }
     }
