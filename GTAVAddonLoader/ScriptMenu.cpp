@@ -262,7 +262,10 @@ void update_settingsmenu() {
                     { "Use for when you changed an image that's already been loaded."})) {
         clearImages();
     }
-    // TODO: Reload user DLC
+    if (menu.Option("Reload user DLC", 
+                    { "Reload your custom groupings" })) {
+        reloadUserDlc();
+    }
     if (menu.Option("Clean up image preview folder", 
                     { "Remove images from the preview folder that aren't detected as add-ons.",
                         "Removed files are put in a \"bak.timestamp\" folder." })) {

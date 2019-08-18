@@ -512,6 +512,32 @@ void checkCache(const std::string& cacheFile) {
     }
 }
 
+void clearAddonLists() {
+    g_addonVehiclesAll.clear();
+    g_dlcVehiclesAll.clear();
+    g_addonVehicles.clear();
+    g_addonClasses.clear();
+    g_addonMakes.clear();
+}
+
+void reloadUserDlc() {
+    clearAddonLists();
+
+    g_userDlcs = BuildUserDLCList();
+    cacheDLCVehicles(g_userDlcs);
+
+    // Remove user DLC from "normal" add-on pool.
+    for (const auto& dlc : g_userDlcs) {
+        logger.Write(INFO, "[User] DLC Name: %s", dlc.Name.c_str());
+        for (const auto& entry : dlc.Vehicles) {
+            logger.Write(INFO, "[User]         : 0x%X / %s", entry.ModelHash, entry.ModelName.c_str());
+        }
+    }
+
+    // moved after fetching user dlc so it can be excluded in the step
+    cacheAddons();
+}
+
 void main() {
     // logger.SetMinLevel(DEBUG);
     logger.Write(INFO, "Script started");
@@ -536,22 +562,7 @@ void main() {
 
     g_dlcs = buildDLClist();
     cacheDLCs();
-    
-    // This is... less than optimal. - ikt, 2019
-    g_userDlcs = BuildUserDLCList();
-    cacheDLCVehicles(g_userDlcs);
-
-    // Remove user DLC from "normal" add-on pool.
-    for (const auto& dlc : g_userDlcs) {
-        logger.Write(INFO, "[User] DLC Name: %s", dlc.Name.c_str());
-        for (const auto& entry : dlc.Hashes) {
-            logger.Write(INFO, "[User]         : 0x%X", entry);
-            
-        }
-    }
-
-    // moved after fetching user dlc so it can be excluded in the step
-    cacheAddons();
+    reloadUserDlc();
 
     Hash hash = joaat("noimage");
     std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
@@ -584,17 +595,13 @@ void main() {
 void clearGlobals() {
     g_missingImages.clear();
     g_persistentVehicles.clear();
-    g_addonClasses.clear();
-    g_addonMakes.clear();
-    g_addonVehicles.clear();
     g_addonImages.clear();
     g_dlcs.clear();
     g_dlcClasses.clear();
     g_dlcMakes.clear();
     g_dlcVehicles.clear();
     g_userDlcs.clear();
-    g_dlcVehiclesAll.clear();
-    g_addonVehiclesAll.clear();
+    clearAddonLists();
 }
 
 void ScriptMain() {
