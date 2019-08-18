@@ -112,8 +112,8 @@ void cleanImageDirectory(bool backup) {
             //logger.Write(INFO, "Marked " + fs::path(file).stem().string());
         }
     }
-    std::string bakPath = "";
-    if (filesToDiscard.size() == 0) {
+    std::string bakPath;
+    if (filesToDiscard.empty()) {
         logger.Write(INFO, "No files to discard");
         return;
     }
@@ -175,18 +175,18 @@ void cacheDLCVehicles() {
     }
     g_dlcVehicles.clear();
     g_dlcClasses.clear();
-    for (auto dlc : g_dlcs) {
-        for (ModelInfo vehicle : dlc.Vehicles) {
+    for (const auto& dlc : g_dlcs) {
+        for (const ModelInfo& vehicle : dlc.Vehicles) {
             g_dlcVehicles.push_back(vehicle);
         }
-        for (auto dlcClass : dlc.Classes) {
+        for (const auto& dlcClass : dlc.Classes) {
             g_dlcClasses.emplace(dlcClass);
         }
-        for (auto dlcMake : dlc.Makes) {
+        for (const auto& dlcMake : dlc.Makes) {
             g_dlcMakes.emplace(dlcMake);
         }
     }
-    std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](ModelInfo a1, ModelInfo a2) {
+    std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](const ModelInfo& a1, const ModelInfo& a2) {
         std::string name1 = getGxtName(a1.ModelHash);
         std::string name2 = getGxtName(a2.ModelHash);
         if (name1 == name2) {
@@ -242,7 +242,7 @@ void cacheAddons() {
         return;
 
     std::vector<Hash> allVehicles;
-    for (auto hash : g_vehicleHashes) {
+    for (const auto& hash : g_vehicleHashes) {
         allVehicles.push_back(hash.first);
     }
 
@@ -270,7 +270,7 @@ void cacheAddons() {
         std::string makeName = getMakeName(hash);
 
         if (isHashInDLCList(g_dlcs, hash)){
-            g_dlcVehiclesAll.push_back(ModelInfo(className, makeName, getModelName(hash), hash));
+            g_dlcVehiclesAll.emplace_back(className, makeName, getModelName(hash), hash);
         }
         else {
             std::stringstream hashAsHex;
@@ -282,10 +282,10 @@ void cacheAddons() {
             logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getModelName(hash);
             logStream << std::left << std::setw(nameLength) << std::setfill(' ') << getGxtName(hash);
             logger.Write(INFO, logStream.str());
-            g_addonVehiclesAll.push_back(ModelInfo(className, makeName, getModelName(hash), hash));
+            g_addonVehiclesAll.emplace_back(className, makeName, getModelName(hash), hash);
         }
         if (!isHashInDLCList(g_dlcs, hash) && !isHashInDLCList(g_userDlcs, hash)) {
-            g_addonVehicles.push_back(ModelInfo(className, makeName, getModelName(hash), hash));
+            g_addonVehicles.emplace_back(className, makeName, getModelName(hash), hash);
             g_addonClasses.emplace(className);
             g_addonMakes.emplace(makeName);
         }
@@ -293,14 +293,14 @@ void cacheAddons() {
 }
 
 void clearPersistentVehicles() {
-    for (Vehicle veh : g_persistentVehicles) {
+    for (Vehicle& veh : g_persistentVehicles) {
         ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, false, true);
         ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
     }
     g_persistentVehicles.clear();
 }
 
-bool findStringInNames(std::string search, Hash hash) {
+bool findStringInNames(const std::string& search, Hash hash) {
     char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
     std::string displayName = UI::_GET_LABEL_TEXT(name);
     std::string rawName = name;
@@ -456,7 +456,7 @@ std::string getImageExtra(Hash addonVehicle) {
  * Used by the menu so it gets only the info of the current addon vehicle option,
  * instead of everything. 
  */
-std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle) {
+std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
     std::vector<std::string> extras;
 
     auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
@@ -476,11 +476,11 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
     extras.push_back("Make: \t" + makeFinal);
     extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
     extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
-    if (modkitsInfo.size() > 0) {
+    if (!modkitsInfo.empty()) {
         extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
     }
     else {
-        extras.push_back("Mod kit ID(s): \tNone");
+        extras.emplace_back("Mod kit ID(s): \tNone");
     }
     return extras;
 }
@@ -491,8 +491,8 @@ std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type a
  * subsequent reloads make for an empty g_vehicleHashes. Cache is updated each
  * full game launch since g_vehicleHashes isn't empty.
  */
-void checkCache(std::string cacheFile) {
-    if (g_vehicleHashes.size() != 0) {
+void checkCache(const std::string& cacheFile) {
+    if (!g_vehicleHashes.empty()) {
         std::ofstream outfile;
         outfile.open(cacheFile, std::ofstream::out | std::ofstream::trunc);
         for (auto hash : g_vehicleHashes) {

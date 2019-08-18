@@ -20,7 +20,7 @@ void ScriptMain();
 void update_menu();
 void onMenuOpen();
 void onMenuExit();
-std::vector<std::string> resolveVehicleInfo(std::vector<ModelInfo>::value_type addonVehicle);
+std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle);
 
 void cacheAddons();
 void cacheDLCs();

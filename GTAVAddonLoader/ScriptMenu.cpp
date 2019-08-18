@@ -82,7 +82,7 @@ bool evaluateInput(std::string &searchFor) {
 
 void update_searchresults() {
     g_matchedVehicles.clear();
-    for (auto addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
+    for (const auto& addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
         char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
         std::string displayName = UI::_GET_LABEL_TEXT(name);
         std::string rawName = name;
@@ -116,7 +116,7 @@ void onMenuExit() {
     manualVehicleName.clear();
 }
 
-void format_infobox(std::vector<ModelInfo>::value_type vehicle) {
+void format_infobox(const ModelInfo& vehicle) {
     char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash);
     std::string displayName = UI::_GET_LABEL_TEXT(name);
     if (displayName == "NULL") {
@@ -133,18 +133,19 @@ void format_infobox(std::vector<ModelInfo>::value_type vehicle) {
     }
 }
 
-void update_spawnmenu(std::string category, std::vector<ModelInfo> addonVehicles, std::string origin, bool asMake) {
+void update_spawnmenu(const std::string& category, const std::vector<ModelInfo>& addonVehicles, 
+                      const std::string& origin, bool asMake) {
     menu.Title(category);
     menu.Subtitle(origin);
 
-    for (auto vehicle : addonVehicles) {
+    for (const auto& vehicle : addonVehicles) {
         if (category == (asMake ? vehicle.MakeName : vehicle.ClassName)) {
             format_infobox(vehicle);
         }
     }
 }
 
-void update_mainmenu(std::set<std::string> addonCats) {
+void update_mainmenu(const std::set<std::string>& addonCats) {
     menu.Title("Add-on spawner");
     menu.Subtitle("~b~" + std::string(DISPLAY_VERSION) + "~w~");
 
@@ -185,7 +186,7 @@ void update_mainmenu(std::set<std::string> addonCats) {
         menu.MenuOption("Spawn user DLCs", "userdlcmenu");
     }
 
-    for (auto category : addonCats) {
+    for (const auto& category : addonCats) {
         menu.MenuOption(category, category);
     }
 }
@@ -214,7 +215,7 @@ void update_searchmenu() {
         update_searchresults();
     }
 
-    for (auto vehicle : g_matchedVehicles) {
+    for (const auto& vehicle : g_matchedVehicles) {
         format_infobox(vehicle);
     }
 }
@@ -276,11 +277,11 @@ void update_settingsmenu() {
     }
 }
 
-void update_officialdlcmergedmenu(std::set<std::string> categories) {
+void update_officialdlcmergedmenu(const std::set<std::string>& categories) {
     menu.Title("Official DLC");
     menu.Subtitle("Merged");
 
-    for (auto category : categories) {
+    for (const auto& category : categories) {
         menu.MenuOption(category, "dlc_" + category);
     }
 }
@@ -289,7 +290,7 @@ void update_officialdlcmenu() {
     menu.Title("Official DLC");
     menu.Subtitle("Sort by DLC");
 
-    for (auto dlc : g_dlcs) {
+    for (const auto& dlc : g_dlcs) {
         menu.MenuOption(dlc.Name, dlc.Name);
     }
 }
@@ -298,16 +299,16 @@ void update_userdlcmenu() {
     menu.Title("User DLC");
     menu.Subtitle("User add-on groupings");
 
-    for (auto dlc : g_userDlcs) {
+    for (const auto& dlc : g_userDlcs) {
         menu.MenuOption(dlc.Name, dlc.Name);
     }
 }
 
-void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> dlcCats) {
+void update_perdlcmenu(const DLC& dlc, const std::set<std::string>& dlcCats) {
     menu.Title(dlc.Name);
     menu.Subtitle("Sort by DLC");
 
-    for (auto category : dlcCats) {
+    for (const auto& category : dlcCats) {
         menu.MenuOption(category, dlc.Name + " " + category);
     }
     if (dlcCats.empty()) {
@@ -318,7 +319,7 @@ void update_perdlcmenu(std::vector<DLC>::value_type dlc, std::set<std::string> d
 
 void update_menu() {
     menu.CheckKeys();
-    std::set<std::string> &addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
+    const std::set<std::string>& addonCats = settings.CategorizeMake ? g_addonMakes : g_addonClasses;
 
     if (menu.CurrentMenu("mainmenu")) {
         update_mainmenu(addonCats);
@@ -332,19 +333,19 @@ void update_menu() {
         update_settingsmenu();
     }
 
-    for (auto category : addonCats) {
+    for (const auto& category : addonCats) {
         if (menu.CurrentMenu(category)) {
             update_spawnmenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
         }
     }    
 
     if (settings.MergeDLCs) {
-        std::set<std::string> &categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
+        const std::set<std::string>& categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;
 
         if (menu.CurrentMenu("officialdlcmergedmenu")) {
             update_officialdlcmergedmenu(categories);
         }
-        for (auto category : categories) {
+        for (const auto& category : categories) {
             if (menu.CurrentMenu("dlc_" + category)) {
                 update_spawnmenu(category, g_dlcVehicles, "Original + All DLCs", settings.CategorizeMake);
             }
@@ -355,13 +356,13 @@ void update_menu() {
             update_officialdlcmenu();
         }
 
-        for (auto dlc : g_dlcs) {
-            std::set<std::string> &dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+        for (const auto& dlc : g_dlcs) {
+            const std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
             if (menu.CurrentMenu(dlc.Name)) {
                 update_perdlcmenu(dlc, dlcCats);
             }
-            for (auto className : dlcCats) {
+            for (const auto& className : dlcCats) {
                 if (menu.CurrentMenu(dlc.Name + " " + className)) {
                     update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
                 }
@@ -373,13 +374,13 @@ void update_menu() {
         update_userdlcmenu();
     }
 
-    for (auto dlc : g_userDlcs) {
-        std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
+    for (const auto& dlc : g_userDlcs) {
+        const std::set<std::string>& dlcCats = settings.CategorizeMake ? dlc.Makes : dlc.Classes;
 
         if (menu.CurrentMenu(dlc.Name)) {
             update_perdlcmenu(dlc, dlcCats);
         }
-        for (auto className : dlcCats) {
+        for (const auto& className : dlcCats) {
             if (menu.CurrentMenu(dlc.Name + " " + className)) {
                 update_spawnmenu(className, dlc.Vehicles, dlc.Name, settings.CategorizeMake);
             }
