@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0
+* Add user-filtering, see README/INSTRUCTIONS for more information
+* Remove internal sprite usage
+* Bug fixes and code improvements
+
 ## v1.3.8
 * Update grouping for b1737
 
