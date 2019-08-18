@@ -9,45 +9,43 @@
 #include "ExtraTypes.h"
 #include "NativeMemory.hpp"
 #include "Util/Util.hpp"
-#include "VehicleHashes.h"
 
-std::string manualVehicleName = "";
-std::string searchVehicleName = "";
+std::string manualVehicleName;
+std::string searchVehicleName;
 bool manualSpawnSelected = false;
 bool searchEntrySelected = false;
 std::vector<ModelInfo> g_matchedVehicles;
 
-
 extern NativeMenu::Menu menu;
-extern NativeMenu::MenuControls controls;
 extern Settings settings;
-extern Ped playerPed;
 
-extern std::vector<Hash> g_missingImages;
+// Keep a list of vehicles we marked as mission entity
 extern std::vector<Vehicle> g_persistentVehicles;
 
-extern std::set<std::string> g_addonClasses;
-extern std::set<std::string> g_addonMakes;
-extern std::vector<ModelInfo> g_addonVehicles;    // all add-on vehicles
-extern std::vector<AddonImage> g_addonImages;
-
-extern std::vector<Hash> g_gameVehicles;             // all base vehicles
+// Stock vehicles DLC. Needs to be updated every DLC release. 
 extern std::vector<DLC> g_dlcs;
-extern std::set<std::string> g_dlcClasses;
-extern std::set<std::string> g_dlcMakes;
-extern std::vector<ModelInfo> g_dlcVehicles;
 
+// User vehicles DLCs. User-updateable.
 extern std::vector<DLC> g_userDlcs;
+
+// Classes and makes, for grouping in the main menu by either class or make.
+extern std::set<std::string> g_addonClasses;   // Grouping-related
+extern std::set<std::string> g_addonMakes;     // Grouping-related
+extern std::set<std::string> g_dlcClasses;     // Grouping-related
+extern std::set<std::string> g_dlcMakes;       // Grouping-related
+
+// These have been filtered by user DLC
+extern std::vector<ModelInfo> g_addonVehicles;     // add-on vehicles - used for sorting
+extern std::vector<ModelInfo> g_dlcVehicles;       // game vehicles - used for sorting
 
 // These contain everything
 extern std::vector<ModelInfo> g_addonVehiclesAll;     // all add-on vehicles - used for sorting
 extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - used for sorting
+
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
-    PLAYER::IS_PLAYER_CONTROL_ON(false);
     UI::SET_PAUSE_MENU_ACTIVE(false);
     CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(2);
-    CONTROLS::IS_CONTROL_ENABLED(playerPed, false);
 
     for (char c = ' '; c < '~'; c++) {
         int key = str2key(std::string(1, c));
@@ -88,7 +86,7 @@ void update_searchresults() {
         char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
         std::string displayName = UI::_GET_LABEL_TEXT(name);
         std::string rawName = name;
-        std::string modelName = getModelName(addonVehicle.ModelHash);
+        std::string modelName = addonVehicle.ModelName;
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
         std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
 
@@ -261,16 +259,13 @@ void update_settingsmenu() {
     }
     if (menu.Option("Reload previews", 
                     { "Use for when you changed an image that's already been loaded."})) {
-        g_missingImages.clear();
-        g_addonImages.clear();
+        clearImages();
     }
     // TODO: Reload user DLC
     if (menu.Option("Clean up image preview folder", 
                     { "Remove images from the preview folder that aren't detected as add-ons.",
                         "Removed files are put in a \"bak.timestamp\" folder." })) {
-        g_missingImages.clear();
-        g_addonImages.clear();
-
+        clearImages();
         cleanImageDirectory(true);
     }
     if (settings.Persistent) {

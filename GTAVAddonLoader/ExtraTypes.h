@@ -9,11 +9,12 @@ class ModelInfo {
 public:
     ModelInfo(): ModelHash(0) { }
 
-    ModelInfo(std::string className, std::string makeName, Hash hash) :
-              ClassName(className), MakeName(makeName), ModelHash(hash) { }
+    ModelInfo(std::string className, std::string makeName, std::string modelName, Hash hash) :
+              ClassName(className), MakeName(makeName), ModelName(modelName), ModelHash(hash) { }
 
     std::string ClassName;
     std::string MakeName;
+    std::string ModelName;
     Hash ModelHash;
     // TODO: AddonImage?
 };
