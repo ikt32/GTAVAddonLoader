@@ -1,5 +1,5 @@
 #define NOMINMAX
-#include "../../../ScriptHookV_SDK/inc/natives.h"
+#include "inc/natives.h"
 #include "Util.hpp"
 #include <algorithm>
 #include <experimental/filesystem>

@@ -4,7 +4,7 @@ http://dev-c.com
 (C) Alexander Blade 2015
 */
 
-#include "..\..\ScriptHookV_SDK\inc\main.h"
+#include "inc\main.h"
 #include "script.h"
 #include "keyboard.h"
 #include "Util/Paths.h"

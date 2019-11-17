@@ -14,21 +14,6 @@
     <ClCompile Include="Util\Paths.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menu.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menucontrols.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menukeyboard.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menusettings.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menuutils.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptMenu.cpp" />
     <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp">
       <Filter>thirdparty</Filter>
@@ -42,10 +27,25 @@
     <ClCompile Include="Hooking.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\GTAVMenuBase\menumemutils.cpp">
+    <ClCompile Include="UserDLC.cpp" />
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menu.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="UserDLC.cpp" />
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menucontrols.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menukeyboard.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menumemutils.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menusettings.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\GTAVMenuBase\menuutils.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
@@ -76,21 +76,6 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="VehicleHashes.h" />
-    <ClInclude Include="..\..\GTAVMenuBase\menu.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\menucontrols.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\menukeyboard.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\menusettings.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\menuutils.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
     <ClInclude Include="ExtraTypes.h" />
     <ClInclude Include="..\thirdparty\lodepng\lodepng.h">
       <Filter>thirdparty</Filter>
@@ -101,16 +86,34 @@
     <ClInclude Include="NativeMemory.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\Scaleform.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
     <ClInclude Include="Hooking.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GTAVMenuBase\menumemutils.hpp">
+    <ClInclude Include="UserDLC.h" />
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\InstructionalButton.h">
       <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="UserDLC.h" />
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menu.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menucontrols.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menukeyboard.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menusettings.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menuutils.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\Scaleform.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\GTAVMenuBase\menumemutils.hpp">
+      <Filter>Menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">
@@ -128,5 +131,10 @@
     <Filter Include="Memory">
       <UniqueIdentifier>{99f880a3-306a-43ff-b7b2-432e57255433}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\thirdparty\ScriptHookV_SDK\lib\ScriptHookV.lib">
+      <Filter>SDK</Filter>
+    </Library>
   </ItemGroup>
 </Project>
