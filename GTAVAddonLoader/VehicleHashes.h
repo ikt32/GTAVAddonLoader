@@ -788,6 +788,29 @@ static const std::vector<Hash> CasinoVehicles = {
     0xD757D97D, //  Super               ZORRUSSO            zorrusso            Zorrusso
 };
 
+static const std::vector<Hash> CasinoHeistVehicles = {
+    0x42ACA95F, //  Compacts            ASBO                asbo                Asbo                
+    0x18619B7E, //  Compacts            KANJO               kanjo               Blista Kanjo        
+    0x64F49967, //  Muscle              YOSEMITE2           yosemite2           Drift Yosemite      
+    0x97553C28, //  Off-Road            EVERON              everon              Everon              
+    0x3944D5A0, //  Super               FURIA               furia               Furia               
+    0xBC7C0A00, //  Sports              IMORGON             imorgon             Imorgon             
+    0xB53C6C52, //  Military            MINITANK            minitank            Invade and Persuade Tank
+    0x177DA45C, //  Sports Classics     JB7002              jb7002              JB 700W             
+    0xCE44C4B9, //  Sports              KOMODA              komoda              Komoda              
+    0x185E2FF3, //  Off-Road            OUTLAW              outlaw              Outlaw              
+    0x1446590A, //  Open Wheel          FORMULA             formula             PR4                 
+    0x8B213907, //  Open Wheel          FORMULA2            formula2            R88                 
+    0x04F48FC4, //  SUVs                REBLA               rebla               Rebla GTS           
+    0x79178F0A, //  Sports Classics     RETINUE2            retinue2            Retinue Mk II       
+    0x11F58A5A, //  Motorcycles         Stryder             Stryder             Stryder             
+    0x3ADB9758, //  Sports              Sugoi               Sugoi               Sugoi               
+    0x3404691C, //  Sports              SULTAN2             sultan2             Sultan Classic      
+    0x56CDEE7D, //  Sports              VSTR                vstr                V-STR               
+    0x2C1FEA99, //  Off-Road            VAGRANT             vagrant             Vagrant             
+    0x4C8DBA51, //  Off-Road            ZHABA               zhaba               Zhaba               
+};
+
 inline std::vector<DLC> buildDLClist() {
     return {
         { DLC("Original game", OriginalVehicles) },
@@ -821,5 +844,6 @@ inline std::vector<DLC> buildDLClist() {
         { DLC("After Hours", AfterHoursVehicles) },
         { DLC("Arena War", ArenaWarVehicles) },
         { DLC("The Diamond Casino & Resort", CasinoVehicles) },
+        { DLC("The Diamond Casino Heist", CasinoHeistVehicles) },
     };
 }
