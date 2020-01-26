@@ -2,13 +2,13 @@
 #include "inc/natives.h"
 #include "Util.hpp"
 #include <algorithm>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <lodepng/lodepng.h>
 #include <jpegsize.h>
 
 #include "Logger.hpp"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 void showText(float x, float y, float scale, const char* text, int font, const Color &rgba, bool outline) {
     UI::SET_TEXT_FONT(font);
