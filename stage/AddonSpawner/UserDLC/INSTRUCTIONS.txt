@@ -1,0 +1,15 @@
+# User DLC Instructions
+
+Create a <DLC Name>.list file with the model names you want in the DLC.
+For example, if you have a few vanilla vehicles, create the following file:
+
+VanillaWorks Lite.list
+
+Inside the .list file, put each model you want on a new line, for example
+
+streiter2
+vincent2
+
+A `VanillaWorks Lite` entry will then appear in the main menu - with under it,
+the vehicles you added. Still sortable by brand or class, giving you more power
+to manage your add-on vehicle packs.
