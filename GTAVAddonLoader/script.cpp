@@ -145,7 +145,9 @@ void cleanImageDirectory(bool backup) {
 }
 
 std::string getMakeName(Hash hash) {
-    char* makeName = MemoryAccess::GetVehicleMakeName(hash);
+    char* makeName = invoke<char *>(0xF7AF4F159FF99F97, hash);
+
+    //char* makeName = MemoryAccess::GetVehicleMakeName(hash);
     if (strcmp(UI::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
         return "No make";
     }
@@ -459,16 +461,16 @@ std::string getImageExtra(Hash addonVehicle) {
 std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
     std::vector<std::string> extras;
 
-    auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
-    std::string modkitsInfo;
-    for (auto kit : modkits) {
-        if (kit == modkits.back()) {
-            modkitsInfo += std::to_string(kit);
-        }
-        else {
-            modkitsInfo += std::to_string(kit) + ", ";
-        }
-    }
+    //auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
+    //std::string modkitsInfo;
+    //for (auto kit : modkits) {
+    //    if (kit == modkits.back()) {
+    //        modkitsInfo += std::to_string(kit);
+    //    }
+    //    else {
+    //        modkitsInfo += std::to_string(kit) + ", ";
+    //    }
+    //}
 
     extras.push_back(getImageExtra(addonVehicle.ModelHash));
 
@@ -476,12 +478,12 @@ std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
     extras.push_back("Make: \t" + makeFinal);
     extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
     extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
-    if (!modkitsInfo.empty()) {
-        extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
-    }
-    else {
-        extras.emplace_back("Mod kit ID(s): \tNone");
-    }
+    //if (!modkitsInfo.empty()) {
+    //    extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
+    //}
+    //else {
+    //    extras.emplace_back("Mod kit ID(s): \tNone");
+    //}
     return extras;
 }
 
@@ -538,6 +540,47 @@ void reloadUserDlc() {
     cacheAddons();
 }
 
+template <typename F, typename ... Args>
+void CheckCheat(const std::string& cheat, F func, Args...args) {
+    Hash hash = GAMEPLAY::GET_HASH_KEY(const_cast<char*>(cheat.c_str()));
+    if (GAMEPLAY::_HAS_CHEAT_STRING_JUST_BEEN_ENTERED(hash)) {
+        func(args...);
+    }
+}
+
+void SetModKit(Hash model) {
+    showNotification("Enter modkit id wanted?");
+    GAMEPLAY::DISPLAY_ONSCREEN_KEYBOARD(0, "FMMC_KEY_TIP8", "", "", "", "", "", 31);
+    while (GAMEPLAY::UPDATE_ONSCREEN_KEYBOARD() == 0) WAIT(0);
+    if (!GAMEPLAY::GET_ONSCREEN_KEYBOARD_RESULT()) {
+        showNotification("Cancelled");
+        return;
+    }
+
+    std::string modkitStr = GAMEPLAY::GET_ONSCREEN_KEYBOARD_RESULT();
+    int modKit = -1;
+    int result = sscanf_s(modkitStr.c_str(), "%d", &modKit);
+
+    if (result != 1)
+        modKit = -1;
+
+    if (modKit == -1) {
+        showNotification("Invalid entry");
+        return;
+    }
+
+    logger.Write(INFO, "Setting modkit %d to model 0x%X", modKit, model);
+
+    MemoryAccess::SetVehicleModKits(model, { static_cast<uint16_t>(modKit) });
+}
+
+void update_cheat() {
+    Ped playerPed = PLAYER::PLAYER_PED_ID();
+    Vehicle vehicle = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
+    Hash model = ENTITY::GET_ENTITY_MODEL(vehicle);
+    CheckCheat("setmodkit", SetModKit, model);
+}
+
 void main() {
     // logger.SetMinLevel(DEBUG);
     logger.Write(INFO, "Script started");
@@ -588,6 +631,7 @@ void main() {
 
     while (true) {
         update_menu();
+        update_cheat();
         WAIT(0);
     }
 }

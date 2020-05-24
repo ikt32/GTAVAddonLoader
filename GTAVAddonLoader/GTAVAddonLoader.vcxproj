@@ -130,10 +130,6 @@
     <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\enums.h" />
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\main.h" />
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\natives.h" />
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\types.h" />
     <ClInclude Include="..\thirdparty\GTAVMenuBase\InstructionalButton.h" />
     <ClInclude Include="..\thirdparty\GTAVMenuBase\menu.h" />
     <ClInclude Include="..\thirdparty\GTAVMenuBase\menucontrols.h" />
@@ -144,6 +140,11 @@
     <ClInclude Include="..\thirdparty\GTAVMenuBase\Scaleform.h" />
     <ClInclude Include="..\thirdparty\jpegsize.h" />
     <ClInclude Include="..\thirdparty\lodepng\lodepng.h" />
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\enums.h" />
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\main.h" />
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\nativeCaller.h" />
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\natives.h" />
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\types.h" />
     <ClInclude Include="ExtraTypes.h" />
     <ClInclude Include="Hooking.h" />
     <ClInclude Include="keyboard.h" />

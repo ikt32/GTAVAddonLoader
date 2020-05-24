@@ -331,6 +331,7 @@ public:
     static char *GetVehicleGameName(int modelHash);
     static char *GetVehicleMakeName(int modelHash);
     static std::vector<uint16_t> GetVehicleModKits(int modelHash);
+    static void SetVehicleModKits(int modelHash, const std::vector<uint16_t>& modKits);
 private:
     static bool findShopController();
     static void enableCarsGlobal();

@@ -51,18 +51,6 @@
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="script.h" />
     <ClInclude Include="settings.h" />
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\main.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\types.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\natives.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ScriptHookV_SDK\inc\enums.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="Util\Versions.h">
       <Filter>Util</Filter>
     </ClInclude>
@@ -113,6 +101,21 @@
     </ClInclude>
     <ClInclude Include="..\thirdparty\GTAVMenuBase\menumemutils.hpp">
       <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\enums.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\main.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\nativeCaller.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\natives.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\types.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

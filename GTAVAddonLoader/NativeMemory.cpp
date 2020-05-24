@@ -107,9 +107,55 @@ std::vector<uint16_t> GetVehicleModKits_t(int modelHash) {
         for (uint16_t i = 0; i < count; i++) {
             uint16_t modKit = modelInfo->m_modKits[i];
             modKits.push_back(modKit);
+
+            //BYTE modKitIndex = *(BYTE*)((DWORD64)info->modKitsPtr + i);
+            //if (modKitIndex >= 0 && modKitIndex <= 255)
+            //{
+            //    BYTE modKit = *(BYTE*)(modKitsAddr + 0x70 * modKitIndex + 4);
+            //    Log("%s = %u (in-game: %u)\n", pair.name, modKit, modKitIndex);
+            //}
+
         }
+
     }
     return modKits;
+}
+
+template < typename ModelInfo >
+void SetVehicleModKits_t(int modelHash, const std::vector<uint16_t>& modKits) {
+    int index = 0xFFFF;
+    auto* modelInfo = reinterpret_cast<ModelInfo*>(GetModelInfo(modelHash, &index));
+    if (modelInfo && modelInfo->GetModelType() == 5) {
+        modelInfo->m_modKitsCount = modKits.size();
+        logger.Write(INFO, "Set modkit size to %d", modelInfo->m_modKitsCount);
+        logger.Write(INFO, "Allocating memory...", modelInfo->m_modKitsCount);
+        modelInfo->m_modKits = new uint16_t[modKits.size()];
+        for (uint16_t i = 0; i < modKits.size(); i++) {
+            modelInfo->m_modKits[i] = modKits[i];
+            logger.Write(INFO, "Set modkit to %u", modelInfo->m_modKits[i]);
+        }
+    }
+}
+
+void GetVehicleModKits2(int modelHash) {
+    int index = 0xFFFF;
+    //DWORD64 modKitsAddr = *(DWORD64*)(g_vehicleModelInfoVarGlobal + 0x58);
+    CVehicleModelInfo1290* info = (CVehicleModelInfo1290*)GetModelInfo(modelHash, &index);
+    if (info != nullptr)
+    {
+        if (info->m_modKitsCount > 0)
+        {
+            for (UINT16 i = 0; i < info->m_modKitsCount; i++)
+            {
+                BYTE modKitIndex = *(BYTE*)((DWORD64)info->m_modKits + i);
+                if (modKitIndex >= 0 && modKitIndex <= 255)
+                {
+                    //BYTE modKit = *(BYTE*)(modKitsAddr + 0x70 * modKitIndex + 4);
+                    //logger.Write(INFO, "0x%X = %u (in-game: %u / %u)\n", modelHash, modKit, modKitIndex, info->m_modKits[i]);
+                }
+            }
+        }
+    }
 }
 
 std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
@@ -119,6 +165,10 @@ std::vector<uint16_t> MemoryAccess::GetVehicleModKits(int modelHash) {
     else {
         return GetVehicleModKits_t<CVehicleModelInfo1290>(modelHash);
     }
+}
+
+void MemoryAccess::SetVehicleModKits(int modelHash, const std::vector<uint16_t>& modKits) {
+    SetVehicleModKits_t<CVehicleModelInfo1290>(modelHash, modKits);
 }
 
 char *MemoryAccess::GetVehicleGameName(int modelHash) {
