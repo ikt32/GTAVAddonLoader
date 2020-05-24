@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.4.2
+
+* Support Epic Game Store version (1.0.1868.4)
+
 ## v1.4.1
 * Update grouping for b1868
 * Fix ghost menu active for categories without any name
