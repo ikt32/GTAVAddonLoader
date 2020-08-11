@@ -61,7 +61,7 @@ void removeHooks() {
 void MemoryAccess::Init() {
     uintptr_t addr;
 
-    if (gameVersion <= 56) {
+    if (gameVersion <= 57) {
         addr = FindPattern(
             "\x0F\xB7\x05\x00\x00\x00\x00"
             "\x45\x33\xC9\x4C\x8B\xDA\x66\x85\xC0"
@@ -83,7 +83,7 @@ void MemoryAccess::Init() {
     else {
         addr = FindPattern("\xEB\x09\x41\x3B\x0A\x74\x54", "xxxxxxx");
         if (!addr) {
-            logger.Write(ERROR, "Couldn't find GetModelInfo (v57+)");
+            logger.Write(ERROR, "Couldn't find GetModelInfo (v58+)");
         }
         addr = addr - 0x2C;
     }

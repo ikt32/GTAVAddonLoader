@@ -811,6 +811,24 @@ static const std::vector<Hash> CasinoHeistVehicles = {
     0x4C8DBA51, //  Off-Road            ZHABA               zhaba               Zhaba               
 };
 
+static const std::vector<Hash> LosSantosSummerSpecialVehicles = {
+    0x58F77553, //  Open Wheel          OPENWHEEL1          openwheel1          BR8                 
+    0x7F3415E3, //  Muscle              DUKES3              dukes3              Beater Dukes        
+    0x82E47E85, //  Compacts            CLUB                club                Club                
+    0x98F65A5E, //  Sports              COQUETTE4           coquette4           Coquette D10        
+    0x4669D038, //  Open Wheel          OPENWHEEL2          openwheel2          DR1                 
+    0x817AFAAD, //  Muscle              GAUNTLET5           gauntlet5           Gauntlet Classic Custom
+    0xC98BBAD6, //  Sedans              GLENDALE2           glendale2           Glendale Custom     
+    0xCE0B9F22, //  SUVs                LANDSTLKR2          landstalker2        Landstalker XL      
+    0x665F785D, //  Muscle              MANANA2             manana2             Manana Custom       
+    0xDA5EC7DA, //  Sports              PENUMBRA2           penumbra2           Penumbra FF         
+    0x4201A843, //  Sports Classics     PEYOTE3             peyote3             Peyote Custom       
+    0x94114926, //  SUVs                SEMINOLE2           seminole2           Seminole Frontier   
+    0xAF0B8D48, //  Super               TIGON               tigon               Tigon               
+    0x0409D787, //  Off-Road            yosemite3           yosemite3           Yosemite Rancher    
+    0x6B73A9BE, //  Vans                YOUGA3              youga3              Youga Classic 4x4   
+};
+
 inline std::vector<DLC> buildDLClist() {
     return {
         { DLC("Original game", OriginalVehicles) },
@@ -845,5 +863,6 @@ inline std::vector<DLC> buildDLClist() {
         { DLC("Arena War", ArenaWarVehicles) },
         { DLC("The Diamond Casino & Resort", CasinoVehicles) },
         { DLC("The Diamond Casino Heist", CasinoHeistVehicles) },
+        { DLC("Los Santos Summer Special", LosSantosSummerSpecialVehicles) },
     };
 }
