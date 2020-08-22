@@ -23,10 +23,10 @@ extern Settings settings;
 extern std::vector<Vehicle> g_persistentVehicles;
 
 // Stock vehicles DLC. Needs to be updated every DLC release. 
-extern std::vector<DLC> g_dlcs;
+extern std::vector<DLCDefinition> g_dlcs;
 
 // User vehicles DLCs. User-updateable.
-extern std::vector<DLC> g_userDlcs;
+extern std::vector<DLCDefinition> g_userDlcs;
 
 // Classes and makes, for grouping in the main menu by either class or make.
 extern std::set<std::string> g_addonClasses;   // Grouping-related
@@ -44,8 +44,8 @@ extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - use
 
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
-    UI::SET_PAUSE_MENU_ACTIVE(false);
-    CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(2);
+    HUD::SET_PAUSE_MENU_ACTIVE(false);
+    PAD::DISABLE_ALL_CONTROL_ACTIONS(2);
 
     for (char c = ' '; c < '~'; c++) {
         int key = str2key(std::string(1, c));
@@ -83,12 +83,12 @@ bool evaluateInput(std::string &searchFor) {
 void update_searchresults() {
     g_matchedVehicles.clear();
     for (const auto& addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
-        char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
-        std::string displayName = UI::_GET_LABEL_TEXT(name);
+        const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
+        std::string displayName = HUD::_GET_LABEL_TEXT(name);
         std::string rawName = name;
         std::string modelName = addonVehicle.ModelName;
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
-        std::string makeName = UI::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
+        std::string makeName = HUD::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
 
         if (findSubstring(rawName, searchVehicleName) != -1 ||
             findSubstring(displayName, searchVehicleName) != -1 ||
@@ -117,8 +117,8 @@ void onMenuExit() {
 }
 
 void format_infobox(const ModelInfo& vehicle) {
-    char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash);
-    std::string displayName = UI::_GET_LABEL_TEXT(name);
+    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash);
+    std::string displayName = HUD::_GET_LABEL_TEXT(name);
     if (displayName == "NULL") {
         displayName = name;
     }
@@ -169,7 +169,7 @@ void update_mainmenu(const std::set<std::string>& addonCats) {
         }
 
         if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
-            spawnVehicle(GAMEPLAY::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
+            spawnVehicle(MISC::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
         }
     }
 
@@ -307,7 +307,7 @@ void update_userdlcmenu() {
     }
 }
 
-void update_perdlcmenu(const DLC& dlc, const std::set<std::string>& dlcCats) {
+void update_perdlcmenu(const DLCDefinition& dlc, const std::set<std::string>& dlcCats) {
     menu.Title(dlc.Name);
     menu.Subtitle("Sort by DLC");
 

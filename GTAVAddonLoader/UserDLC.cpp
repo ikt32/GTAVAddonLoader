@@ -16,7 +16,7 @@ namespace {
     }
 }
 
-DLC parseFile(const std::filesystem::directory_entry& de) {
+DLCDefinition parseFile(const std::filesystem::directory_entry& de) {
     std::vector<Hash> hashes;
     std::ifstream file(de.path().string());
 
@@ -26,20 +26,20 @@ DLC parseFile(const std::filesystem::directory_entry& de) {
     }
 
     if (hashes.empty()) {
-        return DLC("", std::vector<Hash>());
+        return DLCDefinition("", std::vector<Hash>());
     }
 
-    return DLC(de.path().stem().string(), hashes);
+    return DLCDefinition(de.path().stem().string(), hashes);
 }
 
-std::vector<DLC> BuildUserDLCList() {
-    std::vector<DLC> userDLCs;
+std::vector<DLCDefinition> BuildUserDLCList() {
+    std::vector<DLCDefinition> userDLCs;
     std::string userDlcPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\UserDLC";
     for (auto& file : fs::directory_iterator(userDlcPath)) {
         if (toLower(fs::path(file).extension().string()) != ".list")
             continue;
 
-        DLC dlc = parseFile(file);
+        DLCDefinition dlc = parseFile(file);
         if (!dlc.Name.empty())
             userDLCs.emplace_back(dlc);
     }

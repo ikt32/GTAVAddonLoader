@@ -34,9 +34,9 @@ public:
     int TextureID;
 };
 
-class DLC {
+class DLCDefinition {
 public:
-    DLC(std::string name, std::vector<Hash> hashes) :
+    DLCDefinition(std::string name, std::vector<Hash> hashes) :
         Name(name), Hashes(hashes)
     { }
     std::string Name;

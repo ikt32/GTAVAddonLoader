@@ -11,74 +11,43 @@
 namespace fs = std::filesystem;
 
 void showText(float x, float y, float scale, const char* text, int font, const Color &rgba, bool outline) {
-    UI::SET_TEXT_FONT(font);
-    UI::SET_TEXT_SCALE(scale, scale);
-    UI::SET_TEXT_COLOUR(rgba.R, rgba.G, rgba.B, rgba.A);
-    UI::SET_TEXT_WRAP(0.0, 1.0);
-    UI::SET_TEXT_CENTRE(0);
-    if (outline) UI::SET_TEXT_OUTLINE();
-    UI::BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING");
-    UI::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(text));
-    UI::END_TEXT_COMMAND_DISPLAY_TEXT(x, y);
+    HUD::SET_TEXT_FONT(font);
+    HUD::SET_TEXT_SCALE(scale, scale);
+    HUD::SET_TEXT_COLOUR(rgba.R, rgba.G, rgba.B, rgba.A);
+    HUD::SET_TEXT_WRAP(0.0, 1.0);
+    HUD::SET_TEXT_CENTRE(0);
+    if (outline) HUD::SET_TEXT_OUTLINE();
+    HUD::BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING");
+    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(text));
+    HUD::END_TEXT_COMMAND_DISPLAY_TEXT(x, y, 0);
 }
 
 void showNotification(std::string message, int *prevNotification) {
     if (prevNotification != nullptr && *prevNotification != 0) {
-        UI::_REMOVE_NOTIFICATION(*prevNotification);
+        HUD::THEFEED_REMOVE_ITEM(*prevNotification);
     }
-    UI::_SET_NOTIFICATION_TEXT_ENTRY("STRING");
+    HUD::BEGIN_TEXT_COMMAND_THEFEED_POST("STRING");
 
-    UI::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.c_str()));
+    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.c_str()));
     
-    int id = UI::_DRAW_NOTIFICATION(false, false);
+    int id = HUD::END_TEXT_COMMAND_THEFEED_POST_TICKER(false, false);
     if (prevNotification != nullptr) {
         *prevNotification = id;
     }
 }
 
 void showSubtitle(std::string message, int duration) {
-    UI::BEGIN_TEXT_COMMAND_PRINT("CELL_EMAIL_BCON");
+    HUD::BEGIN_TEXT_COMMAND_PRINT("CELL_EMAIL_BCON");
 
     const int maxStringLength = 99;
 
     for (int i = 0; i < message.size(); i += maxStringLength) {
         int npos = std::min(maxStringLength, static_cast<int>(message.size()) - i);
-        UI::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.substr(i, npos).c_str()));
+        HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.substr(i, npos).c_str()));
     }
 
-    UI::END_TEXT_COMMAND_PRINT(duration, 1);
+    HUD::END_TEXT_COMMAND_PRINT(duration, 1);
 }
-
-GameSound::GameSound(char *sound, char *soundSet): m_prevNotification(0) {
-    Active = false;
-    m_sound = sound;
-    m_soundSet = soundSet;
-    m_soundID = -1;
-}
-
-GameSound::~GameSound() {
-    if (m_soundID == -1 || !Active) return;
-    AUDIO::RELEASE_SOUND_ID(m_soundID);
-}
-
-void GameSound::Load(char *audioBank) {
-    AUDIO::REQUEST_SCRIPT_AUDIO_BANK(audioBank, false);
-}
-
-void GameSound::Play(Entity ent) {
-    if (Active) return;
-    m_soundID = AUDIO::GET_SOUND_ID();
-    //showNotification(("New soundID: " + std::to_string(m_soundID)).c_str(), nullptr);
-    AUDIO::PLAY_SOUND_FROM_ENTITY(m_soundID, m_sound, ent, m_soundSet, 0, 0);
-    Active = true;
-}
-
-void GameSound::Stop() {
-    if (m_soundID == -1 || !Active) return;
-    AUDIO::STOP_SOUND(m_soundID);
-    Active = false;
-}
-
 
 bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height) {
     auto ext = fs::path(file).extension();
@@ -136,8 +105,8 @@ Hash joaat(std::string s) {
 }
 
 std::string getGxtName(Hash hash) {
-    char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-    std::string displayName = UI::_GET_LABEL_TEXT(name);
+    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    std::string displayName = HUD::_GET_LABEL_TEXT(name);
     if (displayName == "NULL") {
         displayName = name;
     }

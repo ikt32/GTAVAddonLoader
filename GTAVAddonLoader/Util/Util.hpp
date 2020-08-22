@@ -20,24 +20,6 @@ void showText(float x, float y, float scale, const char* text, int font = 0, con
 void showNotification(std::string message, int *prevNotification = nullptr);
 void showSubtitle(std::string message, int duration = 2500);
 
-//https://github.com/CamxxCore/AirSuperiority
-class GameSound {
-public:
-    GameSound(char *sound, char *soundSet);
-    ~GameSound();
-    void Load(char *audioBank);
-    void Play(Entity ent);
-    void Stop();
-
-    bool Active;
-
-private:
-    char *m_soundSet;
-    char *m_sound;
-    int m_soundID;
-    int m_prevNotification;
-};
-
 bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height);
 
 bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height);

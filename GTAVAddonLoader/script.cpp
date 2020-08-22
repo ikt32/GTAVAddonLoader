@@ -37,10 +37,10 @@ std::string settingsMenuFile;
 std::vector<Vehicle> g_persistentVehicles;
 
 // Stock vehicles DLC. Needs to be updated every DLC release. 
-std::vector<DLC> g_dlcs;
+std::vector<DLCDefinition> g_dlcs;
 
 // User vehicles DLCs. User-updateable.
-std::vector<DLC> g_userDlcs;
+std::vector<DLCDefinition> g_userDlcs;
 
 // All vehicles discovered during load. Unfiltered - contains everything.
 std::unordered_map<Hash, std::string> g_vehicleHashes;
@@ -146,10 +146,10 @@ void cleanImageDirectory(bool backup) {
 
 std::string getMakeName(Hash hash) {
     char* makeName = MemoryAccess::GetVehicleMakeName(hash);
-    if (strcmp(UI::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
+    if (strcmp(HUD::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
         return "No make";
     }
-    return std::string(UI::_GET_LABEL_TEXT(makeName));
+    return std::string(HUD::_GET_LABEL_TEXT(makeName));
 }
 
 std::string getModelName(Hash hash) {
@@ -166,7 +166,7 @@ void cacheDLCVehicles() {
                 continue;
             char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-            std::string className = UI::_GET_LABEL_TEXT(buffer);
+            std::string className = HUD::_GET_LABEL_TEXT(buffer);
             std::string makeName = getMakeName(hash);
             dlc.Vehicles.emplace_back(className, makeName, getModelName(hash), hash);
             dlc.Classes.emplace(className);
@@ -196,7 +196,7 @@ void cacheDLCVehicles() {
     });
 }
 
-void cacheDLCVehicles(std::vector<DLC>& dlcs) {
+void cacheDLCVehicles(std::vector<DLCDefinition>& dlcs) {
     for (auto& dlc : dlcs) {
         dlc.Vehicles.clear();
         for (auto hash : dlc.Hashes) {
@@ -204,7 +204,7 @@ void cacheDLCVehicles(std::vector<DLC>& dlcs) {
                 continue;
             char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-            std::string className = UI::_GET_LABEL_TEXT(buffer);
+            std::string className = HUD::_GET_LABEL_TEXT(buffer);
             std::string makeName = getMakeName(hash);
             dlc.Vehicles.emplace_back(className, makeName, getModelName(hash), hash);
             dlc.Classes.emplace(className);
@@ -224,8 +224,8 @@ void cacheDLCs() {
     cacheDLCVehicles();
 }
 
-bool isHashInDLCList(const std::vector<DLC>& dlc, Hash hash) {
-    return std::find_if(dlc.begin(), dlc.end(), [hash](const DLC & d) {
+bool isHashInDLCList(const std::vector<DLCDefinition>& dlc, Hash hash) {
+    return std::find_if(dlc.begin(), dlc.end(), [hash](const DLCDefinition & d) {
         return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash & h) {
             return hash == h;
             }) != d.Hashes.end();
@@ -265,7 +265,7 @@ void cacheAddons() {
     for (auto hash : allVehicles) {
         char buffer[128];
         sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-        std::string className = UI::_GET_LABEL_TEXT(buffer);
+        std::string className = HUD::_GET_LABEL_TEXT(buffer);
         std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
         std::string makeName = getMakeName(hash);
 
@@ -301,8 +301,8 @@ void clearPersistentVehicles() {
 }
 
 bool findStringInNames(const std::string& search, Hash hash) {
-    char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-    std::string displayName = UI::_GET_LABEL_TEXT(name);
+    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    std::string displayName = HUD::_GET_LABEL_TEXT(name);
     std::string rawName = name;
     std::string modelName = getModelName(hash);
     std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(hash);
@@ -336,8 +336,8 @@ Vehicle spawnVehicle(Hash hash, Vector3 coords, float heading, DWORD timeout) {
         }
     }
 
-    Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, coords.x, coords.y, coords.z, heading, 0, 1);
-    VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
+    Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, coords.x, coords.y, coords.z, heading, 0, 1, 0);
+    VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 5.0f);
     WAIT(0);
     STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 
@@ -382,8 +382,8 @@ void spawnVehicle(Hash hash) {
             Hash oldHash = ENTITY::GET_ENTITY_MODEL(oldVeh);
             Vector3 newMin, newMax;
             Vector3 oldMin, oldMax;
-            GAMEPLAY::GET_MODEL_DIMENSIONS(hash, &newMin, &newMax);
-            GAMEPLAY::GET_MODEL_DIMENSIONS(oldHash, &oldMin, &oldMax);
+            MISC::GET_MODEL_DIMENSIONS(hash, &newMin, &newMax);
+            MISC::GET_MODEL_DIMENSIONS(oldHash, &oldMin, &oldMax);
             if (!ENTITY::DOES_ENTITY_EXIST(oldVeh)) {
                 oldMax.x = oldMin.x = 0.0f;
             }
@@ -404,8 +404,8 @@ void spawnVehicle(Hash hash) {
         }
         
 
-        Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1);
-        VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh);
+        Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1, 0);
+        VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 5.0f);
         VEHICLE::SET_VEHICLE_DIRT_LEVEL(veh, 0.0f);
 
         if (spawnInside) {

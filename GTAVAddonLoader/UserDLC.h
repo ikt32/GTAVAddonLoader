@@ -2,4 +2,4 @@
 #include "ExtraTypes.h"
 #include <vector>
 
-std::vector<DLC> BuildUserDLCList();
+std::vector<DLCDefinition> BuildUserDLCList();
