@@ -26,6 +26,7 @@
 
 namespace fs = std::filesystem;
 
+bool g_firstLoad = true;
 NativeMenu::Menu menu;
 NativeMenu::MenuControls controls;
 Settings settings;
@@ -538,7 +539,7 @@ void reloadUserDlc() {
     cacheAddons();
 }
 
-void main() {
+void initialSetup() {
     // logger.SetMinLevel(DEBUG);
     logger.Write(INFO, "Script started");
 
@@ -585,11 +586,7 @@ void main() {
     }
     
     logger.Write(INFO, "Initialization finished");
-
-    while (true) {
-        update_menu();
-        WAIT(0);
-    }
+    g_firstLoad = false;
 }
 
 void clearGlobals() {
@@ -604,8 +601,19 @@ void clearGlobals() {
     clearAddonLists();
 }
 
+void main() {
+    if (g_firstLoad) {
+        clearGlobals();
+        initialSetup();
+    }
+
+    while (true) {
+        update_menu();
+        WAIT(0);
+    }
+}
+
 void ScriptMain() {
     srand(GetTickCount());
-    clearGlobals();
     main();
 }
