@@ -829,6 +829,30 @@ static const std::vector<Hash> LosSantosSummerSpecialVehicles = {
     0x6B73A9BE, //  Vans                YOUGA3              youga3              Youga Classic 4x4   
 };
 
+static const std::vector<Hash> CayoPericoHeistVehicles = {
+    0x11962E49, //  Helicopters         ANNIHLATOR2         annihilator2        Annihilator Stealth 
+    0x9A474B5E, //  Boats               AVISA               avisa               Avisa               
+    0x55365079, //  Compacts            BRIOSO2             brioso2             Brioso 300          
+    0xBB78956A, //  Sports              ITALIRSX            italirsx            Itali RSX           
+    0x4FAF0D70, //  Boats               KOSATKA             kosatka             Kosatka             
+    0xEF813606, //  Boats               PATROLBOAT          patrolboat          Kurtz 31 Patrol Boat
+    0x6EF89CCC, //  Boats               LONGFIN             longfin             Longfin             
+    0x40C332A3, //  Motorcycles         MANCHEZ2            manchez2            Manchez Scout       
+    0xEA313705, //  Planes              ALKONOST            alkonost            RO-86 Alkonost      
+    0xC1A8A914, //  Utility             SLAMTRUCK           slamtruck           Slamtruck           
+    0x5F017E6B, //  Helicopters         SPARROW3            seasparrow3         Sparrow             
+    0x494752F7, //  Helicopters         SPARROW2            seasparrow2         Sparrow             
+    0xF9E67C05, //  SUVs                SQUADDIE            squaddie            Squaddie            
+    0x56C8A5EF, //  Sports Classics     TOREADOR            toreador            Toreador            
+    0x11CBC051, //  Off-Road            VERUS               verus               Verus               
+    0x780FFBD2, //  Military            VETIR               vetir               Vetir               
+    0xCCE5C8FA, //  Sports              VETO                veto                Veto Classic        
+    0xA703E4A9, //  Sports              VETO2               veto2               Veto Modern         
+    0xC58DA34A, //  Boats               DINGHY5             dinghy5             Weaponized Dinghy   
+    0x61FE4D6A, //  Compacts            WEEVIL              weevil              Weevil              
+    0xF376F1E6, //  Off-Road            winky               winky               Winky               
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -864,5 +888,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("The Diamond Casino & Resort", CasinoVehicles) },
         { DLCDefinition("The Diamond Casino Heist", CasinoHeistVehicles) },
         { DLCDefinition("Los Santos Summer Special", LosSantosSummerSpecialVehicles) },
+        { DLCDefinition("The Cayo Perico Heist", CayoPericoHeistVehicles) },
     };
 }
