@@ -26,7 +26,6 @@
 
 namespace fs = std::filesystem;
 
-bool g_firstLoad = true;
 NativeMenu::Menu menu;
 NativeMenu::MenuControls controls;
 Settings settings;
@@ -539,10 +538,7 @@ void reloadUserDlc() {
     cacheAddons();
 }
 
-void initialSetup() {
-    // logger.SetMinLevel(DEBUG);
-    logger.Write(INFO, "Script started");
-
+void ScriptInit() {
     settingsGeneralFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_general.ini";
     settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
     settings.SetFiles(settingsGeneralFile);
@@ -565,6 +561,13 @@ void initialSetup() {
     cacheDLCs();
     reloadUserDlc();
 
+    logger.Write(INFO, "Initialization finished");
+}
+
+void InitTextures() {
+    g_missingImages.clear();
+    g_addonImages.clear();
+
     Hash hash = joaat("noimage");
     std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
     if (FileExists(fileName)) {
@@ -584,29 +587,11 @@ void initialSetup() {
         noImage = AddonImage(-1, hash, width, height);
         logger.Write(ERROR, "Missing img/noimage.png!");
     }
-    
-    logger.Write(INFO, "Initialization finished");
-    g_firstLoad = false;
 }
 
-void clearGlobals() {
-    g_missingImages.clear();
-    g_persistentVehicles.clear();
-    g_addonImages.clear();
-    g_dlcs.clear();
-    g_dlcClasses.clear();
-    g_dlcMakes.clear();
-    g_dlcVehicles.clear();
-    g_userDlcs.clear();
-    clearAddonLists();
-}
+bool initialized = false;
 
-void main() {
-    if (g_firstLoad) {
-        clearGlobals();
-        initialSetup();
-    }
-
+void ScriptTick() {
     while (true) {
         update_menu();
         WAIT(0);
@@ -614,6 +599,14 @@ void main() {
 }
 
 void ScriptMain() {
-    srand(GetTickCount());
-    main();
+    if (!initialized) {
+        logger.Write(INFO, "Script started");
+        ScriptInit();
+        initialized = true;
+    }
+    else {
+        logger.Write(INFO, "Script restarted");
+    }
+    InitTextures();
+    ScriptTick();
 }
