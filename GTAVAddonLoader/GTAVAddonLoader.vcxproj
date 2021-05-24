@@ -116,7 +116,6 @@
     <ClCompile Include="..\thirdparty\GTAVMenuBase\menusettings.cpp" />
     <ClCompile Include="..\thirdparty\GTAVMenuBase\menuutils.cpp" />
     <ClCompile Include="..\thirdparty\jpegsize.cpp" />
-    <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp" />
     <ClCompile Include="Hooking.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="main.cpp" />
@@ -143,7 +142,6 @@
     <ClInclude Include="..\thirdparty\GTAVMenuBase\menuutils.h" />
     <ClInclude Include="..\thirdparty\GTAVMenuBase\Scaleform.h" />
     <ClInclude Include="..\thirdparty\jpegsize.h" />
-    <ClInclude Include="..\thirdparty\lodepng\lodepng.h" />
     <ClInclude Include="ExtraTypes.h" />
     <ClInclude Include="Hooking.h" />
     <ClInclude Include="keyboard.h" />

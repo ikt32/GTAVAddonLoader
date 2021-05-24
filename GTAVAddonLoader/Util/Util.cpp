@@ -1,12 +1,13 @@
 #define NOMINMAX
-#include "inc/natives.h"
 #include "Util.hpp"
-#include <algorithm>
-#include <filesystem>
-#include <lodepng/lodepng.h>
+#include "Logger.hpp"
+
+#include <inc/natives.h>
 #include <jpegsize.h>
 
-#include "Logger.hpp"
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -49,44 +50,77 @@ void showSubtitle(std::string message, int duration) {
     HUD::END_TEXT_COMMAND_PRINT(duration, 1);
 }
 
-bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height) {
-    auto ext = fs::path(file).extension();
-    if (ext == ".png" || ext == ".PNG")
-        return GetPNGDimensions(file, width, height);
-    if (ext == ".jpg" || ext == ".JPG" || ext == ".jpeg" || ext == ".JPEG")
-        return GetJPGDimensions(file, width, height);
-    return false;
+std::optional<std::pair<uint32_t, uint32_t>> GetIMGDimensions(const std::string& path) {
+    std::string ext = to_lower(fs::path(path).extension().string());
+
+    std::optional<std::pair<uint32_t, uint32_t>> result;
+
+    if (ext == ".png")
+        result = GetPNGDimensions(path);
+    if (ext == ".jpg" || ext == ".jpeg")
+        result = GetJPGDimensions(path);
+
+    if (result)
+        return result;
+
+    logger.Write(ERROR, "[IMG] %s: getting size failed, using defaults (480 x 270)", fs::path(path).filename().string());
+    return { {480, 270} };
 }
 
-bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height) {
-    std::vector<unsigned char> image;
-    unsigned error = lodepng::decode(image, *width, *height, file);
-    if (error) {
-        logger.Write(ERROR, "PNG error: %s: %s", std::to_string(error).c_str(), lodepng_error_text(error));
-        return false;
+std::optional<std::pair<uint32_t, uint32_t>> GetPNGDimensions(const std::string& path) {
+    const uint64_t pngSig = 0x89504E470D0A1A0A;
+
+    std::ifstream img(path, std::ios::binary);
+
+    if (!img.good()) {
+        logger.Write(ERROR, "[IMG]: %s failed to open", path.c_str());
+        return {};
     }
-    return true;
+
+    uint64_t imgSig = 0x0;
+
+    img.seekg(0);
+    img.read((char*)&imgSig, sizeof(uint64_t));
+
+    imgSig = _byteswap_uint64(imgSig);
+
+    if (imgSig == pngSig) {
+        uint32_t w, h;
+
+        img.seekg(16);
+        img.read((char*)&w, 4);
+        img.read((char*)&h, 4);
+
+        w = _byteswap_ulong(w);
+        h = _byteswap_ulong(h);
+
+        return { {w, h} };
+    }
+
+    logger.Write(ERROR, "[IMG]: %s not a PNG file, sig: 0x%16X", path.c_str(), imgSig);
+    return {};
 }
 
-bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height) {
+std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string& path) {
     FILE *image = nullptr;
 
-    errno_t err = fopen_s(&image, file.c_str(), "rb");  // open JPEG image file
+    errno_t err = fopen_s(&image, path.c_str(), "rb");  // open JPEG image file
     if (!image || err) {
-        logger.Write(ERROR, "JPEG error: %s: Failed to open file", fs::path(file).filename().string().c_str());
-        return false;
+        logger.Write(ERROR, "JPEG error: %s: Failed to open file", fs::path(path).filename().string().c_str());
+        if (image)
+            fclose(image);
+        return {};
     }
     int w, h;
     int result = scanhead(image, &w, &h);
+    fclose(image);
+
     if (result == 1) {
-        *width = w;
-        *height = h;
-        return true;
+        return { {w, h} };
     }
-    logger.Write(ERROR, "JPEG error: %s: getting size failed, using defaults (480 x 270)", fs::path(file).filename().string());
-    *width = 480;
-    *height = 270;
-    return false;
+    else {
+        return {};
+    }
 }
 
 Hash joaat(std::string s) {

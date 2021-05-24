@@ -1,6 +1,8 @@
 #pragma once
-#include <vector>
 #include "inc/types.h"
+
+#include <optional>
+#include <vector>
 #include <algorithm>
 #include <locale>
 
@@ -20,10 +22,10 @@ void showText(float x, float y, float scale, const char* text, int font = 0, con
 void showNotification(std::string message, int *prevNotification = nullptr);
 void showSubtitle(std::string message, int duration = 2500);
 
-bool GetIMGDimensions(std::string file, unsigned *width, unsigned *height);
+std::optional<std::pair<uint32_t, uint32_t>> GetIMGDimensions(const std::string& path);
 
-bool GetPNGDimensions(std::string file, unsigned *width, unsigned *height);
-bool GetJPGDimensions(std::string file, unsigned *width, unsigned *height);
+std::optional<std::pair<uint32_t, uint32_t>> GetPNGDimensions(const std::string& path);
+std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string& path);
 
 Hash joaat(std::string s);
 std::string removeSpecialChars(std::string input);

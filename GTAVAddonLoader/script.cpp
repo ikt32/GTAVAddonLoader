@@ -83,9 +83,15 @@ void resolveImage(Hash selected) {
         if (hash != selected) continue;
 
         std::string fileName = fs::path(file).string();
+        auto dims = GetIMGDimensions(fileName);
         unsigned width;
         unsigned height;
-        if (!GetIMGDimensions(fileName, &width, &height)) {
+
+        if (dims) {
+            width = dims->first;
+            height = dims->second;
+        }
+        else {
             width = 480;
             height = 270;
         }
@@ -565,18 +571,21 @@ void ScriptInit() {
 }
 
 void InitTextures() {
-    g_missingImages.clear();
-    g_addonImages.clear();
+    clearImages();
 
     Hash hash = joaat("noimage");
     std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
     if (FileExists(fileName)) {
+        auto dims = GetIMGDimensions(fileName);
         unsigned width;
         unsigned height;
-        if (!GetIMGDimensions(fileName, &width, &height)) {
-            width = 800;
-            height = 450;
-            logger.Write(WARN, "Failed to get image proportions for noimage.png, using default values");
+        if (dims) {
+            width = dims->first;
+            height = dims->second;
+        }
+        else {
+            width = 480;
+            height = 270;
         }
         int handle = createTexture(fileName.c_str());
         noImage = AddonImage(handle, hash, width, height);

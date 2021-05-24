@@ -15,9 +15,6 @@
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="ScriptMenu.cpp" />
-    <ClCompile Include="..\thirdparty\lodepng\lodepng.cpp">
-      <Filter>thirdparty</Filter>
-    </ClCompile>
     <ClCompile Include="..\thirdparty\jpegsize.cpp">
       <Filter>thirdparty</Filter>
     </ClCompile>
@@ -77,9 +74,6 @@
     </ClInclude>
     <ClInclude Include="VehicleHashes.h" />
     <ClInclude Include="ExtraTypes.h" />
-    <ClInclude Include="..\thirdparty\lodepng\lodepng.h">
-      <Filter>thirdparty</Filter>
-    </ClInclude>
     <ClInclude Include="..\thirdparty\jpegsize.h">
       <Filter>thirdparty</Filter>
     </ClInclude>
