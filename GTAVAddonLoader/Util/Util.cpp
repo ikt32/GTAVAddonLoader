@@ -59,6 +59,8 @@ std::optional<std::pair<uint32_t, uint32_t>> GetIMGDimensions(const std::string&
         result = GetPNGDimensions(path);
     if (ext == ".jpg" || ext == ".jpeg")
         result = GetJPGDimensions(path);
+    if (ext == ".webp")
+        result = GetWebPDimensions(path);
 
     if (result)
         return result;
@@ -106,7 +108,7 @@ std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string&
 
     errno_t err = fopen_s(&image, path.c_str(), "rb");  // open JPEG image file
     if (!image || err) {
-        logger.Write(ERROR, "JPEG error: %s: Failed to open file", fs::path(path).filename().string().c_str());
+        logger.Write(ERROR, "[IMG]: %s: Failed to open file", fs::path(path).filename().string().c_str());
         if (image)
             fclose(image);
         return {};
@@ -122,6 +124,87 @@ std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string&
         return {};
     }
 }
+
+std::optional<std::pair<uint32_t, uint32_t>> GetWebPDimensions(const std::string& path) {
+    const uint32_t riffSig = 'RIFF';
+    const uint32_t webpSig = 'WEBP';
+
+    std::ifstream img(path, std::ios::binary);
+
+    if (!img.good()) {
+        logger.Write(ERROR, "[IMG]: %s failed to open", path.c_str());
+        return {};
+    }
+
+    uint32_t imgRiffSig = 0x0;
+    uint32_t imgWebPSig = 0x0;
+
+    img.seekg(0);
+    img.read((char*)&imgRiffSig, sizeof(uint32_t));
+    imgRiffSig = _byteswap_ulong(imgRiffSig);
+
+    img.seekg(2 * sizeof(uint32_t));
+    img.read((char*)&imgWebPSig, sizeof(uint32_t));
+    imgWebPSig = _byteswap_ulong(imgWebPSig);
+
+    if (imgRiffSig == riffSig && imgWebPSig == webpSig) {
+        uint32_t vp8Sig = 0x0;
+
+        img.seekg(3 * sizeof(uint32_t));
+        img.read((char*)&vp8Sig, sizeof(uint32_t));
+        vp8Sig = _byteswap_ulong(vp8Sig);
+
+        switch (vp8Sig) {
+            case 'VP8 ': {
+                uint8_t sigBytes[3] = { 0x0, 0x0, 0x0 };
+                img.seekg(0x17);
+                img.read((char*)sigBytes, 3);
+                if (sigBytes[0] != 0x9D || sigBytes[1] != 0x01 || sigBytes[2] != 0x2A) {
+                    logger.Write(ERROR, "[IMG]: %s failed to find VP8 (Lossy) signature bytes, got 0x%02X 0x%02X 0x%02X",
+                        path.c_str(), sigBytes[0], sigBytes[1], sigBytes[2]);
+                    return {};
+                }
+
+                uint16_t w = 0x0;
+                uint16_t h = 0x0;
+
+                img.read((char*)&w, 2);
+                img.read((char*)&h, 2);
+
+                return { {w, h} };
+            }
+            case 'VP8L': {
+                uint8_t sigByte = 0x0;
+                img.seekg(5 * sizeof(uint32_t));
+                img.read((char*)&sigByte, 1);
+                if (sigByte != 0x2F) {
+                    logger.Write(ERROR, "[IMG]: %s failed to find VP8 (Lossless) signature byte, got 0x%02X",
+                        path.c_str(), sigByte);
+                    return {};
+                }
+
+                uint32_t wh = 0x0;
+
+                img.read((char*)&wh, 4);
+                wh = wh & 0x0FFFFFFF;
+
+                uint16_t w = wh & 0x3FFF;
+                uint16_t h = (wh >> 14) & 0x3FFF;
+                return { {w + 1, h + 1} };
+            }
+            default:
+                logger.Write(ERROR, "[IMG]: %s unrecognized WebP format. FourCC: 0x%04X",
+                    path.c_str(), vp8Sig);
+                return {};
+        }
+    }
+    else {
+        logger.Write(ERROR, "[IMG]: %s not a WebP file. RIFF (0x%04X): 0x%04X, WEBP (0x%04X): 0x%04X",
+            path.c_str(), riffSig, imgRiffSig, webpSig, imgWebPSig);
+        return {};
+    }
+}
+
 
 Hash joaat(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);

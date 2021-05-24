@@ -26,6 +26,7 @@ std::optional<std::pair<uint32_t, uint32_t>> GetIMGDimensions(const std::string&
 
 std::optional<std::pair<uint32_t, uint32_t>> GetPNGDimensions(const std::string& path);
 std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string& path);
+std::optional<std::pair<uint32_t, uint32_t>> GetWebPDimensions(const std::string& path);
 
 Hash joaat(std::string s);
 std::string removeSpecialChars(std::string input);
