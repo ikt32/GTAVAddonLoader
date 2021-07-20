@@ -853,6 +853,27 @@ static const std::vector<Hash> CayoPericoHeistVehicles = {
     0xF376F1E6, //  Off-Road            winky               winky               Winky               
 };
 
+static const std::vector<Hash> LosSantosTunersVehicles = {
+    0xB8D657AD, //  Sports              CALICO              calico              Calico GTF          
+    0x991EFC04, //  Sports              COMET6              comet6              Comet S2            
+    0x68A5D1EF, //  Sports              CYPHER              cypher              Cypher              
+    0x196F9418, //  Muscle              DOMINATOR7          dominator7          Dominator ASP       
+    0x2BE8B90A, //  Muscle              DOMINATOR8          dominator8          Dominator GTT       
+    0x7980BDD5, //  Sports              EUROS               euros               Euros               
+    0xBDEC3D99, //  Trains              FREIGHT             freightcar2         Freight Train       
+    0xA6297CC8, //  Sports              FUTO2               futo2               Futo GTX            
+    0x4DC079D7, //  Sports              GROWLER             growler             Growler             
+    0xA1B3A871, //  Sports              JESTER4             jester4             Jester RR           
+    0x546DA331, //  Coupes              previon             previon             Previon             
+    0xE505CF99, //  Sports              RT3000              rt3000              RT3000              
+    0x5216AD5E, //  Sports              REMUS               remus               Remus               
+    0xEEA75E63, //  Sports              SULTAN3             sultan3             Sultan RS Classic   
+    0xB5D306A4, //  Sedans              TAILGATER2          tailgater2          Tailgater S         
+    0xA42FC3A5, //  Sports              VECTRE              vectre              Vectre              
+    0x2290C50A, //  Sedans              WARRENER2           warrener2           Warrener HKR        
+    0x91373058, //  Sports              ZR350               zr350               ZR350               
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -889,5 +910,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("The Diamond Casino Heist", CasinoHeistVehicles) },
         { DLCDefinition("Los Santos Summer Special", LosSantosSummerSpecialVehicles) },
         { DLCDefinition("The Cayo Perico Heist", CayoPericoHeistVehicles) },
+        { DLCDefinition("Los Santos Tuners", LosSantosTunersVehicles) },
     };
 }
