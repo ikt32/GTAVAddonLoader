@@ -152,8 +152,10 @@ void cleanImageDirectory(bool backup) {
 
 std::string getMakeName(Hash hash) {
     char* makeName = MemoryAccess::GetVehicleMakeName(hash);
-    if (strcmp(HUD::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
-        return "No make";
+    if (makeName == nullptr ||
+        strcmp(makeName, "") == 0 ||
+        strcmp(HUD::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
+        return std::string();
     }
     return std::string(HUD::_GET_LABEL_TEXT(makeName));
 }
@@ -193,12 +195,18 @@ void cacheDLCVehicles() {
         }
     }
     std::sort(g_dlcVehicles.begin(), g_dlcVehicles.end(), [](const ModelInfo& a1, const ModelInfo& a2) {
-        std::string name1 = getGxtName(a1.ModelHash);
-        std::string name2 = getGxtName(a2.ModelHash);
-        if (name1 == name2) {
-            return getModelName(a1.ModelHash) < getModelName(a2.ModelHash);
+        std::string makeName1 = getMakeName(a1.ModelHash);
+        std::string makeName2 = getMakeName(a2.ModelHash);
+
+        if (makeName1 == makeName2) {
+            std::string modelName1 = getGxtName(a1.ModelHash);
+            std::string modelName2 = getGxtName(a2.ModelHash);
+            if (modelName1 == modelName2) {
+                return getModelName(a1.ModelHash) < getModelName(a2.ModelHash);
+            }
+            return modelName1 < modelName2;
         }
-        return name1 < name2;
+        return makeName1 < makeName2;
     });
 }
 
@@ -253,9 +261,18 @@ void cacheAddons() {
     }
 
     std::sort(allVehicles.begin(), allVehicles.end(), [](Hash h1, Hash h2) {
-        std::string name1 = getGxtName(h1);
-        std::string name2 = getGxtName(h2);
-        return name1 < name2;
+        std::string makeName1 = getMakeName(h1);
+        std::string makeName2 = getMakeName(h2);
+
+        if (makeName1 == makeName2) {
+            std::string modelName1 = getGxtName(h1);
+            std::string modelName2 = getGxtName(h2);
+            if (modelName1 == modelName2) {
+                return getModelName(h1) < getModelName(h2);
+            }
+            return modelName1 < modelName2;
+        }
+        return makeName1 < makeName2;
     });
 
     int hashLength = 12;
@@ -479,6 +496,8 @@ std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
     extras.push_back(getImageExtra(addonVehicle.ModelHash));
 
     std::string makeFinal = getMakeName(addonVehicle.ModelHash);
+    if (makeFinal.empty())
+        makeFinal = "No make";
     extras.push_back("Make: \t" + makeFinal);
     extras.push_back("Name: \t" + getGxtName(addonVehicle.ModelHash));
     extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));

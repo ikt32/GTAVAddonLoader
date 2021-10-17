@@ -116,15 +116,22 @@ void onMenuExit() {
     manualVehicleName.clear();
 }
 
-void format_infobox(const ModelInfo& vehicle) {
-    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash);
-    std::string displayName = HUD::_GET_LABEL_TEXT(name);
+void OptionVehicle(const ModelInfo& vehicle) {
+    std::string displayName = HUD::_GET_LABEL_TEXT(VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash));
+    std::string displayMakeName = HUD::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(vehicle.ModelHash));
+
     if (displayName == "NULL") {
-        displayName = name;
+        displayName = vehicle.ModelName;
     }
     std::vector<std::string> extras = {};
     bool visible = false;
-    if (menu.OptionPlus(displayName, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
+
+    std::string optionText = displayName;
+    if (!displayMakeName.empty() && displayMakeName != "NULL") {
+        optionText = displayMakeName + " " + displayName;
+    }
+
+    if (menu.OptionPlus(optionText, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
         spawnVehicle(vehicle.ModelHash);
     }
     if (visible) {
@@ -133,14 +140,25 @@ void format_infobox(const ModelInfo& vehicle) {
     }
 }
 
+std::string FormatCategoryName(const std::string& category) {
+    if (settings.CategorizeMake &&
+        category.empty()) {
+        return "No make";
+    }
+    return category;
+}
+
 void update_spawnmenu(const std::string& category, const std::vector<ModelInfo>& addonVehicles, 
                       const std::string& origin, bool asMake) {
-    menu.Title(category);
+    std::string catTitle = category;
+    if (asMake && category.empty())
+        catTitle = "No make";
+    menu.Title(catTitle);
     menu.Subtitle(origin);
 
     for (const auto& vehicle : addonVehicles) {
         if (category == (asMake ? vehicle.MakeName : vehicle.ClassName)) {
-            format_infobox(vehicle);
+            OptionVehicle(vehicle);
         }
     }
 }
@@ -187,7 +205,8 @@ void update_mainmenu(const std::set<std::string>& addonCats) {
     }
 
     for (const auto& category : addonCats) {
-        menu.MenuOption(category, category);
+        std::string categoryName = FormatCategoryName(category);
+        menu.MenuOption(categoryName, category);
     }
 }
 
@@ -216,7 +235,7 @@ void update_searchmenu() {
     }
 
     for (const auto& vehicle : g_matchedVehicles) {
-        format_infobox(vehicle);
+        OptionVehicle(vehicle);
     }
 }
 
@@ -285,7 +304,8 @@ void update_officialdlcmergedmenu(const std::set<std::string>& categories) {
     menu.Subtitle("Merged");
 
     for (const auto& category : categories) {
-        menu.MenuOption(category, "dlc_" + category);
+        std::string categoryName = FormatCategoryName(category);
+        menu.MenuOption(categoryName, "dlc_" + category);
     }
 }
 
@@ -312,7 +332,8 @@ void update_perdlcmenu(const DLCDefinition& dlc, const std::set<std::string>& dl
     menu.Subtitle("Sort by DLC");
 
     for (const auto& category : dlcCats) {
-        menu.MenuOption(category, dlc.Name + " " + category);
+        std::string categoryName = FormatCategoryName(category);
+        menu.MenuOption(categoryName, dlc.Name + " " + category);
     }
     if (dlcCats.empty()) {
         menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
