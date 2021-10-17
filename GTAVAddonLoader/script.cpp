@@ -615,6 +615,10 @@ void InitTextures() {
         noImage = AddonImage(-1, hash, width, height);
         logger.Write(ERROR, "Missing img/noimage.png!");
     }
+
+    for (const auto& [modelHash, modelName] : g_vehicleHashes) {
+        resolveImage(modelHash);
+    }
 }
 
 bool initialized = false;
