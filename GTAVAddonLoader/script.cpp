@@ -252,7 +252,7 @@ bool isHashInDLCList(const std::vector<DLCDefinition>& dlc, Hash hash) {
  * the log outputs a thing.
  */
 void cacheAddons() {
-    if (!g_addonVehiclesAll.empty())
+    if (!g_addonVehiclesAll.empty() || !g_dlcVehiclesAll.empty())
         return;
 
     std::vector<Hash> allVehicles;
