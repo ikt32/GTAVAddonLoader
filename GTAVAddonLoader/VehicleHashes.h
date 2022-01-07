@@ -874,6 +874,26 @@ static const std::vector<Hash> LosSantosTunersVehicles = {
     0x91373058, //  Sports              ZR350               zr350               ZR350               
 };
 
+static const std::vector<Hash> TheContractVehicles = {
+    0xDB0C9B04, //  Muscle              BUFFALO4            buffalo4            Buffalo STX         
+    0xF06C29C7, //  SUVs                GRANGER2            granger2            Granger 3600LX      
+    0xC972A155, //  Super               CHAMPION            champion            Champion            
+    0x5B531351, //  Sedans              DEITY               deity               Deity               
+    0x1B8165D3, //  SUVs                JUBILEE             jubilee             Jubilee             
+    0x1573422D, //  SUVs                BALLER7             baller7             Baller ST           
+    0xA4F52C13, //  Sedans              CINQUEMILA          cinquemila          Cinquemila          
+    0x501AC93C, //  Commercial          MULE5               mule5               Mule                
+    0xD80F4A44, //  Off-Road            PATRIOT3            patriot3            Patriot Mil-Spec    
+    0x50A6FB9C, //  Motorcycles         SHINOBI             shinobi             Shinobi             
+    0x27816B7E, //  SUVs                IWAGEN              iwagen              I-Wagen             
+    0x2714AA93, //  Super               ZENO                zeno                Zeno                
+    0xA9EC907B, //  Super               IGNUS               ignus               Ignus               
+    0x258C9364, //  SUVs                ASTRON              astron              Astron              
+    0x440851D8, //  Sports              COMET7              comet7              Comet S2 Cabrio     
+    0x589A840C, //  Vans                YOUGA4              youga4              Youga Custom        
+    0x76D7C404, //  Motorcycles         REEVER              reever              Reever              
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -911,5 +931,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("Los Santos Summer Special", LosSantosSummerSpecialVehicles) },
         { DLCDefinition("The Cayo Perico Heist", CayoPericoHeistVehicles) },
         { DLCDefinition("Los Santos Tuners", LosSantosTunersVehicles) },
+        { DLCDefinition("The Contract", TheContractVehicles) },
     };
 }
