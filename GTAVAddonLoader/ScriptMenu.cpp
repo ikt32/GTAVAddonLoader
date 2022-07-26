@@ -314,7 +314,15 @@ void update_officialdlcmenu() {
     menu.Subtitle("Sort by DLC");
 
     for (const auto& dlc : g_dlcs) {
-        menu.MenuOption(dlc.Name, dlc.Name);
+        if (dlc.Name == "Expanded and Enhanced") {
+            menu.MenuOption(dlc.Name, dlc.Name, {
+                "Warning: this DLC may be unavailable.",
+                "Spawning vehicles within may cause the game to crash."
+            });
+        }
+        else {
+            menu.MenuOption(dlc.Name, dlc.Name);
+        }
     }
 }
 

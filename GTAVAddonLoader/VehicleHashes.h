@@ -894,6 +894,35 @@ static const std::vector<Hash> TheContractVehicles = {
     0x76D7C404, //  Motorcycles         REEVER              reever              Reever              
 };
 
+static const std::vector<Hash> ExpandedAndEnhancedVehicles = {
+    0x170341C2, //  Super               CYCLONE2            cyclone2            Cyclone II          
+    0x5C54030C, //  Muscle              ARBITERGT           arbitergt           Arbiter GT          
+    0x438F6593, //  Sports              S95                 s95                 S95                 
+    0x39085F47, //  Super               IGNUS2              ignus2              Weaponized Ignus    
+    0xA71D0D4F, //  SUVs                ASTRON2             astron2             Astron Custom       
+};
+
+static const std::vector<Hash> TheCriminalEnterprisesVehicles = {
+    0x00E827DE, //  Compacts                                brioso3             Grotti Brioso 300 Widebody
+    0xE384DD25, //  Helicopters                             conada              Buckingham Conada
+    0xD3046147, //  Sports                                  corsita             Lampadati Corsita
+    0xD235A4A6, //  Off - Road                              draugur             Declasse Draugur
+    0x026ED430, //  Muscle                                  greenwood           Bravado Greenwood
+    0xFC2E479A, //  Coupes                                  kanjosj             Dinka Kanjo SJ
+    0xFF5968CD, //  Super                                   lm87                Benefactor LM87
+    0xE1E2E6D7, //  Sports                                  omnisegt            Obey Omnis e-GT
+    0xEE6F8F79, //  Coupes                                  postlude            Dinka Postlude 
+    0x91673D0E, //  Sedans                                  rhinehart           Rhinehart
+    0x65BDEBFC, //  Muscle                                  ruiner4             Imponte Ruiner ZZ-8
+    0xAF1FA439, //  Sports                                  sentinel4           Ubermacht Sentinel Classic Widebody
+    0x2E3967B0, //  Sports                                  sm722               Benefactor SM722
+    0xCAB6E261, //  Sports                                  tenf                Obey 10F
+    0x10635A0E, //  Sports                                  tenf2               Obey 10F Widebody
+    0xF62446BA, //  Super                                   torero2             Pegassi Torero XO
+    0x973141FC, //  Muscle                                  vigero2             Declasse Vigero ZX
+    0xC4BB1908, //  Muscle                                  weevil2             BF Weevil Custom
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -932,5 +961,7 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("The Cayo Perico Heist", CayoPericoHeistVehicles) },
         { DLCDefinition("Los Santos Tuners", LosSantosTunersVehicles) },
         { DLCDefinition("The Contract", TheContractVehicles) },
+        { DLCDefinition("Expanded and Enhanced", ExpandedAndEnhancedVehicles) },
+        { DLCDefinition("The Criminal Enterprises", TheCriminalEnterprisesVehicles) },
     };
 }
