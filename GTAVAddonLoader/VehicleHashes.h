@@ -961,7 +961,10 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("The Cayo Perico Heist", CayoPericoHeistVehicles) },
         { DLCDefinition("Los Santos Tuners", LosSantosTunersVehicles) },
         { DLCDefinition("The Contract", TheContractVehicles) },
-        { DLCDefinition("Expanded and Enhanced", ExpandedAndEnhancedVehicles) },
+        { DLCDefinition("Expanded and Enhanced", ExpandedAndEnhancedVehicles,
+            "<C>~r~WARNING~s~</C>: Vehicles from this DLC may be unavailable and "
+            "crash the game when spawned!"
+        )},
         { DLCDefinition("The Criminal Enterprises", TheCriminalEnterprisesVehicles) },
     };
 }

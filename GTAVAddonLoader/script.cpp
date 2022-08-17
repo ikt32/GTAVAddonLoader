@@ -176,7 +176,11 @@ void cacheDLCVehicles() {
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
             std::string className = HUD::_GET_LABEL_TEXT(buffer);
             std::string makeName = getMakeName(hash);
-            dlc.Vehicles.emplace_back(className, makeName, getModelName(hash), hash);
+            auto notes = std::vector<std::string>{ dlc.Name };
+            if (!dlc.Note.empty()) {
+                notes.push_back(dlc.Note);
+            }
+            dlc.Vehicles.emplace_back(className, makeName, getModelName(hash), hash, notes);
             dlc.Classes.emplace(className);
             dlc.Makes.emplace(makeName);
         }
@@ -238,12 +242,22 @@ void cacheDLCs() {
     cacheDLCVehicles();
 }
 
-bool isHashInDLCList(const std::vector<DLCDefinition>& dlc, Hash hash) {
-    return std::find_if(dlc.begin(), dlc.end(), [hash](const DLCDefinition & d) {
-        return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash & h) {
-            return hash == h;
+std::pair<bool, std::vector<std::string>> isHashInDLCList(const std::vector<DLCDefinition>& dlc, Hash hash) {
+    auto foundItem = std::find_if(dlc.begin(), dlc.end(), [hash](const DLCDefinition& d) {
+        return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash& h) {
+            if (hash == h)
+                return hash == h;
             }) != d.Hashes.end();
-        }) != dlc.end();
+        });
+    if (foundItem != dlc.end()) {
+        if (!foundItem->Note.empty()) {
+            return std::make_pair(true, std::vector<std::string>{ foundItem->Name, foundItem->Note });
+        }
+        else {
+            return std::make_pair(true, std::vector<std::string>{ foundItem->Name });
+        }
+    }
+    return std::make_pair(false, std::vector<std::string>());
 }
 
 /**
@@ -292,8 +306,9 @@ void cacheAddons() {
         std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
         std::string makeName = getMakeName(hash);
 
-        if (isHashInDLCList(g_dlcs, hash)){
-            g_dlcVehiclesAll.emplace_back(className, makeName, getModelName(hash), hash);
+        const auto& [inGameDlc, gameDlcNotes] = isHashInDLCList(g_dlcs, hash);
+        if (inGameDlc) {
+            g_dlcVehiclesAll.emplace_back(className, makeName, getModelName(hash), hash, gameDlcNotes);
         }
         else {
             std::stringstream hashAsHex;
@@ -307,7 +322,8 @@ void cacheAddons() {
             logger.Write(INFO, logStream.str());
             g_addonVehiclesAll.emplace_back(className, makeName, getModelName(hash), hash);
         }
-        if (!isHashInDLCList(g_dlcs, hash) && !isHashInDLCList(g_userDlcs, hash)) {
+        const auto& [inUserDlc, userDlcNotes] = isHashInDLCList(g_userDlcs, hash);
+        if (!inGameDlc && !inUserDlc) {
             g_addonVehicles.emplace_back(className, makeName, getModelName(hash), hash);
             g_addonClasses.emplace(className);
             g_addonMakes.emplace(makeName);

@@ -12,11 +12,15 @@ public:
     ModelInfo(std::string className, std::string makeName, std::string modelName, Hash hash) :
               ClassName(className), MakeName(makeName), ModelName(modelName), ModelHash(hash) { }
 
+    ModelInfo(std::string className, std::string makeName, std::string modelName, Hash hash, std::vector<std::string> notes) :
+        ClassName(className), MakeName(makeName), ModelName(modelName), ModelHash(hash), Notes(notes) {
+    }
+
     std::string ClassName;
     std::string MakeName;
     std::string ModelName;
     Hash ModelHash;
-    // TODO: AddonImage?
+    std::vector<std::string> Notes;
 };
 
 class AddonImage {
@@ -36,12 +40,18 @@ public:
 
 class DLCDefinition {
 public:
-    DLCDefinition(std::string name, std::vector<Hash> hashes) :
-        Name(name), Hashes(hashes)
+    DLCDefinition(std::string name,
+                  std::vector<Hash> hashes,
+                  std::string note = std::string())
+        : Name(name)
+        , Hashes(hashes)
+        , Note(note)
     { }
     std::string Name;
     std::set<std::string> Classes;
     std::set<std::string> Makes;
     std::vector<Hash> Hashes;
     std::vector<ModelInfo> Vehicles; // TODO: Combine with Hashes
+
+    std::string Note;
 };

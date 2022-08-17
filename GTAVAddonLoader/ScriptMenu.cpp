@@ -1,14 +1,16 @@
 #include "script.h"
-#include <set>
-#include <inc/natives.h>
-#include "Util/Logger.hpp"
-#include "Util/Versions.h"
 #include "menu.h"
 #include "keyboard.h"
 #include "settings.h"
 #include "ExtraTypes.h"
 #include "NativeMemory.hpp"
+#include "Util/Logger.hpp"
 #include "Util/Util.hpp"
+#include "Util/Versions.h"
+
+#include <inc/natives.h>
+
+#include <set>
 
 std::string manualVehicleName;
 std::string searchVehicleName;
@@ -131,7 +133,7 @@ void OptionVehicle(const ModelInfo& vehicle) {
         optionText = displayMakeName + " " + displayName;
     }
 
-    if (menu.OptionPlus(optionText, extras, &visible, nullptr, nullptr, "Vehicle info", {})) {
+    if (menu.OptionPlus(optionText, extras, &visible, nullptr, nullptr, "Vehicle info", vehicle.Notes)) {
         spawnVehicle(vehicle.ModelHash);
     }
     if (visible) {
@@ -314,11 +316,8 @@ void update_officialdlcmenu() {
     menu.Subtitle("Sort by DLC");
 
     for (const auto& dlc : g_dlcs) {
-        if (dlc.Name == "Expanded and Enhanced") {
-            menu.MenuOption(dlc.Name, dlc.Name, {
-                "Warning: this DLC may be unavailable.",
-                "Spawning vehicles within may cause the game to crash."
-            });
+        if (!dlc.Note.empty()) {
+            menu.MenuOption(dlc.Name, dlc.Name, { dlc.Note });
         }
         else {
             menu.MenuOption(dlc.Name, dlc.Name);
@@ -344,7 +343,7 @@ void update_perdlcmenu(const DLCDefinition& dlc, const std::set<std::string>& dl
         menu.MenuOption(categoryName, dlc.Name + " " + category);
     }
     if (dlcCats.empty()) {
-        menu.Option("DLC unavailable.", { "This version of the game does not have the " + dlc.Name + " DLC content.",
+        menu.Option("DLC unavailable.", { "The dlclist.xml and/or game files do not contain the '" + dlc.Name + "' content.",
                         "Game version: " + eGameVersionToString(getGameVersion()) });
     }
 }
