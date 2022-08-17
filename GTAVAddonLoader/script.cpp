@@ -245,10 +245,10 @@ void cacheDLCs() {
 std::pair<bool, std::vector<std::string>> isHashInDLCList(const std::vector<DLCDefinition>& dlc, Hash hash) {
     auto foundItem = std::find_if(dlc.begin(), dlc.end(), [hash](const DLCDefinition& d) {
         return std::find_if(d.Hashes.begin(), d.Hashes.end(), [hash](const Hash& h) {
-            if (hash == h)
-                return hash == h;
-            }) != d.Hashes.end();
-        });
+            return hash == h;
+        }) != d.Hashes.end();
+    });
+
     if (foundItem != dlc.end()) {
         if (!foundItem->Note.empty()) {
             return std::make_pair(true, std::vector<std::string>{ foundItem->Name, foundItem->Note });
