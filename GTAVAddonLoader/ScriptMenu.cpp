@@ -1,6 +1,5 @@
 #include "script.h"
 #include "menu.h"
-#include "keyboard.h"
 #include "settings.h"
 #include "ExtraTypes.h"
 #include "NativeMemory.hpp"
@@ -8,6 +7,7 @@
 #include "Util/Util.hpp"
 #include "Util/Versions.h"
 
+#include <GTAVMenuBase/menukeyboard.h>
 #include <inc/natives.h>
 
 #include <set>
@@ -46,11 +46,12 @@ extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - use
 
 // returns true if a character was pressed
 bool evaluateInput(std::string &searchFor) {
+    using namespace NativeMenu;
     HUD::SET_PAUSE_MENU_ACTIVE(false);
     PAD::DISABLE_ALL_CONTROL_ACTIONS(2);
 
     for (char c = ' '; c < '~'; c++) {
-        int key = str2key(std::string(1, c));
+        int key = GetKeyFromName(std::string(1, c));
         if (key == -1) continue;
         if (IsKeyJustUp(key)) {
             searchFor += c;
@@ -58,23 +59,23 @@ bool evaluateInput(std::string &searchFor) {
         }
     }
 
-    if ((IsKeyDown(str2key("LSHIFT")) || IsKeyDown(str2key("RSHIFT"))) && IsKeyJustUp(str2key("VK_OEM_MINUS"))) {
+    if ((IsKeyDown(GetKeyFromName("LSHIFT")) || IsKeyDown(GetKeyFromName("RSHIFT"))) && IsKeyJustUp(GetKeyFromName("VK_OEM_MINUS"))) {
         searchFor += '_';
         return true;
     }
-    if (IsKeyJustUp(str2key("VK_OEM_MINUS"))) {
+    if (IsKeyJustUp(GetKeyFromName("VK_OEM_MINUS"))) {
         searchFor += '-';
         return true;
     }
-    if (IsKeyJustUp(str2key("SPACE"))) {
+    if (IsKeyJustUp(GetKeyFromName("SPACE"))) {
         searchFor += ' ';
         return true;
     }
-    if (IsKeyJustUp(str2key("DELETE")) && searchFor.size() > 0) {
+    if (IsKeyJustUp(GetKeyFromName("DELETE")) && searchFor.size() > 0) {
         searchFor.pop_back();
         return true;
     }
-    if (IsKeyJustUp(str2key("BACKSPACE"))) {
+    if (IsKeyJustUp(GetKeyFromName("BACKSPACE"))) {
         searchFor.clear();
         return true;
     }
