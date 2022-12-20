@@ -923,6 +923,26 @@ static const std::vector<Hash> TheCriminalEnterprisesVehicles = {
     0xC4BB1908, //  Muscle                                  weevil2             BF Weevil Custom
 };
 
+static const std::vector<Hash> DrugWarsVehicles = {
+    0x3B639C8D, //  Off-Road		                        boor	            Karin Boor
+    0xA2073353, //  Service                                 brickade2           MTL Brickade 6x6
+    0x8CC51028, //  Muscle                                  broadway            Classique Broadway
+    0x8B4864E1, //  Planes                                  cargoplane2         Cargo Plane
+    0x6838FC1D, //  Super                                   entity3             Overflod Entity MT
+    0xB581BF9A, //  Muscle                                  eudora              Willard Eudora
+    0xF82BC92E, //  Sports                                  everon2             Karin Hotring Everon
+    0x5C6C00B4, //  SUVs                                    issi8               Weeny Issi Rally
+    0x9F04C481, //  Vans                                    journey2            Zirconium Journey
+    0x5285D628, //  Motorcycles                             manchez3            Maibatsu Manchez Scout C
+    0x7D326F04, //  Sports                                  panthere            Toundra Panthere
+    0xAD5E30D7, //  Motorcycles                             pwoersurge          Western Powersurge
+    0x402586F8, //  Sports                                  r300                Annis 300R
+    0xC247AEE5, //  Vans                                    surfer3             BF Surfer Custom
+    0xE478B977, //  Muscle                                  tahoma              Declasse Tahoma Coupe
+    0x1004EDA4, //  Muscle                                  tulip2              Declasse Tulip M-100
+    0x27E34161, //  Super                                   virtue              Ocelot Virtue
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -966,5 +986,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
             "crash the game when spawned!"
         )},
         { DLCDefinition("The Criminal Enterprises", TheCriminalEnterprisesVehicles) },
+        { DLCDefinition("Drug Wars", DrugWarsVehicles) },
     };
 }
