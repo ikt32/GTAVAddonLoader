@@ -225,11 +225,21 @@ void MemoryAccess::enableCarsGlobal() {
     const char* mask1604_0 = "x??xxxx??xxxxx?xx????xxxx?x";
     const unsigned int offset1064_0 = 17;
 
+    // Updated pattern entirely thanks to @alexguirre
+    const char* patt2802_0 = "\x2D\x00\x00\x00\x00\x2C\x01\x00\x00\x56\x04\x00\x71\x2E\x00\x01\x62\x00\x00\x00\x00\x04\x00\x71\x2E\x00\x01";
+    const char* mask2802_0 = "x??xxxx??xxxxx?xx????xxxx?x";
+    const unsigned int offset2802_0 = 17;
+
     const char* pattern = patt617_1;
     const char* mask = mask617_1;
     int offset = offset617_1;
 
-    if (getGameVersion() >= 46) {
+    if (getGameVersion() >= 80) {
+        pattern = patt2802_0;
+        mask = mask2802_0;
+        offset = offset2802_0;
+    }
+    else if (getGameVersion() >= 46) {
         pattern = patt1604_0;
         mask = mask1604_0;
         offset = offset1064_0;
