@@ -943,6 +943,26 @@ static const std::vector<Hash> LosSantosDrugWarsVehicles = {
     0x27E34161, //  Super                                   virtue              Ocelot Virtue
 };
 
+static const std::vector<Hash> SanAndreasMercenariesVehicles = {
+    0x0E4C8C4D, //  Planes              RAIJU               raiju               F - 160 Raiju
+    0xCA7C4AE9, //  Cycles              INDUCTOR            inductor            Inductor
+    0x89C45478, //  Cycles              INDUCTOR2           inductor2           Junk Energy Inductor
+    0xD8FD24D1, //  Muscle              BRIGHAM             brigham             Brigham
+    0x09E478B3, //  Muscle              BUFFALO5            buffalo5            Buffalo EVX
+    0x4FA9970B, //  Sports              GAUNTLET6           gauntlet6           Hotring Hellfire
+    0x9D1D9872, //  Helicopters         Conada2             conada2             Weaponized Conada
+    0x96E0736B, //  Off-Road            l35                 l35                 Walton L35
+    0x5649FF41, //  Sports              stingertt           stingertt           Itali GTO Stinger TT
+    0x2FDA9E05, //  Off-Road            MONSTROCITI         monstrociti         MonstroCiti
+    0xE68D8190, //  Planes              AVENGER3            avenger3            Avenger
+    0xFBDEAC32, //  Planes              AVENGER3            avenger4            Avenger
+    0x0B706A72, //  Planes              STREAMER216         streamer216         Streamer216
+    0x24626C26, //  Sports              COUREUR             coureur             La Coureuse
+    0xC5A12E61, //  Muscle              CLIQUE2             clique2             Clique Wagon
+    0xE00BADAB, //  Off-Road            RATEL               ratel               Ratel
+    0xFD546A18, //  Vans                SPEEDO4             speedo5             Speedo Custom
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -987,5 +1007,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         )},
         { DLCDefinition("The Criminal Enterprises", TheCriminalEnterprisesVehicles) },
         { DLCDefinition("Los Santos Drug Wars", LosSantosDrugWarsVehicles) },
+        { DLCDefinition("San Andreas Mercenaries", SanAndreasMercenariesVehicles) },
     };
 }
