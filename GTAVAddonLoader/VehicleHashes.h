@@ -963,6 +963,42 @@ static const std::vector<Hash> SanAndreasMercenariesVehicles = {
     0xFD546A18, //  Vans                SPEEDO4             speedo5             Speedo Custom
 };
 
+static const std::vector<Hash> TheChopShopVehicles = {
+    0x6D63DAB0, //  Utility             BOATTRAILER         boattrailer2        Boat Trailer        
+    0x5BBDB764, //  Utility             BOATTRAILER         boattrailer3        Boat Trailer        
+    0xE5A41E08, //  Trains              FREIGHT2            freight2            Freight Train       
+    0xD7F8BB72, //  Utility             TOWTRUCK            towtruck3           Tow Truck           
+    0xCA3C1FF9, //  Utility             TOWTRUCK            towtruck4           Tow Truck           
+    0xB075D9C8, //  Utility             TRAILER             trailers5           Trailer             
+    0x1C136AF8, //  Utility             TRAILER             tvtrailer2          Trailer             
+    0xC29F8F4E, //  SUVs                CAVALCADE3          cavalcade3          Cavalcade XL        
+    0x30F15228, //  Sports              DRIFTEUROS          drifteuros          Euros               
+    0x9F3273F4, //  Sports              DRIFTREMUS          driftremus          Remus               
+    0x72A6CEBE, //  Sports              DRIFTZR350          driftzr350          ZR350               
+    0xD2389392, //  SUVs                DORADO              dorado              Dorado              
+    0xB67633E6, //  Emergency           POLGAUNTLET         polgauntlet         Gauntlet Interceptor
+    0xCDC46B21, //  Vans                BOXVILLE6           boxville6           Boxville (LSDS)     
+    0x09FC300D, //  Off-Road            TERMINUS            terminus            Terminus            
+    0x9AE43988, //  Sports              DRIFTTAMPA          drifttampa          Drift Tampa         
+    0x9BC400EF, //  Muscle              DRIFTYOSEM          driftyosemite       Drift Yosemite      
+    0xF55D2F7A, //  Muscle              IMPALER6            impaler6            Impaler LX          
+    0xE3788BB1, //  Sedans              IMPALER5            impaler5            Impaler SZ          
+    0x1635C007, //  Muscle              VIGERO3             Vigero3             Vigero ZX Convertible
+    0x96E6932D, //  Sports              DRIFTJESTER         driftjester         Jester RR           
+    0xA7C9F9A7, //  Coupes              DRIFTFR36           driftfr36           FR36                
+    0xE43C11E5, //  Coupes              FR36                fr36                FR36                
+    0xCC8A305C, //  SUVs                BALLER8             baller8             Baller ST-D         
+    0xF8AB457B, //  Super               TURISMO3            turismo3            Turismo Omaggio     
+    0xF84B48D1, //  Commercial          PHANTOM             phantom4            Phantom             
+    0xD3D366B1, //  Sedans              ASTEROPE2           asterope2           Asterope GZ         
+    0xF52D92EE, //  Sports              DRIFTFUTO           driftfuto           Futo GTX            
+    0xAE2CC02A, //  SUVs                VIVANITE            vivanite            Vivanite            
+    0xFDAEBF27, //  SUVs                ALEUTIAN            aleutian            Aleutian            
+    0x2B69BEA7, //  Commercial          BENSON2             benson2             Benson (Cluckin' Bell)
+    0xE5B3ACA1, //  Muscle              DOMINATOR9          dominator9          Dominator GT        
+    0x9C32EB57, //  Emergency           POLICE5             police5             Stanier LE Cruiser  
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -1008,5 +1044,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("The Criminal Enterprises", TheCriminalEnterprisesVehicles) },
         { DLCDefinition("Los Santos Drug Wars", LosSantosDrugWarsVehicles) },
         { DLCDefinition("San Andreas Mercenaries", SanAndreasMercenariesVehicles) },
+        { DLCDefinition("The Chop Shop", TheChopShopVehicles) },
     };
 }
