@@ -999,6 +999,30 @@ static const std::vector<Hash> TheChopShopVehicles = {
     0x9C32EB57, //  Emergency           POLICE5             police5             Stanier LE Cruiser  
 };
 
+static const std::vector<Hash> BottomDollarBountiesVehicles = {
+    0xA9E13F3D, //  Emergency           POLICET3            policet3            Burrito (Bail Enforcement)
+    0xC46B66C2, //  Coupes              eurosX32            eurosX32            Euros X32           
+    0xF771092E, //  Sedans              DRIFTVORSCH         driftvorschlag      Vorschlaghammer     
+    0xB614798D, //  Sedans              VORSCHLAG           vorschlaghammer     Vorschlaghammer     
+    0x42D623C7, //  Sports              ENVISAGE            envisage            Envisage            
+    0x9EF6AEC7, //  Emergency           POLDORADO           poldorado           Dorado Cruiser      
+    0x678DD3EA, //  Emergency           POLGREENW           polgreenwood        Greenwood Cruiser   
+    0x4DF2780F, //  SUVs                CASTIGATOR          castigator          Castigator          
+    0x568BD0B6, //  Emergency           POLIMPALER6         polimpaler6         Impaler LX Cruiser  
+    0x4A78B890, //  Emergency           POLIMPALER5         polimpaler5         Impaler SZ Cruiser  
+    0x8EF5E388, //  Off-Road            YOSEMITE4           yosemite1500        Yosemite 1500       
+    0xC79C754A, //  Sports              PARAGON3            paragon3            Paragon S           
+    0x8B44BEFB, //  Sports Classics     COQUETTE5           coquette5           Coquette D1         
+    0xF2AE3F81, //  Super               PIPISTRELLO         pipistrello         Pipistrello         
+    0x75599EA7, //  Motorcycles         PIZZABOY            pizzaboy            Pizza Boy           
+    0x0F626001, //  Sports              DRIFTCYPHER         driftcypher         Cypher              
+    0x70241EEA, //  Sports              NIOBE               niobe               Niobe               
+    0xC530D126, //  Sports              DRIFTSENT           driftsentinel       Sentinel Classic Widebody
+    0x5E2B66BE, //  Muscle              DOMINATOR10         dominator10         Dominator FX        
+    0xD1E0B7D7, //  Emergency           POLDOM10            poldominator10      Dominator FX Interceptor
+    0x64C1C8AA, //  Sports Classics     DRIFTNEBULA         driftnebula         Nebula Turbo        
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -1045,5 +1069,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("Los Santos Drug Wars", LosSantosDrugWarsVehicles) },
         { DLCDefinition("San Andreas Mercenaries", SanAndreasMercenariesVehicles) },
         { DLCDefinition("The Chop Shop", TheChopShopVehicles) },
+        { DLCDefinition("Bottom Dollar Bounties", BottomDollarBountiesVehicles) },
     };
 }

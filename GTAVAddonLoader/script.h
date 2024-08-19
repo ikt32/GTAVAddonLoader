@@ -1,6 +1,6 @@
 #pragma once
 
-#define DISPLAY_VERSION "v1.5.6"
+#define DISPLAY_VERSION "v1.5.7"
 
 #include <string>
 #include <vector>
