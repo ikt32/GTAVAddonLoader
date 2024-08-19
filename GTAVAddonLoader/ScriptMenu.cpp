@@ -45,7 +45,7 @@ extern std::vector<ModelInfo> g_addonVehiclesAll;     // all add-on vehicles - u
 extern std::vector<ModelInfo> g_dlcVehiclesAll;       // all game vehicles - used for sorting
 
 // returns true if a character was pressed
-bool evaluateInput(std::string &searchFor) {
+bool evaluateInput(std::string& searchFor) {
     using namespace NativeMenu;
     HUD::SET_PAUSE_MENU_ACTIVE(false);
     PAD::DISABLE_ALL_CONTROL_ACTIONS(2);
@@ -86,12 +86,12 @@ bool evaluateInput(std::string &searchFor) {
 void update_searchresults() {
     g_matchedVehicles.clear();
     for (const auto& addonVehicle : settings.SearchCategory == 0 ? g_dlcVehiclesAll : g_addonVehiclesAll) {
-        const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
-        std::string displayName = HUD::_GET_LABEL_TEXT(name);
+        const char* name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(addonVehicle.ModelHash);
+        std::string displayName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(name);
         std::string rawName = name;
         std::string modelName = addonVehicle.ModelName;
         std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash);
-        std::string makeName = HUD::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
+        std::string makeName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(MemoryAccess::GetVehicleMakeName(addonVehicle.ModelHash));
 
         if (findSubstring(rawName, searchVehicleName) != -1 ||
             findSubstring(displayName, searchVehicleName) != -1 ||
@@ -120,8 +120,8 @@ void onMenuExit() {
 }
 
 void OptionVehicle(const ModelInfo& vehicle) {
-    std::string displayName = HUD::_GET_LABEL_TEXT(VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash));
-    std::string displayMakeName = HUD::_GET_LABEL_TEXT(MemoryAccess::GetVehicleMakeName(vehicle.ModelHash));
+    std::string displayName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(vehicle.ModelHash));
+    std::string displayMakeName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(MemoryAccess::GetVehicleMakeName(vehicle.ModelHash));
 
     if (displayName == "NULL") {
         displayName = vehicle.ModelName;
@@ -151,7 +151,7 @@ std::string FormatCategoryName(const std::string& category) {
     return category;
 }
 
-void update_spawnmenu(const std::string& category, const std::vector<ModelInfo>& addonVehicles, 
+void update_spawnmenu(const std::string& category, const std::vector<ModelInfo>& addonVehicles,
                       const std::string& origin, bool asMake) {
     std::string catTitle = category;
     if (asMake && category.empty())
@@ -190,7 +190,7 @@ void update_mainmenu(const std::set<std::string>& addonCats) {
         }
 
         if (menu.OptionPlus("Spawn by name", extraSpawnInfo, &manualSpawnSelected, nullptr, nullptr, "Enter name")) {
-            spawnVehicle(MISC::GET_HASH_KEY((char *)(manualVehicleName.c_str())));
+            spawnVehicle(MISC::GET_HASH_KEY((char*)(manualVehicleName.c_str())));
         }
     }
 
@@ -249,9 +249,9 @@ void update_settingsmenu() {
     if (menu.BoolOption("Spawn inside vehicle", settings.SpawnInside)) {
         settings.SaveSettings();
     }
-    if (menu.BoolOption("Spawn in place", settings.SpawnInplace, 
+    if (menu.BoolOption("Spawn in place", settings.SpawnInplace,
                         { "Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.",
-                            "Only active if \"Spawn inside vehicle\" is turned on."})) {
+                            "Only active if \"Spawn inside vehicle\" is turned on." })) {
         settings.SaveSettings();
     }
     if (menu.BoolOption("Enable persistence", settings.Persistent,
@@ -263,7 +263,7 @@ void update_settingsmenu() {
                             "This setting adds an option to the main menu." })) {
         settings.SaveSettings();
     }
-    if (menu.BoolOption("Categorize by make", settings.CategorizeMake, 
+    if (menu.BoolOption("Categorize by make", settings.CategorizeMake,
                         { "Categorizing by " + std::string(settings.CategorizeMake ? "make" : "class") + "." })) {
         settings.SaveSettings();
     }
@@ -275,28 +275,28 @@ void update_settingsmenu() {
                         { "Don't sort per DLC and just show the vehicles per class." })) {
         settings.SaveSettings();
     }
-    if (menu.BoolOption("Enable search menu", settings.SearchMenu, 
+    if (menu.BoolOption("Enable search menu", settings.SearchMenu,
                         { "Search for vehicles by their make, game name or model name.",
                             "This setting adds an option to the main menu." })) {
         settings.SaveSettings();
     }
-    if (menu.Option("Reload previews", 
-                    { "Use for when you changed an image that's already been loaded."})) {
+    if (menu.Option("Reload previews",
+                    { "Use for when you changed an image that's already been loaded." })) {
         clearImages();
     }
-    if (menu.Option("Reload user DLC", 
+    if (menu.Option("Reload user DLC",
                     { "Reload your custom groupings" })) {
         reloadUserDlc();
     }
-    if (menu.Option("Clean up image preview folder", 
+    if (menu.Option("Clean up image preview folder",
                     { "Remove images from the preview folder that aren't detected as add-ons.",
                         "Removed files are put in a \"bak.timestamp\" folder." })) {
         clearImages();
         cleanImageDirectory(true);
     }
     if (settings.Persistent) {
-        if (menu.Option("Clear persistence", {"Clears the persistence on spawned vehicles", 
-                            "Persistent vehicles: " + std::to_string(g_persistentVehicles.size())})) {
+        if (menu.Option("Clear persistence", { "Clears the persistence on spawned vehicles",
+                            "Persistent vehicles: " + std::to_string(g_persistentVehicles.size()) })) {
             clearPersistentVehicles();
         }
     }
@@ -369,7 +369,7 @@ void update_menu() {
         if (menu.CurrentMenu(category)) {
             update_spawnmenu(category, g_addonVehicles, "Add-on vehicles", settings.CategorizeMake);
         }
-    }    
+    }
 
     if (settings.MergeDLCs) {
         const std::set<std::string>& categories = settings.CategorizeMake ? g_dlcMakes : g_dlcClasses;

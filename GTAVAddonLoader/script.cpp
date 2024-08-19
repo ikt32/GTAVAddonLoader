@@ -78,7 +78,7 @@ void clearImages() {
  */
 void resolveImage(Hash selected) {
     std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
-    for (auto &file : fs::directory_iterator(imgPath)) {
+    for (auto& file : fs::directory_iterator(imgPath)) {
         Hash hash = joaat(fs::path(file).stem().string());
         if (hash != selected) continue;
 
@@ -109,7 +109,7 @@ void cleanImageDirectory(bool backup) {
     logger.Write(INFO, "Cleaning img dir");
     std::string imgPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img";
     std::vector<fs::directory_entry> filesToDiscard;
-    for (auto &file : fs::directory_iterator(imgPath)) {
+    for (auto& file : fs::directory_iterator(imgPath)) {
         if (is_directory(fs::path(file))) continue;
         if (fs::path(file).stem().string() == "noimage") continue;
         Hash hash = joaat(fs::path(file).stem().string());
@@ -127,15 +127,15 @@ void cleanImageDirectory(bool backup) {
 
     if (backup) {
         logger.Write(INFO, "Creating bak dir");
-        auto ms = std::chrono::duration_cast<std::chrono::milliseconds >(
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
-            ).count();
+        ).count();
         bakPath = imgPath + "\\bak." + std::to_string(ms);
         logger.Write(INFO, "Bak dir: " + bakPath);
         fs::create_directory(bakPath);
     }
 
-    for (auto &file : filesToDiscard) {
+    for (auto& file : filesToDiscard) {
         std::string src = file.path().string();
         std::wstring srcWide = std::wstring(src.begin(), src.end());
         if (backup) {
@@ -154,10 +154,10 @@ std::string getMakeName(Hash hash) {
     char* makeName = MemoryAccess::GetVehicleMakeName(hash);
     if (makeName == nullptr ||
         strcmp(makeName, "") == 0 ||
-        strcmp(HUD::_GET_LABEL_TEXT(makeName), "NULL") == 0) {
+        strcmp(HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(makeName), "NULL") == 0) {
         return std::string();
     }
-    return std::string(HUD::_GET_LABEL_TEXT(makeName));
+    return std::string(HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(makeName));
 }
 
 std::string getModelName(Hash hash) {
@@ -167,14 +167,14 @@ std::string getModelName(Hash hash) {
 }
 
 void cacheDLCVehicles() {
-    for (auto &dlc : g_dlcs) {
+    for (auto& dlc : g_dlcs) {
         dlc.Vehicles.clear();
         for (auto hash : dlc.Hashes) {
             if (!STREAMING::IS_MODEL_IN_CDIMAGE(hash))
                 continue;
             char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-            std::string className = HUD::_GET_LABEL_TEXT(buffer);
+            std::string className = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(buffer);
             std::string makeName = getMakeName(hash);
             auto notes = std::vector<std::string>{ dlc.Name };
             if (!dlc.Note.empty()) {
@@ -222,7 +222,7 @@ void cacheDLCVehicles(std::vector<DLCDefinition>& dlcs) {
                 continue;
             char buffer[128];
             sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-            std::string className = HUD::_GET_LABEL_TEXT(buffer);
+            std::string className = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(buffer);
             std::string makeName = getMakeName(hash);
             dlc.Vehicles.emplace_back(className, makeName, getModelName(hash), hash);
             dlc.Classes.emplace(className);
@@ -302,7 +302,7 @@ void cacheAddons() {
     for (auto hash : allVehicles) {
         char buffer[128];
         sprintf_s(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS_FROM_NAME(hash));
-        std::string className = HUD::_GET_LABEL_TEXT(buffer);
+        std::string className = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(buffer);
         std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
         std::string makeName = getMakeName(hash);
 
@@ -340,8 +340,8 @@ void clearPersistentVehicles() {
 }
 
 bool findStringInNames(const std::string& search, Hash hash) {
-    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-    std::string displayName = HUD::_GET_LABEL_TEXT(name);
+    const char* name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    std::string displayName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(name);
     std::string rawName = name;
     std::string modelName = getModelName(hash);
     std::string makeNameRaw = MemoryAccess::GetVehicleMakeName(hash);
@@ -375,7 +375,7 @@ Vehicle spawnVehicle(Hash hash, Vector3 coords, float heading, DWORD timeout) {
         }
     }
 
-    Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, coords.x, coords.y, coords.z, heading, 0, 1, 0);
+    Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, coords, heading, 0, 1, 0);
     VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 5.0f);
     WAIT(0);
     STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
@@ -388,7 +388,7 @@ Vehicle spawnVehicle(Hash hash, Vector3 coords, float heading, DWORD timeout) {
 
 /*
  * Spawns a vehicle with the chosen model hash. Put it on the player when not
- * already in a vehicle, and puts it to the right when a vehicle is already 
+ * already in a vehicle, and puts it to the right when a vehicle is already
  * occupied. Bounding-box dependent, so spawning two jumbojets should have
  * clearance for non-explodiness, and two bikes are spaced without too much
  * distance between 'em.
@@ -430,8 +430,8 @@ void spawnVehicle(Hash hash) {
             // width + margin + width again 
             offsetX = ((newMax.x - newMin.x) / 2.0f) + 1.0f + ((oldMax.x - oldMin.x) / 2.0f);
         }
-        
-        Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, offsetX, 0.0, 0);
+
+        Vector3 pos = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(playerPed, { offsetX, 0.0f, 0.0f });
 
         if (spawnInside && settings.SpawnInplace && PED::IS_PED_IN_ANY_VEHICLE(playerPed, false)) {
             Vehicle oldVeh = PED::GET_VEHICLE_PED_IS_IN(playerPed, false);
@@ -441,9 +441,9 @@ void spawnVehicle(Hash hash) {
             VEHICLE::DELETE_VEHICLE(&oldVeh);
             pos = oldVehiclePos;
         }
-        
 
-        Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos.x, pos.y, pos.z, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1, 0);
+
+        Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1, 0);
         VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 5.0f);
         VEHICLE::SET_VEHICLE_DIRT_LEVEL(veh, 0.0f);
 
@@ -482,7 +482,7 @@ std::string getImageExtra(Hash addonVehicle) {
     else if (std::find(g_missingImages.begin(), g_missingImages.end(), addonVehicle) == g_missingImages.end()) {
         resolveImage(addonVehicle);
     }
-    
+
     if (extra.empty()) {
         extra = menu.ImagePrefix + std::to_string(noImage.TextureID) +
             "W" + std::to_string(noImage.ResX) +
@@ -493,7 +493,7 @@ std::string getImageExtra(Hash addonVehicle) {
 
 /*
  * Used by the menu so it gets only the info of the current addon vehicle option,
- * instead of everything. 
+ * instead of everything.
  */
 std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
     std::vector<std::string> extras;

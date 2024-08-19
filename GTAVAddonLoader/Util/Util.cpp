@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-void showText(float x, float y, float scale, const char* text, int font, const Color &rgba, bool outline) {
+void showText(float x, float y, float scale, const char* text, int font, const Color& rgba, bool outline) {
     HUD::SET_TEXT_FONT(font);
     HUD::SET_TEXT_SCALE(scale, scale);
     HUD::SET_TEXT_COLOUR(rgba.R, rgba.G, rgba.B, rgba.A);
@@ -19,18 +19,18 @@ void showText(float x, float y, float scale, const char* text, int font, const C
     HUD::SET_TEXT_CENTRE(0);
     if (outline) HUD::SET_TEXT_OUTLINE();
     HUD::BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING");
-    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(text));
-    HUD::END_TEXT_COMMAND_DISPLAY_TEXT(x, y, 0);
+    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char*)(text));
+    HUD::END_TEXT_COMMAND_DISPLAY_TEXT({ x, y }, 0);
 }
 
-void showNotification(std::string message, int *prevNotification) {
+void showNotification(std::string message, int* prevNotification) {
     if (prevNotification != nullptr && *prevNotification != 0) {
         HUD::THEFEED_REMOVE_ITEM(*prevNotification);
     }
     HUD::BEGIN_TEXT_COMMAND_THEFEED_POST("STRING");
 
-    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.c_str()));
-    
+    HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char*)(message.c_str()));
+
     int id = HUD::END_TEXT_COMMAND_THEFEED_POST_TICKER(false, false);
     if (prevNotification != nullptr) {
         *prevNotification = id;
@@ -44,7 +44,7 @@ void showSubtitle(std::string message, int duration) {
 
     for (int i = 0; i < message.size(); i += maxStringLength) {
         int npos = std::min(maxStringLength, static_cast<int>(message.size()) - i);
-        HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char *)(message.substr(i, npos).c_str()));
+        HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char*)(message.substr(i, npos).c_str()));
     }
 
     HUD::END_TEXT_COMMAND_PRINT(duration, 1);
@@ -104,7 +104,7 @@ std::optional<std::pair<uint32_t, uint32_t>> GetPNGDimensions(const std::string&
 }
 
 std::optional<std::pair<uint32_t, uint32_t>> GetJPGDimensions(const std::string& path) {
-    FILE *image = nullptr;
+    FILE* image = nullptr;
 
     errno_t err = fopen_s(&image, path.c_str(), "rb");  // open JPEG image file
     if (!image || err) {
@@ -155,13 +155,14 @@ std::optional<std::pair<uint32_t, uint32_t>> GetWebPDimensions(const std::string
         vp8Sig = _byteswap_ulong(vp8Sig);
 
         switch (vp8Sig) {
-            case 'VP8 ': {
+            case 'VP8 ':
+            {
                 uint8_t sigBytes[3] = { 0x0, 0x0, 0x0 };
                 img.seekg(0x17);
                 img.read((char*)sigBytes, 3);
                 if (sigBytes[0] != 0x9D || sigBytes[1] != 0x01 || sigBytes[2] != 0x2A) {
                     logger.Write(ERROR, "[IMG]: %s failed to find VP8 (Lossy) signature bytes, got 0x%02X 0x%02X 0x%02X",
-                        path.c_str(), sigBytes[0], sigBytes[1], sigBytes[2]);
+                                 path.c_str(), sigBytes[0], sigBytes[1], sigBytes[2]);
                     return {};
                 }
 
@@ -173,13 +174,14 @@ std::optional<std::pair<uint32_t, uint32_t>> GetWebPDimensions(const std::string
 
                 return { {w, h} };
             }
-            case 'VP8L': {
+            case 'VP8L':
+            {
                 uint8_t sigByte = 0x0;
                 img.seekg(5 * sizeof(uint32_t));
                 img.read((char*)&sigByte, 1);
                 if (sigByte != 0x2F) {
                     logger.Write(ERROR, "[IMG]: %s failed to find VP8 (Lossless) signature byte, got 0x%02X",
-                        path.c_str(), sigByte);
+                                 path.c_str(), sigByte);
                     return {};
                 }
 
@@ -194,13 +196,13 @@ std::optional<std::pair<uint32_t, uint32_t>> GetWebPDimensions(const std::string
             }
             default:
                 logger.Write(ERROR, "[IMG]: %s unrecognized WebP format. FourCC: 0x%04X",
-                    path.c_str(), vp8Sig);
+                             path.c_str(), vp8Sig);
                 return {};
         }
     }
     else {
         logger.Write(ERROR, "[IMG]: %s not a WebP file. RIFF (0x%04X): 0x%04X, WEBP (0x%04X): 0x%04X",
-            path.c_str(), riffSig, imgRiffSig, webpSig, imgWebPSig);
+                     path.c_str(), riffSig, imgRiffSig, webpSig, imgWebPSig);
         return {};
     }
 }
@@ -222,8 +224,8 @@ Hash joaat(std::string s) {
 }
 
 std::string getGxtName(Hash hash) {
-    const char *name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
-    std::string displayName = HUD::_GET_LABEL_TEXT(name);
+    const char* name = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(hash);
+    std::string displayName = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(name);
     if (displayName == "NULL") {
         displayName = name;
     }

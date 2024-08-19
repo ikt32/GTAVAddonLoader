@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include <windows.h>
+#include <Windows.h>
+#include <type_traits>
+
 
 typedef DWORD Void;
 typedef DWORD Any;
@@ -35,14 +37,24 @@ typedef int ColourIndex;
 typedef int Sphere;
 typedef int ScrHandle;
 
-#pragma pack(push, 1)
-typedef struct
-{
-    float x;
-    DWORD _paddingx;
-    float y;
-    DWORD _paddingy;
-    float z;
-    DWORD _paddingz;
-} Vector3;
-#pragma pack(pop)
+#pragma warning(push)
+#pragma warning(disable : 4324)
+struct Vector2 {
+    alignas(8) float x;
+    alignas(8) float y;
+};
+
+
+struct Vector3 {
+    alignas(8) float x;
+    alignas(8) float y;
+    alignas(8) float z;
+};
+
+struct Vector4 {
+    alignas(8) float x;
+    alignas(8) float y;
+    alignas(8) float z;
+    alignas(8) float w;
+};
+#pragma warning(pop)
