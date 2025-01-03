@@ -135,6 +135,11 @@ static std::vector<std::string> GameVersionString = {
     "v1.0.3179.0",           // 86
     "v1.0.3258.0",           // 87
     "v1.0.3274.0",           // 88
+    "v1.0.3323.0",           // 89
+    "v1.0.3337.0",           // 90
+    "v1.0.3351.0",           // 91
+    "v1.0.3407.0",           // 92
+    "v1.0.3411.0",           // 93
 };
 
 static std::string eGameVersionToString(int version) {

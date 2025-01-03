@@ -102,7 +102,7 @@
       <Path>$(IntDir)$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>PostBuild.bat $(ProjectDir)$(OutDir) "D:\Games\Steam\steamapps\common\Grand Theft Auto V" $(TargetFileName)</Command>
+      <Command>PostBuild.bat $(ProjectDir)$(OutDir) "E:\Games\Steam\steamapps\common\Grand Theft Auto V" $(TargetFileName)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>copy /b $(ProjectDir)main.cpp +,,</Command>

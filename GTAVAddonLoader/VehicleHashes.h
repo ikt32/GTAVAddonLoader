@@ -1023,6 +1023,27 @@ static const std::vector<Hash> BottomDollarBountiesVehicles = {
     0x64C1C8AA, //  Sports Classics     DRIFTNEBULA         driftnebula         Nebula Turbo        
 };
 
+static const std::vector<Hash> AgentsOfSabotageVehicles = {
+    0x904CE25B, //  Trains              FREIGHT             freightcar3         Freight Train       
+    0xD8A914D3, //  Sports              BANSHEE3            banshee3            Banshee GTS         
+    0xEAFA7EB7, //  Helicopters         CARGOBOB5           cargobob5           DH-7 Iron Mule      
+    0xB1412350, //  Emergency           POLTERMINU          polterminus         Terminus Patrol     
+    0x76BC2267, //  Sedans              chavosv6            chavosv6            Chavos V6           
+    0xEA61C64A, //  Sports Classics     DRIFTJSTR3          driftjester3        Jester Classic      
+    0x5882160F, //  Sports              JESTER5             jester5             Jester RR Widebody  
+    0x3329757E, //  Planes              TITAN2              titan2              Titan 250 D         
+    0x79C12D73, //  Emergency           POLCOQUTT4          polcoquette4        Coquette D10 Pursuit
+    0x0796B7A5, //  Sports              coquette6           coquette6           Coquette D5         
+    0xB327FA66, //  Sports              DRIFTFUTO2          driftfuto2          Futo                
+    0xA8940CF3, //  Sports Classics     DRIFTCHEBU          driftcheburek       Cheburek            
+    0x8BD565B8, //  Emergency           POLCARACAR          polcaracara         Caracara Pursuit    
+    0xC600F136, //  Off-Road            FIREBOLT            firebolt            Firebolt ASP        
+    0x5B73F5B7, //  Sports Classics     URANUS              uranus              Uranus LozSpeed     
+    0x871160F9, //  Vans                YOUGA4              youga5              Youga Custom        
+    0x05071B2D, //  Planes              DUSTER2             duster2             Duster 300-H        
+    0x70B8833A, //  Emergency           POLFCTION2          polfaction2         Outreach Faction    
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -1070,5 +1091,6 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("San Andreas Mercenaries", SanAndreasMercenariesVehicles) },
         { DLCDefinition("The Chop Shop", TheChopShopVehicles) },
         { DLCDefinition("Bottom Dollar Bounties", BottomDollarBountiesVehicles) },
+        { DLCDefinition("Agents of Sabotage", AgentsOfSabotageVehicles) },
     };
 }
