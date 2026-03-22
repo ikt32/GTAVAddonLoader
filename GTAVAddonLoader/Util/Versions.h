@@ -154,6 +154,7 @@ const std::vector<std::string> NamesLegacy = {
     "v1.0.3717.0",       // 99
     //"v1.0.3725.0",     // XXX
     "v1.0.3751.0",       // 100
+    "v1.0.3788.0",       // 101
 };
 
 const std::vector<std::string> NamesEnhanced{
@@ -168,6 +169,7 @@ const std::vector<std::string> NamesEnhanced{
     "v1.0.1013.17",     // 1008
     //"v1.0.1013.20"    // XXXX
     "v1.0.1013.29",     // 1009
+    "v1.0.1013.33",     // 1010
 };
 
 enum EGameVersion: int {
@@ -315,7 +317,8 @@ enum EGameVersion: int {
     L_1_0_3586_0,           // 98
     L_1_0_3717_0,           // 99
     //L_1_0_3725_0          // XXX
-    L_1_0_3751_0,           // 101
+    L_1_0_3751_0,           // 100
+    L_1_0_3788_0,           // 101
 
     // Enhanced
     E_1_0_811_8             = 1001,
@@ -328,6 +331,7 @@ enum EGameVersion: int {
     E_1_0_1013_17           = 1008,
     //E_1_0_1013_20         = XXXX
     E_1_0_1013_29           = 1009,
+    E_1_0_1013_33           = 1010,
 };
 
 inline bool IsEnhanced(int version) {
