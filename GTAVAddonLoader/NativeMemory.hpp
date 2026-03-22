@@ -335,13 +335,17 @@ struct HashNode {
 
 class MemoryAccess {
 public:
-    static uintptr_t FindPattern(const char* pattern, const char* mask, const char* startAddress, size_t size);
-    static uintptr_t FindPattern(const char* pattern, const char* mask);
+    static uintptr_t FindPattern(const std::string& pattern, const uint8_t* startAddress, size_t size);
+    static uintptr_t FindPattern(const std::string& pattern);
+
     static void Init();
     static std::string GetVehicleMakeName(int modelHash);
     static std::vector<uint16_t> GetVehicleModKits(int modelHash);
 private:
     static void initGetModelInfo();
+    static void initGetModelInfoLegacy();
+    static void initGetModelInfoEnhanced();
+
     static void initEnableCarsGlobal();
 
     static bool findShopController();

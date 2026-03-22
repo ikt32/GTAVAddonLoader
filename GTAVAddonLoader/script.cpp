@@ -484,17 +484,13 @@ std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
 
     std::string modkitsInfo;
 
-    // TODO: GetModelInfo for Enhanced is not implemented
-    // Skip mod kit info.
-    if (!Versions::IsEnhanced()) {
-        auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
-        for (auto kit : modkits) {
-            if (kit == modkits.back()) {
-                modkitsInfo += std::to_string(kit);
-            }
-            else {
-                modkitsInfo += std::to_string(kit) + ", ";
-            }
+    auto modkits = MemoryAccess::GetVehicleModKits(addonVehicle.ModelHash);
+    for (auto kit : modkits) {
+        if (kit == modkits.back()) {
+            modkitsInfo += std::to_string(kit);
+        }
+        else {
+            modkitsInfo += std::to_string(kit) + ", ";
         }
     }
 
