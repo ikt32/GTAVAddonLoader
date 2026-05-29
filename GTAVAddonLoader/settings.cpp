@@ -14,7 +14,8 @@ void Settings::ReadSettings() {
     CSimpleIniA settingsGeneral;
     settingsGeneral.SetUnicode();
     settingsGeneral.LoadFile(settingsGeneralFile.c_str());
-    
+
+    ShowPreviews = settingsGeneral.GetBoolValue("OPTIONS", "ShowPreviews", true);
     SpawnInside = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInside", false);
     SpawnInplace = settingsGeneral.GetBoolValue("OPTIONS", "SpawnInplace", false);
     SpawnByName = settingsGeneral.GetBoolValue("OPTIONS", "SpawnByName", false);
@@ -32,6 +33,7 @@ void Settings::SaveSettings() {
     settings.SetUnicode();
     settings.LoadFile(settingsGeneralFile.c_str());
 
+    settings.SetBoolValue("OPTIONS", "ShowPreviews", ShowPreviews);
     settings.SetBoolValue("OPTIONS", "SpawnInside", SpawnInside);
     settings.SetBoolValue("OPTIONS", "SpawnInplace", SpawnInplace);
     settings.SetBoolValue("OPTIONS", "SpawnByName", SpawnByName);

@@ -16,6 +16,7 @@ public:
     void SaveSettings();
     void SetFiles(const std::string &general);
 
+    bool ShowPreviews = true;
     bool SpawnInside = false;
     bool SpawnByName = false;
     bool ListAllDLCs = false;

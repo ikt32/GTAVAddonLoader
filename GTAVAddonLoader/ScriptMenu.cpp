@@ -280,6 +280,13 @@ void update_settingsmenu() {
                             "This setting adds an option to the main menu." })) {
         settings.SaveSettings();
     }
+
+    if (menu.BoolOption("Show previews", settings.ShowPreviews,
+                        { "Show or hide vehicle previews" })) {
+        if (!settings.ShowPreviews) {
+            clearImages();
+        }
+    }
     if (menu.Option("Reload previews",
                     { "Use for when you changed an image that's already been loaded." })) {
         clearImages();

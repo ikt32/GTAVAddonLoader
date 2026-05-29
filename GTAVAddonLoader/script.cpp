@@ -494,7 +494,8 @@ std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
         }
     }
 
-    extras.push_back(getImageExtra(addonVehicle.ModelHash));
+    if (settings.ShowPreviews)
+        extras.push_back(getImageExtra(addonVehicle.ModelHash));
 
     std::string makeFinal = Utility::GetVehicleMakeGxt(addonVehicle.ModelHash);
     if (makeFinal.empty())
@@ -592,6 +593,9 @@ void ScriptInit() {
 
 void InitTextures() {
     clearImages();
+
+    if (!settings.ShowPreviews)
+        return;
 
     Hash hash = joaat("noimage");
     std::string fileName = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\img\\noimage.png";
