@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <vector>
 #include <simpleini/SimpleIni.h>
 
@@ -26,6 +27,7 @@ public:
     bool SpawnInplace = false;
     bool SearchMenu = false;
     int SearchCategory = 0;
+    std::string Language = "en-US";
 
 private:
     std::string settingsGeneralFile;

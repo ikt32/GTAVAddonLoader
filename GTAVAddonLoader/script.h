@@ -23,5 +23,6 @@ void clearImages();
 void clearPersistentVehicles();
 void cleanImageDirectory(bool backup);
 void reloadUserDlc();
+void reloadLanguages();
 
 void spawnVehicle(Hash hash);

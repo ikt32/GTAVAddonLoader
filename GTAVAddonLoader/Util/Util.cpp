@@ -42,11 +42,20 @@ void showNotification(std::string message, int* prevNotification) {
 void showSubtitle(std::string message, int duration) {
     HUD::BEGIN_TEXT_COMMAND_PRINT("CELL_EMAIL_BCON");
 
-    const int maxStringLength = 99;
+    constexpr size_t maxStringLength = 99;
+    size_t start = 0;
+    while (start < message.size()) {
+        size_t end = std::min(start + maxStringLength, message.size());
+        while (end < message.size() && end > start &&
+               (static_cast<unsigned char>(message[end]) & 0xC0) == 0x80) {
+            --end;
+        }
+        if (end == start)
+            end = std::min(start + maxStringLength, message.size());
 
-    for (int i = 0; i < message.size(); i += maxStringLength) {
-        int npos = std::min(maxStringLength, static_cast<int>(message.size()) - i);
-        HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char*)(message.substr(i, npos).c_str()));
+        const std::string chunk = message.substr(start, end - start);
+        HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME((char*)(chunk.c_str()));
+        start = end;
     }
 
     HUD::END_TEXT_COMMAND_PRINT(duration, 1);
