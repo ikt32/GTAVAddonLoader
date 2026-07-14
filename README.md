@@ -24,15 +24,10 @@ Clone my [GTAVMenuBase](https://github.com/E66666666/GTAVMenuBase) to the same f
 Language packs are UTF-8 XML files stored in `AddonSpawner/Languages`. The
 language can be changed immediately from the in-game Settings menu and is saved
 as `Language` in `settings_general.ini`. The bundled packs are English
-(`en-US`), Simplified Chinese (`zh-CN`), Russian (`ru-RU`), Spanish for Spain
-(`es-ES`) and Latin America (`es-419`), Brazilian Portuguese (`pt-BR`), German
-(`de-DE`), Japanese (`ja-JP`), and French (`fr-FR`). If a pack or an individual
-entry cannot be loaded, the affected text falls back to built-in English.
-
-The non-English translations are ready for use but should receive native-speaker
-review before being described as professionally localized. See the English
-[language market prioritization](docs/language-market-prioritization.md) for the
-selection evidence, estimates, and limitations.
+(`en-US`) and Simplified Chinese (`zh-CN`). Chinese menu text and subtitles have
+been verified in GTA V Legacy v1.0.3788.0. If a pack or an individual entry
+cannot be loaded, the affected text falls back to built-in English. Additional
+languages can be added after native-speaker translation or review.
 
 Create another language by copying `en-US.xml`, then change the language code,
 display name and translated values:

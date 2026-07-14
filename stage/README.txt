@@ -44,11 +44,11 @@ settings_menu.ini should contain all info you need.
 Language packs
 ==============
 Language packs are UTF-8 XML files in AddonSpawner/Languages. Change the
-language from the in-game Settings menu. Included languages are English,
-Simplified Chinese, Russian, Spanish (Spain and Latin America), Brazilian
-Portuguese, German, Japanese, and French. Missing translations automatically
-fall back to English. Non-English translations should receive native-speaker
-review before being described as professionally localized.
+language from the in-game Settings menu. Included languages are English and
+Simplified Chinese. Chinese menu text and subtitles have been verified in
+GTA V Legacy v1.0.3788.0. Missing translations automatically fall back to
+English. Additional languages can be added after native-speaker translation
+or review.
 
 To add a language, copy en-US.xml, change the code and name on the <language>
 element, and translate the values inside each <text> element. Do not change the
