@@ -4,6 +4,7 @@
 #include "VehicleHashes.h"
 #include "ExtraTypes.h"
 #include "Images.h"
+#include "Language.h"
 #include "UserDLC.h"
 
 #include "Util/Logger.hpp"
@@ -34,6 +35,14 @@ Settings settings;
 
 std::string settingsGeneralFile;
 std::string settingsMenuFile;
+
+void reloadLanguages() {
+    const std::filesystem::path languageDirectory =
+        Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\Languages";
+    gLanguage.Reload(languageDirectory, settings.Language);
+    settings.Language = gLanguage.ActiveCode();
+    settings.SaveSettings();
+}
 
 // Keep a list of vehicles we marked as mission entity
 std::vector<Vehicle> g_persistentVehicles;
@@ -387,7 +396,7 @@ void spawnVehicle(Hash hash) {
         while (!STREAMING::HAS_MODEL_LOADED(hash)) {
             WAIT(0);
             if (GetTickCount() > startTime + timeout) {
-                showSubtitle("Couldn't load model");
+                showSubtitle(gLanguage.Text("subtitle.model_load_failed"));
                 WAIT(0);
                 STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
                 return;
@@ -448,10 +457,13 @@ void spawnVehicle(Hash hash) {
             ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
         }
 
-        showSubtitle("Spawned " + Utility::GetVehicleNameGxt(hash) + " (" + getModelName(hash) + ")");
+        showSubtitle(gLanguage.Format("subtitle.vehicle_spawned", {
+            { "vehicle", Utility::GetVehicleNameGxt(hash) },
+            { "model", getModelName(hash) },
+        }));
     }
     else {
-        showSubtitle("Vehicle doesn't exist");
+        showSubtitle(gLanguage.Text("subtitle.vehicle_missing"));
     }
 }
 
@@ -499,15 +511,15 @@ std::vector<std::string> resolveVehicleInfo(const ModelInfo& addonVehicle) {
 
     std::string makeFinal = Utility::GetVehicleMakeGxt(addonVehicle.ModelHash);
     if (makeFinal.empty())
-        makeFinal = "No make";
-    extras.push_back("Make: \t" + makeFinal);
-    extras.push_back("Name: \t" + Utility::GetVehicleNameGxt(addonVehicle.ModelHash));
-    extras.push_back("Model: \t" + to_lower(getModelName(addonVehicle.ModelHash)));
+        makeFinal = gLanguage.Text("common.no_make");
+    extras.push_back(gLanguage.Format("vehicle.info.make", { { "value", makeFinal } }));
+    extras.push_back(gLanguage.Format("vehicle.info.name", { { "value", Utility::GetVehicleNameGxt(addonVehicle.ModelHash) } }));
+    extras.push_back(gLanguage.Format("vehicle.info.model", { { "value", to_lower(getModelName(addonVehicle.ModelHash)) } }));
     if (!modkitsInfo.empty()) {
-        extras.push_back("Mod kit ID(s): \t" + modkitsInfo);
+        extras.push_back(gLanguage.Format("vehicle.info.mod_kits", { { "value", modkitsInfo } }));
     }
     else if (!Versions::IsEnhanced() /* TODO: Re-enable for Enhanced when GetModelInfo */) {
-        extras.emplace_back("Mod kit ID(s): \tNone");
+        extras.push_back(gLanguage.Format("vehicle.info.mod_kits", { { "value", gLanguage.Text("common.none") } }));
     }
     return extras;
 }
@@ -570,6 +582,7 @@ void ScriptInit() {
     settingsMenuFile = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\settings_menu.ini";
     settings.SetFiles(settingsGeneralFile);
     settings.ReadSettings();
+    reloadLanguages();
 
     menu.RegisterOnMain(std::bind(onMenuOpen));
     menu.RegisterOnExit(std::bind(onMenuExit));

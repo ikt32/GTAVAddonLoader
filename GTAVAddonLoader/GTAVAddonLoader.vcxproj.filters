@@ -43,6 +43,7 @@
       <Filter>Menu</Filter>
     </ClCompile>
     <ClCompile Include="Images.cpp" />
+    <ClCompile Include="Language.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="script.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="noimage_old.h" />
     <ClInclude Include="noimage_new.h" />
     <ClInclude Include="Images.h" />
+    <ClInclude Include="Language.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Menu">

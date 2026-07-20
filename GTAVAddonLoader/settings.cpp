@@ -25,6 +25,7 @@ void Settings::ReadSettings() {
     Persistent = settingsGeneral.GetBoolValue("OPTIONS", "Persistent", false);
     CategorizeMake = settingsGeneral.GetBoolValue("OPTIONS", "CategorizeMake", false);
     SearchCategory = settingsGeneral.GetLongValue("OPTIONS", "SearchCategory", 0);
+    Language = settingsGeneral.GetValue("OPTIONS", "Language", "en-US");
 }
 
 
@@ -43,6 +44,7 @@ void Settings::SaveSettings() {
     settings.SetBoolValue("OPTIONS", "Persistent", Persistent);
     settings.SetBoolValue("OPTIONS", "CategorizeMake", CategorizeMake);
     settings.SetLongValue("OPTIONS", "SearchCategory", SearchCategory);
+    settings.SetValue("OPTIONS", "Language", Language.c_str());
 
     settings.SaveFile(settingsGeneralFile.c_str());
 }
