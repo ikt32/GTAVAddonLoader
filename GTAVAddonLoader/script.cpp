@@ -40,8 +40,11 @@ void reloadLanguages() {
     const std::filesystem::path languageDirectory =
         Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\Languages";
     gLanguage.Reload(languageDirectory, settings.Language);
-    settings.Language = gLanguage.ActiveCode();
-    settings.SaveSettings();
+    const std::string& activeLanguage = gLanguage.ActiveCode();
+    if (settings.Language != activeLanguage) {
+        settings.Language = activeLanguage;
+        settings.SaveSettings();
+    }
 }
 
 // Keep a list of vehicles we marked as mission entity
