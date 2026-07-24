@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <language code="en-US" name="English">
   <text key="common.no_make">No make</text>
-  <text key="common.none">None</text>
   <text key="input.delete_backspace">Use Delete for backspace</text>
   <text key="input.enter_model">Enter car model:</text>
   <text key="input.enter_name">Enter name</text>
@@ -23,7 +22,7 @@
   <text key="settings.spawn_inside">Spawn inside vehicle</text>
   <text key="settings.spawn_in_place">Spawn in place</text>
   <text key="settings.spawn_in_place.detail1">Don't spawn to the right of the previous car, but spawn at the current position. This replaces the current vehicle.</text>
-  <text key="settings.spawn_in_place.detail2">Only active if &quot;Spawn inside vehicle&quot; is turned on.</text>
+  <text key="settings.spawn_in_place.detail2">Only active if "Spawn inside vehicle" is turned on.</text>
   <text key="settings.persistence">Enable persistence</text>
   <text key="settings.persistence.detail">Spawned cars don't disappear.</text>
   <text key="settings.spawn_by_name">Spawn by name</text>
@@ -47,7 +46,7 @@
   <text key="settings.reload_user_dlc.detail">Reload your custom groupings</text>
   <text key="settings.clean_previews">Clean up image preview folder</text>
   <text key="settings.clean_previews.detail1">Remove images from the preview folder that aren't detected as add-ons.</text>
-  <text key="settings.clean_previews.detail2">Removed files are put in a &quot;bak.timestamp&quot; folder.</text>
+  <text key="settings.clean_previews.detail2">Removed files are put in a "bak.timestamp" folder.</text>
   <text key="settings.clear_persistence">Clear persistence</text>
   <text key="settings.clear_persistence.detail">Clears the persistence on spawned vehicles</text>
   <text key="settings.persistent_count">Persistent vehicles: {count}</text>
@@ -56,6 +55,7 @@
   <text key="vehicle.info.name">Name: 	{value}</text>
   <text key="vehicle.info.model">Model: 	{value}</text>
   <text key="vehicle.info.mod_kits">Mod kit ID(s): 	{value}</text>
+  <text key="common.none">None</text>
   <text key="menu.official_dlc.title">Official DLC</text>
   <text key="menu.official_dlc.merged">Merged</text>
   <text key="menu.official_dlc.sort">Sort by DLC</text>

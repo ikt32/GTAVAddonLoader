@@ -15,9 +15,8 @@
 LanguageManager gLanguage;
 
 namespace {
-using StringMap = std::unordered_map<std::string, std::string>;
-
-const StringMap kEnglishStrings = {
+using TStringMap = std::unordered_map<std::string, std::string>;
+const TStringMap sEnglishStrings = {
     { "common.no_make", "No make" },
     { "input.delete_backspace", "Use Delete for backspace" },
     { "input.enter_model", "Enter car model:" },
@@ -233,7 +232,7 @@ bool LanguageManager::Reload(const std::filesystem::path& languageDirectory, con
 
     LanguagePack english;
     english.Info = { "en-US", "English", {} };
-    english.Strings = kEnglishStrings;
+    english.Strings = sEnglishStrings;
     packs.push_back(std::move(english));
 
     std::error_code error;
@@ -305,10 +304,10 @@ bool LanguageManager::Select(const std::string& code) {
 }
 
 void LanguageManager::Activate(const LanguagePack& pack) {
-    activeStrings = kEnglishStrings;
+    activeStrings = sEnglishStrings;
     for (const auto& [key, value] : pack.Strings) {
-        const auto fallback = kEnglishStrings.find(key);
-        if (fallback != kEnglishStrings.end() && Placeholders(fallback->second) != Placeholders(value)) {
+        const auto fallback = sEnglishStrings.find(key);
+        if (fallback != sEnglishStrings.end() && Placeholders(fallback->second) != Placeholders(value)) {
             LOG(Warning, "[Language] Placeholder mismatch for '{}' in {}; using English fallback",
                 key, pack.Info.FilePath.string());
             continue;
@@ -323,8 +322,8 @@ std::string LanguageManager::Text(const std::string& key) const {
     const auto found = activeStrings.find(key);
     if (found != activeStrings.end())
         return found->second;
-    const auto fallback = kEnglishStrings.find(key);
-    if (fallback != kEnglishStrings.end())
+    const auto fallback = sEnglishStrings.find(key);
+    if (fallback != sEnglishStrings.end())
         return fallback->second;
     LOG(Warning, "[Language] Unknown translation key '{}'", key);
     return key;

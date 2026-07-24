@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set ProjDir=%1
+set "ProjDir=%~dp0"
 copy /b "%ProjDir%main.cpp" +,,
 copy /b/v/y "%ProjDir%GitInfo.h.template" "%ProjDir%GitInfo.h"
 

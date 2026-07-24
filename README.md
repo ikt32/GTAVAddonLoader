@@ -23,11 +23,11 @@ Clone my [GTAVMenuBase](https://github.com/E66666666/GTAVMenuBase) to the same f
 
 Language packs are UTF-8 XML files stored in `AddonSpawner/Languages`. The
 language can be changed immediately from the in-game Settings menu and is saved
-as `Language` in `settings_general.ini`. The bundled packs are English
-(`en-US`) and Simplified Chinese (`zh-CN`). Chinese menu text and subtitles have
-been verified in GTA V Legacy v1.0.3788.0. If a pack or an individual entry
-cannot be loaded, the affected text falls back to built-in English. Additional
-languages can be added after native-speaker translation or review.
+as `Language` in `settings_general.ini`. The bundled language is English
+(`en-US`).
+
+If a pack or an individual entry cannot be loaded, the affected text falls back
+to built-in English. Additional languages will not be supported out-of-the-box.
 
 Create another language by copying `en-US.xml`, then change the language code,
 display name and translated values:
@@ -53,3 +53,13 @@ Language files are rescanned whenever the menu opens, so new or edited packs
 can be used without rebuilding the plugin or restarting the game. If multiple
 files declare the same language code, the first valid file in filename order is
 used (the bundled `en-US` pack customizes the built-in English fallback).
+
+It is recommended to generate language packs from `en-US.xml`, and to use an AI
+model to do this task.
+
+### Contributing
+
+When adding new strings:
+- Use the template pattern in `ScriptMenu.cpp`
+- Update the corresponding referring English strings in `sEnglishStrings` in `Language.cpp`
+- The post-build script automatically regenerates `en-US.xml` for consistency.

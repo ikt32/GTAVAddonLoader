@@ -57,6 +57,9 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)tools\Sync-Languages.cmd"</Command>
+    </PreBuildEvent>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
@@ -84,6 +87,9 @@
     </BuildLog>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)tools\Sync-Languages-Release.cmd"</Command>
+    </PreBuildEvent>
     <ClCompile>
       <PreprocessorDefinitions>NOGDI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -108,9 +114,6 @@
     <PostBuildEvent>
       <Command>PostBuild.bat $(ProjectDir)$(OutDir) "E:\Games\Steam\steamapps\common\Grand Theft Auto V" $(TargetFileName)</Command>
     </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>Prebuild.bat $(ProjectDir)</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\thirdparty\GTAVMenuBase\menu.cpp" />
