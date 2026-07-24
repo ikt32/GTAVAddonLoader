@@ -1,4 +1,5 @@
 #include "UserDLC.h"
+#include "DLCFileParsing.h"
 #include "Util/Paths.h"
 #include "script.h"
 #include <filesystem>
@@ -8,22 +9,8 @@
 
 namespace fs = std::filesystem;
 
-namespace {
-    // Serious CBA.
-    std::string toLower(std::string s) {
-        std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-        return s;
-    }
-}
-
 DLCDefinition parseFile(const std::filesystem::directory_entry& de) {
-    std::vector<Hash> hashes;
-    std::ifstream file(de.path().string());
-
-    std::string line;
-    while (std::getline(file, line)) {
-        hashes.emplace_back(joaat(line));
-    }
+    std::vector<Hash> hashes = DLCFileParsing::ParseHashListFile(de);
 
     if (hashes.empty()) {
         return DLCDefinition("", std::vector<Hash>());
@@ -36,7 +23,7 @@ std::vector<DLCDefinition> BuildUserDLCList() {
     std::vector<DLCDefinition> userDLCs;
     std::string userDlcPath = Paths::GetModuleFolder(Paths::GetOurModuleHandle()) + modDir + "\\UserDLC";
     for (auto& file : fs::directory_iterator(userDlcPath)) {
-        if (toLower(fs::path(file).extension().string()) != ".list")
+        if (DLCFileParsing::ToLower(fs::path(file).extension().string()) != ".list")
             continue;
 
         DLCDefinition dlc = parseFile(file);

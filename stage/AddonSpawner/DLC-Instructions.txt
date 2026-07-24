@@ -1,0 +1,32 @@
+DLC Instructions
+================
+
+There are two folders for grouping add-on vehicles into named menu entries:
+
+UserDLC
+-------
+Create a <DLC Name>.list file with the model names you want in the DLC.
+For example, if you have a few vanilla vehicles, create the following file:
+
+UserDLC\VanillaWorks Lite.list
+
+Inside the .list file, put each model you want on a new line, for example
+
+streiter2
+vincent2
+
+A `VanillaWorks Lite` entry will then appear in the main menu - with under it,
+the vehicles you added. Still sortable by brand or class, giving you more power
+to manage your add-on vehicle packs.
+
+GameDLC
+-------
+Same .list format, but used to temporarily add vehicles from a new official
+DLC the loader doesn't know about yet. Name the file <key>_<DLC Name>.list,
+where <key> just controls the order (e.g. a date like 2024-06):
+
+GameDLC\2024-06_Bottom Dollar Bounties.list
+
+This entry appears after all official DLCs in the menu. Once the loader is
+updated to know about that DLC natively, your GameDLC file for it is ignored
+automatically - no need to remove it.

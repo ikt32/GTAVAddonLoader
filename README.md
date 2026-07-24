@@ -19,6 +19,14 @@ Clone this repository to the same folder ScriptHookV_SDK was extracted so you ha
 
 Clone my [GTAVMenuBase](https://github.com/E66666666/GTAVMenuBase) to the same folder you're gonna clone this to.
 
+## User DLC / Game DLC
+
+Add-on vehicles can be grouped into named, menu-visible entries via
+`AddonSpawner/UserDLC` (your own vehicle packs) and `AddonSpawner/GameDLC`
+(temporarily expanding the hard-coded official DLC list ahead of a script
+update). See [GTAVAddonLoader/GameDLC.md](GTAVAddonLoader/GameDLC.md) for the
+file format and conventions.
+
 ## Language packs
 
 Language packs are UTF-8 XML files stored in `AddonSpawner/Languages`. The

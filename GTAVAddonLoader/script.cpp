@@ -6,6 +6,7 @@
 #include "Images.h"
 #include "Language.h"
 #include "UserDLC.h"
+#include "GameDLC.h"
 
 #include "Util/Logger.hpp"
 #include "Util/Paths.h"
@@ -51,6 +52,10 @@ void reloadLanguages() {
 std::vector<Vehicle> g_persistentVehicles;
 
 // Stock vehicles DLC. Needs to be updated every DLC release. 
+std::vector<DLCDefinition> g_hardcodedDlcs;
+
+// Stock vehicles DLC (hard-coded) + GameDLC (user-updateable, expands the
+// former). This is what the rest of the script consumes.
 std::vector<DLCDefinition> g_dlcs;
 
 // User vehicles DLCs. User-updateable.
@@ -565,6 +570,24 @@ void clearAddonLists() {
 void reloadUserDlc() {
     clearAddonLists();
 
+    // Rebuild GameDLC (official DLC expansion) against the hard-coded base
+    // list, then re-cache so newly added official-vehicle DLCs are
+    // populated and menu-visible immediately.
+    std::vector<DLCDefinition> gameDlcs = BuildGameDLCList(g_hardcodedDlcs);
+    g_dlcs = g_hardcodedDlcs;
+    g_dlcs.insert(g_dlcs.end(), gameDlcs.begin(), gameDlcs.end());
+    cacheDLCVehicles();
+
+    for (const auto& dlc : gameDlcs) {
+        auto& cachedDlc = *std::find_if(g_dlcs.begin(), g_dlcs.end(), [&](const DLCDefinition& d) {
+            return d.Name == dlc.Name;
+        });
+        LOG(Info, "[Game] DLC Name: {}", cachedDlc.Name);
+        for (const auto& entry : cachedDlc.Vehicles) {
+            LOG(Info, "[Game]         : 0x{:X} / {}", entry.ModelHash, entry.ModelName);
+        }
+    }
+
     g_userDlcs = BuildUserDLCList();
     cacheDLCVehicles(g_userDlcs);
 
@@ -600,7 +623,8 @@ void ScriptInit() {
 
     MemoryAccess::Init();
 
-    g_dlcs = buildDLClist();
+    g_hardcodedDlcs = buildDLClist();
+    g_dlcs = g_hardcodedDlcs;
     cacheDLCs();
     reloadUserDlc();
 

@@ -123,6 +123,7 @@
     <ClCompile Include="..\thirdparty\GTAVMenuBase\menusettings.cpp" />
     <ClCompile Include="..\thirdparty\GTAVMenuBase\menuutils.cpp" />
     <ClCompile Include="..\thirdparty\jpegsize.cpp" />
+    <ClCompile Include="GameDLC.cpp" />
     <ClCompile Include="Hooking.cpp" />
     <ClCompile Include="Images.cpp" />
     <ClCompile Include="Language.cpp" />
@@ -151,7 +152,9 @@
     <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\nativeCaller.h" />
     <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\natives.h" />
     <ClInclude Include="..\thirdparty\ScriptHookV_SDK\inc\types.h" />
+    <ClInclude Include="DLCFileParsing.h" />
     <ClInclude Include="ExtraTypes.h" />
+    <ClInclude Include="GameDLC.h" />
     <ClInclude Include="Hooking.h" />
     <ClInclude Include="Images.h" />
     <ClInclude Include="Language.h" />
@@ -169,6 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\thirdparty\ScriptHookV_SDK\lib\ScriptHookV.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameDLC.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

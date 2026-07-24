@@ -16,22 +16,11 @@ Put a png or jpg image inside AddonSpawner/img, with the file name being the
 spawn name of the vehicle. Recommended: png, 480x270. Any other aspect ratio
 also works. Try keeping the file small for better performance.
 
-User DLC Instructions
-=====================
-Create a `<DLC Name>.list` file with the model names you want in the DLC.
-For example, if you have a few vanilla vehicles, create the following file:
-
-VanillaWorks Lite.list
-
-Inside the `.list` file, put each model you want on a new line, for example
-
-streiter2
-vincent2
-
-A `VanillaWorks Lite` entry will then appear in the main menu - with under it,
-the vehicles you added. Still sortable by brand or class, giving you more power
-to manage your add-on vehicle packs.
-
+User DLC / Game DLC Instructions
+================================
+See DLC-Instructions.txt for how to group add-on vehicles into named menu
+entries (UserDLC), and how to temporarily add vehicles from a new official
+DLC ahead of a script update (GameDLC).
 
 Changing hotkey
 ===============
