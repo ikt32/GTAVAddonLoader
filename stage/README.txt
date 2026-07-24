@@ -30,24 +30,22 @@ in Keyboard_Keys.txt
 You can also assign a controller key combo to open the menu. 
 settings_menu.ini should contain all info you need.
 
-Language packs
-==============
-Language packs are UTF-8 XML files in AddonSpawner/Languages. Change the
-language from the in-game Settings menu. Included languages are English and
-Simplified Chinese. Chinese menu text and subtitles have been verified in
-GTA V Legacy v1.0.3788.0. Missing translations automatically fall back to
-English. Additional languages can be added after native-speaker translation
-or review.
+Language
+========
+AddonSpawner 1.7.0 introduces support for custom translations.
+Thanks to Sanonz for implementing this feature.
 
-To add a language, copy en-US.xml, change the code and name on the <language>
-element, and translate the values inside each <text> element. Do not change the
-text keys or named placeholders such as {vehicle}, {model}, {count}, {dlc},
-{version}, {category}, and {value}. Entries with missing or extra placeholders
-fall back to English. XML reserved characters must be escaped,
-for example &amp; for an ampersand and &quot; for a quote. Language files are
-rescanned whenever the menu opens.
+By default only English is supported. More languages can be added by putting
+additional .xml file to the Languages folder.
+
+Some language encodings require the game to be in the same encoding,
+an example of such is Chinese.
+
+Since I cannot vouch for translations to include, AddonSpawner only ships with
+English. You may use an AI translation tool to generate other language files.
 
 Source
 ======
-https://github.com/E66666666/GTAVAddonLoader
+https://github.com/ikt32/GTAVAddonLoader
 
+© ikt 2026. All rights reserved.
