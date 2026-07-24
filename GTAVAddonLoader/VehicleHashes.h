@@ -1084,6 +1084,23 @@ static const std::vector<Hash> ASafehouseInTheHillsVehicles = {
     0xC3F57329, //  Super               fmj2                fmj2                FMJ MK V            
 };
 
+static const std::vector<Hash> TheKortzCenterHeist = {
+    0x37921980, //  Utility             TRAILER             trflat2             Trailer             
+    0x287FB782, //  Sedans              MERULA              merula              Merula              
+    0x2A3164EB, //  Sports              DRIFTELEGY          driftelegy          Elegy Retro Custom  
+    0x59176FC4, //  Super               LRCGT               lrcgt               LRC GT              
+    0x85307D56, //  Vans                LAUFER              laufer              Läufer             
+    0x8CD6404E, //  SUVs                WARDEN              warden              Warden              
+    0x876BE547, //  Sports              CARTUCCIA           cartuccia           Cartuccia GT        
+    0xC5ADF0C2, //  Super               velenogt            velenogt            Veleno GT           
+    0x250AAD2F, //  Sports              DRIFTCOQUE          driftcoquette       Coquette            
+    0xAB69C8DA, //  SUVs                ESTRIDE             estride             E-Stride            
+    0xEF7D228E, //  Super               HORUS               horus               Horus               
+    0xFDAB9FC7, //  Emergency           POLIGNUS            polignus            Ignus Pursuit       
+    0x9DD0CBB1, //  Off-Road            CARACARA3           caracara3           Caracara (Armored)  
+    0xDEB666A2, //  Muscle              DRIFTDOM8           driftdominator8     Dominator GTT       
+};
+
 inline std::vector<DLCDefinition> buildDLClist() {
     return {
         { DLCDefinition("Original game", OriginalVehicles) },
@@ -1133,6 +1150,7 @@ inline std::vector<DLCDefinition> buildDLClist() {
         { DLCDefinition("Bottom Dollar Bounties", BottomDollarBountiesVehicles) },
         { DLCDefinition("Agents of Sabotage", AgentsOfSabotageVehicles) },
         { DLCDefinition("Money Fronts", MoneyFrontsVehicles) },
-        { DLCDefinition("A Safehouse in the Hills", ASafehouseInTheHillsVehicles)},
+        { DLCDefinition("A Safehouse in the Hills", ASafehouseInTheHillsVehicles) },
+        { DLCDefinition("The Kortz Center Heist", TheKortzCenterHeist) },
     };
 }
