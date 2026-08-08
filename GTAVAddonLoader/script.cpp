@@ -2,6 +2,7 @@
 
 #include "settings.h"
 #include "VehicleHashes.h"
+#include "VehicleMod.h"
 #include "ExtraTypes.h"
 #include "Images.h"
 #include "Language.h"
@@ -447,6 +448,10 @@ void spawnVehicle(Hash hash) {
         Vehicle veh = VEHICLE::CREATE_VEHICLE(hash, pos, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()), 0, 1, 0);
         VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 5.0f);
         VEHICLE::SET_VEHICLE_DIRT_LEVEL(veh, 0.0f);
+
+        if (settings.SpawnMaxPerfMods) {
+            VehicleModData::SetMaxPerformanceMods(veh);
+        }
 
         if (spawnInside) {
             ENTITY::SET_ENTITY_HEADING(veh, ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()));

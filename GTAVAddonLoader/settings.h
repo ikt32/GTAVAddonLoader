@@ -25,6 +25,7 @@ public:
     bool Persistent = false;
     bool CategorizeMake = false;
     bool SpawnInplace = false;
+    bool SpawnMaxPerfMods = false;
     bool SearchMenu = false;
     int SearchCategory = 0;
     std::string Language = "en-US";

@@ -42,6 +42,8 @@ const TStringMap sEnglishStrings = {
     { "settings.spawn_in_place.detail2", "Only active if \"Spawn inside vehicle\" is turned on." },
     { "settings.persistence", "Enable persistence" },
     { "settings.persistence.detail", "Spawned cars don't disappear." },
+    { "settings.spawn_max_perf_mods", "Spawn tuned" },
+    { "settings.spawn_max_perf_mods.detail", "Spawn vehicles with all performance mods (engine, brakes, transmission, suspension, armor, turbo) installed and maximized." },
     { "settings.spawn_by_name", "Spawn by name" },
     { "settings.spawn_by_name.detail1", "Spawn vehicles by their model name." },
     { "settings.adds_main_option", "This setting adds an option to the main menu." },

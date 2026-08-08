@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -133,6 +133,7 @@
     <ClCompile Include="ScriptMenu.cpp" />
     <ClCompile Include="settings.cpp" />
     <ClCompile Include="UserDLC.cpp" />
+    <ClCompile Include="VehicleMod.cpp" />
     <ClCompile Include="Util\Logger.cpp" />
     <ClCompile Include="Util\Paths.cpp" />
     <ClCompile Include="Util\Util.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="script.h" />
     <ClInclude Include="settings.h" />
     <ClInclude Include="UserDLC.h" />
+    <ClInclude Include="VehicleMod.h" />
     <ClInclude Include="Util\Logger.hpp" />
     <ClInclude Include="Util\Paths.h" />
     <ClInclude Include="Util\Util.hpp" />

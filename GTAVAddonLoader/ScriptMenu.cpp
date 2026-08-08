@@ -281,6 +281,10 @@ void update_settingsmenu() {
                         { T("settings.persistence.detail") })) {
         settings.SaveSettings();
     }
+    if (menu.BoolOption(T("settings.spawn_max_perf_mods"), settings.SpawnMaxPerfMods,
+                        { T("settings.spawn_max_perf_mods.detail") })) {
+        settings.SaveSettings();
+    }
     if (menu.BoolOption(T("settings.spawn_by_name"), settings.SpawnByName,
                         { T("settings.spawn_by_name.detail1"), T("settings.adds_main_option") })) {
         settings.SaveSettings();
